@@ -95,19 +95,16 @@ erDiagram
 
     subscriber ||--o{ diaryEntry : "records"
     subscriber ||--o| nutritionalGoals : "sets"
-    subscriber ||--o{ recipe : "rates"
-    professional ||--o{ recipe : "rates"
     subscriber ||--o{ recipe : "creates"
     professional ||--o{ recipe : "creates"
 
     professional ||--o{ subscriber : "manages"
-    users ||--o{ professional : "managed by"
+    subscriber ||--o{ professional : "managed by"
 
-    foodItem ||--o{ food_diary_entries : "logged in"
+    foodItem ||--o{ diaryEntry : "logged in"
     foodItem ||--o{ recipe : "used in"
 
 
-    recipe ||--o{ subscriber : "favourited by"
     recipe ||--o{ subscriber : "rated by"
 ```
 
