@@ -45,7 +45,6 @@ erDiagram
     }
 
     food_diary_entry {
-        ?? ??
         int food_item_id FK "NN"
         varchar meal_type "NN (breakfast / lunch / dinner / snack)"
         decimal quantity_grams "NN"
