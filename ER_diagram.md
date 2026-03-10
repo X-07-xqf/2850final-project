@@ -76,6 +76,14 @@ erDiagram
 
     recipe {
         recipeID int
+        calories int
+        protein int
+        carbs int
+        fat int
+        fiber int
+        sugar int
+        sodium int
+        cholesterol int
         ingredients foodItem[]
         createdBy varchar
         title varchar
