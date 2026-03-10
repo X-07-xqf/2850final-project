@@ -93,26 +93,22 @@ erDiagram
 
 
 
-    users ||--o| professional_profiles : "has profile"
-    users ||--o{ food_diary_entries : "records"
-    users ||--o| nutritional_goals : "sets"
-    users ||--o{ recipe_favourites : "favourites"
-    users ||--o{ recipe_ratings : "rates"
-    users ||--o{ recipes : "creates"
+    subscriber ||--o{ diaryEntry : "records"
+    subscriber ||--o| nutritionalGoals : "sets"
+    subscriber ||--o{ recipe : "rates"
+    professional ||--o{ recipe : "rates"
+    subscriber ||--o{ recipe : "creates"
+    professional ||--o{ recipe : "creates"
 
-    professional_profiles ||--o{ client_relationships : "manages"
-    users ||--o{ client_relationships : "subscribed to"
+    professional ||--o{ subscriber : "manages"
+    users ||--o{ professional : "managed by"
 
-    users ||--o{ advice_messages : "sends (professional)"
-    users ||--o{ advice_messages : "receives (subscriber)"
+    foodItem ||--o{ food_diary_entries : "logged in"
+    foodItem ||--o{ recipe : "used in"
 
-    food_items ||--o{ food_diary_entries : "logged in"
-    food_items ||--o{ recipe_ingredients : "used in"
 
-    recipes ||--o{ recipe_ingredients : "contains"
-    recipes ||--o{ recipe_steps : "has steps"
-    recipes ||--o{ recipe_favourites : "favourited by"
-    recipes ||--o{ recipe_ratings : "rated by"
+    recipe ||--o{ subscriber : "favourited by"
+    recipe ||--o{ subscriber : "rated by"
 ```
 
 ## Table Descriptions
