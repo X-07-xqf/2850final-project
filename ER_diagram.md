@@ -12,8 +12,8 @@ erDiagram
         password_hash varchar
         dob datetime
         favRecipes recipe[]
-        created_at datetime
-        updated_at datetime
+        createdAt datetime
+        updatedAt datetime
     }
 
     professional {
@@ -23,8 +23,8 @@ erDiagram
         email varchar 
         password_hash varchar
         dob datetime
-        created_at datetime
-        updated_at datetime
+        createdAt datetime
+        updatedAt datetime
         specialty varchar
         bio string
     }
@@ -42,16 +42,19 @@ erDiagram
         sugar_per_100g float
         sodium_per_100g float
         cholesterol_per_100g float
-        created_at datetime 
+        createdAt datetime 
     }
 
     diaryEntry {
         item foodItem
+        exerciseType varchar
+        exerciseMins int
+        calsBurnt int
         mealType varchar 
         quantityGrams int
         entryDate datetime
         notes varchar
-        created_at datetime 
+        createdAt datetime 
     }
 
     nutritionalGoals {
@@ -61,7 +64,7 @@ erDiagram
         dailyCarbs varchar
         dailyFat varchar
         dailyFiber varchar
-        set_at datetime
+        setAt datetime
     }
 
     weightGoal {
@@ -94,9 +97,9 @@ erDiagram
         servings int
         rating varchar
         difficulty varchar
-        image_url varchar 
-        created_at datetime 
-        updated_at datetime 
+        imageURL varchar 
+        createdAt datetime 
+        updatedAt datetime 
     }
 
 
