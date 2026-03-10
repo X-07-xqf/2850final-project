@@ -79,7 +79,7 @@ erDiagram
         recipeID int
         createdBy varchar
         title varchar
-        description varchar/string
+        description varchar
         prepTime varchar
         cookTime varchar
         totalTime varchar
