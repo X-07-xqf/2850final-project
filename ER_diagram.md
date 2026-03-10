@@ -95,6 +95,7 @@ erDiagram
 
     subscriber ||--o{ diaryEntry : "records"
     subscriber ||--o| nutritionalGoals : "sets"
+    subscriber ||--o| weightGoal : "sets"
     subscriber ||--o{ recipe : "creates"
     professional ||--o{ recipe : "creates"
 
