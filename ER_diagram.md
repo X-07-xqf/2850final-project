@@ -4,51 +4,48 @@
 
 ```mermaid
 erDiagram
-    users {
-        int id PK
-        varchar full_name "NN"
-        varchar email "UK, NN"
-        varchar password_hash "NN"
-        varchar role "NN (subscriber / professional)"
-        varchar avatar_url
-        datetime created_at "NN"
-        datetime updated_at
+    subscriber {
+        firstName varchar
+        lastName varchar
+        userID int
+        email varchar 
+        password_hash varchar
+        dob datetime
+        created_at datetime
+        updated_at datetime
     }
 
-    professional_profiles {
-        int id PK
-        int user_id FK "NN, UK"
-        varchar specialty "NN"
-        varchar qualification "NN"
-        text bio
-        datetime created_at "NN"
+    professional {
+        firstName varchar
+        lastName varchar
+        userID int
+        email varchar 
+        password_hash varchar
+        dob datetime
+        created_at datetime
+        updated_at datetime
+        specialty varchar
+        bio string
     }
 
-    client_relationships {
-        int id PK
-        int professional_id FK "NN"
-        int subscriber_id FK "NN"
-        varchar status "NN (active / ended)"
-        datetime started_at "NN"
-        datetime ended_at
+
+    foodItem {
+        name varchar
+        itemID int
+        category varchar
+        calories_per_100g float
+        protein_per_100g float
+        carbs_per_100g float
+        fat_per_100g float
+        fiber_per_100g float
+        sugar_per_100g float
+        sodium_per_100g float
+        cholesterol_per_100g float
+        created_at datetime 
     }
 
-    food_items {
-        int id PK
-        varchar name "NN"
-        varchar category "NN"
-        decimal calories_per_100g "NN"
-        decimal protein_per_100g "NN"
-        decimal carbs_per_100g "NN"
-        decimal fat_per_100g "NN"
-        decimal fiber_per_100g
-        decimal sugar_per_100g
-        datetime created_at "NN"
-    }
-
-    food_diary_entries {
-        int id PK
-        int user_id FK "NN"
+    food_diary_entry {
+        ?? ??
         int food_item_id FK "NN"
         varchar meal_type "NN (breakfast / lunch / dinner / snack)"
         decimal quantity_grams "NN"
@@ -79,18 +76,19 @@ erDiagram
         datetime sent_at "NN"
     }
 
-    recipes {
-        int id PK
-        int created_by FK "NN"
-        varchar title "NN"
-        text description
-        int prep_time_minutes "NN"
-        int cook_time_minutes "NN"
-        int servings "NN"
-        varchar difficulty "NN (easy / medium / hard)"
-        varchar image_url
-        datetime created_at "NN"
-        datetime updated_at
+    recipe {
+        recipeID int
+        createdBy varchar
+        title varchar
+        description varchar/string
+        prepTime varchar
+        cookTime varchar
+        totalTime varchar
+        servings int
+        difficulty varchar
+        image_url varchar 
+        created_at datetime 
+        updated_at datetime 
     }
 
     recipe_ingredients {
