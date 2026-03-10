@@ -11,6 +11,7 @@ erDiagram
         email varchar 
         password_hash varchar
         dob datetime
+        favRecipes recipe[]
         created_at datetime
         updated_at datetime
     }
@@ -44,39 +45,38 @@ erDiagram
         created_at datetime 
     }
 
-    food_diary_entry {
-        int food_item_id FK "NN"
-        varchar meal_type "NN (breakfast / lunch / dinner / snack)"
-        decimal quantity_grams "NN"
-        date entry_date "NN"
-        time entry_time
-        text notes
-        datetime created_at "NN"
+    diaryEntry {
+        item foodItem
+        mealType varchar 
+        quantityGrams int
+        entryDate datetime
+        notes varchar
+        created_at datetime 
     }
 
-    nutritional_goals {
-        int id PK
-        int user_id FK "NN"
-        decimal daily_calories
-        decimal daily_protein
-        decimal daily_carbs
-        decimal daily_fat
-        decimal daily_fiber
-        datetime set_at "NN"
-        datetime updated_at
+    nutritionalGoals {
+        userID userID
+        dailyCals int
+        dailyProtein int
+        dailyCarbs varchar
+        dailyFat varchar
+        dailyFiber varchar
+        set_at datetime
     }
 
-    advice_messages {
-        int id PK
-        int professional_id FK "NN"
-        int subscriber_id FK "NN"
-        text message "NN"
-        boolean is_read "NN, default false"
-        datetime sent_at "NN"
+    weightGoal {
+        userID userID
+        goalWeight varchar
+        startWeight varchar
+        currentWeight varchar
+
     }
+
+
 
     recipe {
         recipeID int
+        ingredients foodItem[]
         createdBy varchar
         title varchar
         description varchar
@@ -84,44 +84,14 @@ erDiagram
         cookTime varchar
         totalTime varchar
         servings int
+        rating varchar
         difficulty varchar
         image_url varchar 
         created_at datetime 
         updated_at datetime 
     }
 
-    recipe_ingredients {
-        int id PK
-        int recipe_id FK "NN"
-        int food_item_id FK
-        varchar ingredient_name "NN"
-        varchar quantity "NN"
-        varchar unit "NN"
-    }
 
-    recipe_steps {
-        int id PK
-        int recipe_id FK "NN"
-        int step_number "NN"
-        text instruction "NN"
-    }
-
-    recipe_favourites {
-        int id PK
-        int user_id FK "NN"
-        int recipe_id FK "NN"
-        datetime created_at "NN"
-    }
-
-    recipe_ratings {
-        int id PK
-        int user_id FK "NN"
-        int recipe_id FK "NN"
-        int rating "NN (1-5)"
-        text comment
-        datetime created_at "NN"
-        datetime updated_at
-    }
 
     users ||--o| professional_profiles : "has profile"
     users ||--o{ food_diary_entries : "records"
