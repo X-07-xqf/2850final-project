@@ -369,28 +369,28 @@ flowchart TD
 ┌──────────────────────────────────┐
 │  ←  Reserve Consultation         │
 │──────────────────────────────────│
-
-Professional: Dr. Smith
-
-Select Available Time
-
-┌────────────────────────────┐
-│ Monday   10:00             │
-│ Monday   14:00             │
-│ Tuesday  11:00             │
-│ Wednesday 15:00            │
-└────────────────────────────┘
-
-[ Confirm Reservation ]
-
-└──────────────────────────────────┘
-┌────────────────────────────┐
-│ System:                    │
-│ Reservation confirmed      │
-│ Dr. Smith                  │
-│ Monday 10:00               │
-└────────────────────────────┘
-
+|
+|Professional: Dr. Smith
+|
+|Select Available Time
+|
+|┌────────────────────────────┐
+|│ Monday   10:00             │
+|│ Monday   14:00             │
+|│ Tuesday  11:00             │
+|│ Wednesday 15:00            │
+|└────────────────────────────┘
+|
+|[ Confirm Reservation ]
+|
+|└──────────────────────────────────┘
+|┌────────────────────────────┐
+|│ System:                    │
+|│ Reservation confirmed      │
+|│ Dr. Smith                  │
+|│ Monday 10:00               │
+|└────────────────────────────┘
+|
 ---
 
 ### 10. Nutritional Goals
