@@ -507,7 +507,7 @@ flowchart TD
 
 ### Subscriber Flow:
 ```
-Login → Dashboard → Food Diary → Add Entry → View Trends
+Login → Dashboard → Diary → Add Entry → View Trends
                   → Recipe Search → Recipe Detail → Rate / Favourite
                   → Nutritional Goals
                   → Messages (from Professional)
