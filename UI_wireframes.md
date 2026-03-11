@@ -36,10 +36,12 @@ flowchart TD
     C --> J[Messages]
     C --> K[Professional Profile]
 
-    I --> I1[Client Detail / Food Diary View]
+    I --> I1[Client Detail / Diary View]
     I1 --> I2[Send Advice]
 
-    J --> J1[Conversation with Client]
+    J --> J1[Receive Reservation]
+    J1 --> J2[Consultation]
+    J2 --> J3[Conversation with Client]
 ```
 
 ---
