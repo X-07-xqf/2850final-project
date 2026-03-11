@@ -366,32 +366,32 @@ flowchart TD
 └──────────────────────────────────┘
 ```
 ### 9. Reserve Consultation
+
 ┌──────────────────────────────────┐
 │  ←  Reserve Consultation         │
 │──────────────────────────────────│
-|
-|Professional: Dr. Smith
-|
-|Select Available Time
-|
-|┌────────────────────────────┐
-|│ Monday   10:00             │
-|│ Monday   14:00             │
-|│ Tuesday  11:00             │
-|│ Wednesday 15:00            │
-|└────────────────────────────┘
-|
-|[ Confirm Reservation ]
-|
-|└──────────────────────────────────┘
-|┌────────────────────────────┐
-|│ System:                    │
-|│ Reservation confirmed      │
-|│ Dr. Smith                  │
-|│ Monday 10:00               │
-|└────────────────────────────┘
-|
+│                                  │
+│  Professional: Dr. Smith         │
+│                                  │
+│  Select Available Time           │
+│                                  │
+│  ┌────────────────────────────┐  │
+│  │ Monday   10:00             │  │
+│  │ Monday   14:00             │  │
+│  │ Tuesday  11:00             │  │
+│  │ Wednesday 15:00            │  │
+│  └────────────────────────────┘  │
+│                                  │
+│  [ Confirm Reservation ]         │
+│                                  │
+└──────────────────────────────────┘
 
+┌────────────────────────────┐
+│ System:                    │
+│ Reservation confirmed      │
+│ Dr. Smith                  │
+│ Monday 10:00               │
+└────────────────────────────┘
 ### 10. Nutritional Goals
 
 ```
@@ -479,7 +479,7 @@ flowchart TD
 │                                  │
 │  FOOD DIARY (read-only)          │
 │  ┌────────────────────────────┐  │
-│  │ ◀  March 4, 2026  ▶       │  │
+│  │ ◀  March 4, 2026  ▶      │  │
 │  │                            │  │
 │  │ Breakfast:                 │  │
 │  │  Oatmeal 250g, Banana 120g│  │
