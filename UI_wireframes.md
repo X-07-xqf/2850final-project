@@ -391,7 +391,7 @@ flowchart TD
 |│ Monday 10:00               │
 |└────────────────────────────┘
 |
-```
+
 ### 10. Nutritional Goals
 
 ```
