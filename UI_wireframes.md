@@ -7,15 +7,16 @@ flowchart TD
     A[Login / Register] -->|Subscriber| B[Dashboard - Subscriber]
     A -->|Professional| C[Dashboard - Professional]
 
-    B --> D[Food Diary]
+    B --> D[Diary]
     B --> E[Recipe Search]
     B --> F[My Profile]
     B --> G[Messages]
     B --> H[Nutritional Goals]
 
     D --> D1[Add Food Entry]
-    D --> D2[View Daily Summary]
-    D --> D3[View Trends / Charts]
+    D --> D2[Add Exercise]
+    D --> D3[View Daily Summary]
+    D --> D4[View Trends / Charts]
 
     E --> E1[Recipe List / Search Results]
     E1 --> E2[Recipe Detail]
@@ -119,11 +120,11 @@ flowchart TD
 
 ---
 
-### 3. Food Diary Page
+### 3. Diary Page
 
 ```
 ┌──────────────────────────────────┐
-│  ←  Food Diary                   │
+│  ←  Diary                   │
 │──────────────────────────────────│
 │  ◀  March 4, 2026  ▶            │
 │                                  │
@@ -147,11 +148,15 @@ flowchart TD
 │  SNACK                           │
 │  ┌────────────────────────────┐  │
 │  │ (No entries yet)           │  │
-│  └────────────────────────────┘  │
+│  └────────────────────────────┘  |
+|    [  + Add Food Entry  ]       
+|
+|  EXERCISE                        │
+│  ┌────────────────────────────┐  │
+│  │ Run     10 mins  100cal    │  │
+│  └────────────────────────────┘  |
 │                                  │
-│  [  + Add Food Entry  ]         │
-│                                  │
-│  [  View Trends]               │
+│  [  View Trends]                 │
 │──────────────────────────────────│
 │  [Home] [Diary] [Recipe] [Profile]│
 └──────────────────────────────────┘
