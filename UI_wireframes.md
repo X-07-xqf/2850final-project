@@ -383,7 +383,11 @@ flowchart TD
 │  └────────────────────────────┘  │
 │                                  │
 │  [ Confirm Reservation ]         │
-│                                  │
+|                                  |
+│  System:                         │
+│  Reservation confirmed           │
+│  Dr. Smith                       │
+│  Monday 10:00                    │
 └──────────────────────────────────┘
 
 ┌────────────────────────────┐
