@@ -28,6 +28,9 @@ flowchart TD
     F --> F3[My Ratings]
 
     G --> G1[Conversation with Professional]
+    G1 --> G2[Reserve Consultation]
+    G2 --> G3[Select Time Slot]
+    G3 --> G4[Confirm Reservation]
 
     C --> I[Client List]
     C --> J[Messages]
@@ -336,35 +339,59 @@ flowchart TD
 ┌──────────────────────────────────┐
 │  ←  Messages                     │
 │──────────────────────────────────│
-│                                  │
-│  Your Nutritionist: Dr. Smith    │
-│                                  │
-│  ┌────────────────────────────┐  │
-│  │          Mar 3, 2026       │  │
-│  │                            │  │
-│  │  ┌──────────────────────┐  │  │
-│  │  │ Dr. Smith:           │  │  │
-│  │  │ Great progress this  │  │  │
-│  │  │ week! Try to add more│  │  │
-│  │  │ fiber to your diet.  │  │  │
-│  │  └──────────────────────┘  │  │
-│  │                            │  │
-│  │    ┌──────────────────┐    │  │
-│  │    │ Me:              │    │  │
-│  │    │ Thanks! Any food │    │  │
-│  │    │ suggestions?     │    │  │
-│  │    └──────────────────┘    │  │
-│  └────────────────────────────┘  │
-│                                  │
-│  ┌─────────────────────┐ [Send]  │
-│  │ Type a message...   │         │
-│  └─────────────────────┘         │
+|
+|Your Nutritionist: Dr. Smith
+|
+|┌────────────────────────────┐
+│| Dr. Smith:                 │
+│|Great progress this week!   │
+│|Try to add more fiber.      │
+|└────────────────────────────┘
+|
+|    ┌──────────────────────┐
+|    │ Me:                  │
+|    │ Thanks! Any advice?  │
+|    └──────────────────────┘
+|
+|────────────────────────────
+|
+|[ Reserve Consultation ]
+|
+|┌─────────────────────┐ [Send]
+|│ Type a message...   │
+|└─────────────────────┘
+|
 └──────────────────────────────────┘
 ```
+### 9. Reserve Consultation
+┌──────────────────────────────────┐
+│  ←  Reserve Consultation         │
+│──────────────────────────────────│
+
+Professional: Dr. Smith
+
+Select Available Time
+
+┌────────────────────────────┐
+│ Monday   10:00             │
+│ Monday   14:00             │
+│ Tuesday  11:00             │
+│ Wednesday 15:00            │
+└────────────────────────────┘
+
+[ Confirm Reservation ]
+
+└──────────────────────────────────┘
+┌────────────────────────────┐
+│ System:                    │
+│ Reservation confirmed      │
+│ Dr. Smith                  │
+│ Monday 10:00               │
+└────────────────────────────┘
 
 ---
 
-### 9. Nutritional Goals
+### 10. Nutritional Goals
 
 ```
 ┌──────────────────────────────────┐
@@ -404,7 +431,7 @@ flowchart TD
 
 ---
 
-### 10. Professional Dashboard
+### 11. Professional Dashboard
 
 ```
 ┌──────────────────────────────────┐
@@ -434,7 +461,7 @@ flowchart TD
 
 ---
 
-### 11. Client Detail (Professional View)
+### 12. Client Detail (Professional View)
 
 ```
 ┌──────────────────────────────────┐
@@ -464,13 +491,13 @@ flowchart TD
 │  │  [Calorie Chart - 7 days]  │  │
 │  └────────────────────────────┘  │
 │                                  │
-│  [  💬 Send Advice  ]            │
+│  [   Send Advice  ]            │
 └──────────────────────────────────┘
 ```
 
 ---
 
-### 12. My Profile / Favourites
+### 13. My Profile / Favourites
 
 ```
 ┌──────────────────────────────────┐
@@ -505,7 +532,10 @@ flowchart TD
 │  [Home] [Diary] [Recipe] [Profile]│
 └──────────────────────────────────┘
 ```
-
+### 14. Messages (Professional View)
+System:
+Alice Johnson booked a consultation
+Monday 10:00
 ---
 
 ## User Flow Summary
@@ -515,7 +545,8 @@ flowchart TD
 Login → Dashboard → Diary → Add Entry → View Trends
                   → Recipe Search → Recipe Detail → Rate / Favourite
                   → Nutritional Goals
-                  → Messages (from Professional)
+                  → Messages (from Professional)→ Chat with Professional
+                  → Reserve Consultation→ Select Time Slot→ Confirm
                   → Profile / Favourites
 ```
 
@@ -523,5 +554,6 @@ Login → Dashboard → Diary → Add Entry → View Trends
 ```
 Login → Dashboard → Client List → Client Detail → View Diary → Send Advice
                   → Messages → Conversation with Client
+                  → Receive Reservation→ Consultation
                   → Profile
 ```
