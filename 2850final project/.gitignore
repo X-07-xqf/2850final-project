@@ -1,0 +1,23 @@
+.DS_Store
+*.swp
+*.swo
+*~
+.idea/
+.vscode/
+node_modules/
+__pycache__/
+*.pyc
+.env
+
+# Gradle
+.gradle/
+build/
+!gradle/wrapper/
+
+# H2 database files
+data/
+
+# Java
+*.class
+*.jar
+!gradle/wrapper/gradle-wrapper.jar
