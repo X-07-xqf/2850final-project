@@ -1,6 +1,7 @@
 plugins {
     kotlin("jvm") version "1.9.22"
-    id("io.ktor.plugin") version "2.3.7"
+    id("application")
+    id("com.gradleup.shadow") version "8.3.0"
 }
 
 group = "com.goodfood"
@@ -14,7 +15,7 @@ repositories {
     mavenCentral()
 }
 
-val ktorVersion = "2.3.7"
+val ktorVersion = "2.3.12"
 val exposedVersion = "0.46.0"
 val h2Version = "2.2.224"
 val logbackVersion = "1.4.14"
