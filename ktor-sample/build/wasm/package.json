@@ -1,0 +1,15 @@
+{
+  "name": "ktor-sample",
+  "version": "unspecified",
+  "private": true,
+  "workspaces": [
+    "packages/ktor-sample-web",
+    "packages/ktor-sample-web-test"
+  ],
+  "devDependencies": {},
+  "dependencies": {},
+  "peerDependencies": {},
+  "optionalDependencies": {},
+  "bundledDependencies": [],
+  "resolutions": {}
+}

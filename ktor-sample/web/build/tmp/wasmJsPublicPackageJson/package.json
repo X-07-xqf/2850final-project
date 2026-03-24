@@ -1,0 +1,12 @@
+{
+  "name": "ktor-sample-web",
+  "version": "0.0.1",
+  "main": "ktor-sample-web.mjs",
+  "devDependencies": {},
+  "dependencies": {
+    "htmx.org": "2.0.3"
+  },
+  "peerDependencies": {},
+  "optionalDependencies": {},
+  "bundledDependencies": []
+}

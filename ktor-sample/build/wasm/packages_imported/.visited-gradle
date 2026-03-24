@@ -1,0 +1,11 @@
+{
+  "version": "9",
+  "items": {
+    "f911994034157f3e731e7b2f74c0727e": {
+      "src": "/home/codespace/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-stdlib-wasm-js/2.3.0/cf45fb936f28b7de68dff1cdae1c75f0881e36f0/kotlin-stdlib-wasm-js-2.3.0.klib"
+    },
+    "234fb7b59288841b187a482e3e5a3bc3": {
+      "src": "/home/codespace/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlinx/kotlinx-browser-wasm-js/0.5.0/4b9c6e6a72df07e2f1d605c9f87c4e5176ddeb93/kotlinx-browser-wasm-js-0.5.0.klib"
+    }
+  }
+}
