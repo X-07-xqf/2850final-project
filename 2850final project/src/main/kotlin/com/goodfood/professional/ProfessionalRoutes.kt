@@ -1,0 +1,77 @@
+package com.goodfood.professional
+
+import com.goodfood.auth.Users
+import com.goodfood.config.UserSession
+import com.goodfood.config.model
+import com.goodfood.diary.DiaryService
+import com.goodfood.goals.GoalService
+import com.goodfood.messages.MessageService
+import io.ktor.server.application.*
+import io.ktor.server.request.*
+import io.ktor.server.response.*
+import io.ktor.server.routing.*
+import io.ktor.server.sessions.*
+import io.ktor.server.thymeleaf.*
+import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.transactions.transaction
+import java.math.BigDecimal
+import java.math.RoundingMode
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+
+fun Route.professionalRoutes() {
+    get("/pro/dashboard") {
+        val session = call.sessions.get<UserSession>() ?: return@get call.respondRedirect("/login")
+        if (session.role != "professional") return@get call.respondRedirect("/dashboard")
+        val unread = MessageService.getUnreadCount(session.userId)
+        val clients = transaction {
+            ClientRelationships.join(Users, JoinType.INNER, ClientRelationships.subscriberId, Users.id)
+                .select(Users.columns + ClientRelationships.columns).where {
+                    (ClientRelationships.professionalId eq session.userId) and (ClientRelationships.status eq "active")
+                }.map { row ->
+                    val clientId = row[Users.id]; val today = LocalDate.now()
+                    val summary = DiaryService.getDailySummary(clientId, today); val goals = GoalService.getGoals(clientId)
+                    val goalCal = goals?.get("calories") ?: BigDecimal("2000")
+                    val pct = if (goalCal > BigDecimal.ZERO) summary["calories"]!!.multiply(BigDecimal(100)).divide(goalCal, 0, RoundingMode.HALF_UP).toInt() else 0
+                    mapOf<String, Any>("id" to clientId, "fullName" to row[Users.fullName],
+                        "initials" to row[Users.fullName].split(" ").map { it.first() }.joinToString(""),
+                        "calories" to (summary["calories"] ?: BigDecimal.ZERO), "goalCalories" to goalCal,
+                        "compliance" to pct.coerceAtMost(100), "status" to if (pct >= 60) "On Track" else "Needs Attention")
+                }
+        }
+        call.respond(ThymeleafContent("professional/dashboard", model(
+            "session" to session, "clients" to clients, "totalClients" to clients.size,
+            "needAttention" to clients.count { it["status"] == "Needs Attention" }, "unreadMessages" to unread, "activePage" to "dashboard")))
+    }
+
+    get("/pro/client/{id}") {
+        val session = call.sessions.get<UserSession>() ?: return@get call.respondRedirect("/login")
+        if (session.role != "professional") return@get call.respondRedirect("/dashboard")
+        val clientId = call.parameters["id"]?.toIntOrNull() ?: return@get call.respondRedirect("/pro/dashboard")
+        val dateStr = call.request.queryParameters["date"]
+        val date = if (dateStr != null) LocalDate.parse(dateStr) else LocalDate.now()
+        val unread = MessageService.getUnreadCount(session.userId)
+        val client = transaction { Users.selectAll().where { Users.id eq clientId }.singleOrNull() } ?: return@get call.respondRedirect("/pro/dashboard")
+        val entries = DiaryService.getEntriesForDate(clientId, date); val summary = DiaryService.getDailySummary(clientId, date)
+        val goals = GoalService.getGoals(clientId)
+        val meals = listOf("breakfast", "lunch", "snack", "dinner").map { meal ->
+            val me = entries.filter { it["mealType"] == meal }; mapOf("type" to meal, "entries" to me, "calories" to me.sumOf { it["calories"] as BigDecimal })
+        }
+        call.respond(ThymeleafContent("professional/client-detail", model(
+            "session" to session,
+            "client" to mapOf<String, Any>("id" to client[Users.id], "fullName" to client[Users.fullName],
+                "initials" to client[Users.fullName].split(" ").map { it.first() }.joinToString("")),
+            "date" to date, "dateFormatted" to date.format(DateTimeFormatter.ofPattern("MMMM d, yyyy")),
+            "prevDate" to date.minusDays(1), "nextDate" to date.plusDays(1),
+            "meals" to meals, "summary" to summary, "goals" to (goals ?: emptyMap()),
+            "unreadMessages" to unread, "activePage" to "clients")))
+    }
+
+    post("/pro/client/{id}/advice") {
+        val session = call.sessions.get<UserSession>() ?: return@post call.respondRedirect("/login")
+        val clientId = call.parameters["id"]?.toIntOrNull() ?: return@post call.respondRedirect("/pro/dashboard")
+        val message = call.receiveParameters()["message"] ?: ""
+        if (message.isNotBlank()) MessageService.sendMessage(session.userId, clientId, message)
+        call.respondRedirect("/pro/client/$clientId")
+    }
+}

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>Professional dashboard — Good Food</title>
+    <link rel="stylesheet" th:href="'/static/css/styles.css'" href="/static/css/styles.css"/>
+</head>
+<body class="app-body">
+<div class="app-layout">
+    <aside class="sidebar sidebar--pro">
+        <div class="sidebar__brand">
+            <span class="sidebar__logo">📋</span>
+            <span class="sidebar__title">Pro portal</span>
+        </div>
+        <p class="sidebar__user" th:if="${session}" th:text="${session.fullName}">Pro</p>
+        <nav class="sidebar__nav" aria-label="Professional">
+            <a th:href="'/pro/dashboard'" th:classappend="${activePage == 'dashboard'} ? ' nav-link--active'" class="nav-link">Clients</a>
+            <a th:href="'/messages'" th:classappend="${activePage == 'messages'} ? ' nav-link--active'" class="nav-link">
+                Messages
+                <span th:if="${unreadMessages != null and unreadMessages > 0}" class="badge" th:text="${unreadMessages}">0</span>
+            </a>
+        </nav>
+        <a th:href="'/logout'" class="nav-link nav-link--muted sidebar__logout">Log out</a>
+    </aside>
+    <main class="main">
+        <header class="page-header page-header--row">
+            <div>
+                <h1 class="page-title">Client overview</h1>
+                <p class="page-meta">
+                    <span th:text="${totalClients}">0</span> active clients
+                    ·
+                    <span th:text="${needAttention}">0</span> need attention
+                </p>
+            </div>
+        </header>
+
+        <div class="card card--table-wrap" th:if="${clients != null and !clients.isEmpty()}">
+            <table class="data-table">
+                <thead>
+                <tr>
+                    <th>Client</th>
+                    <th>Today (kcal)</th>
+                    <th>Goal</th>
+                    <th>Compliance</th>
+                    <th>Status</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="c : ${clients}">
+                    <td>
+                        <span class="table-avatar" th:text="${c.initials}">AB</span>
+                        <span th:text="${c.fullName}">Name</span>
+                    </td>
+                    <td th:text="${c.calories}">0</td>
+                    <td th:text="${c.goalCalories}">2000</td>
+                    <td>
+                        <div class="progress progress--compact" role="progressbar" th:attr="aria-valuenow=${c.compliance}" aria-valuemin="0" aria-valuemax="100">
+                            <div class="progress__fill progress__fill--cal" th:style="|width: ${c.compliance}%;|"></div>
+                        </div>
+                        <span class="table-pct" th:text="${c.compliance} + '%'">0%</span>
+                    </td>
+                    <td>
+                        <span class="status-pill" th:classappend="${c.status == 'On Track'} ? ' status-pill--ok' : ' status-pill--warn'"
+                              th:text="${c.status}">On Track</span>
+                    </td>
+                    <td><a class="btn btn--small btn--ghost" th:href="|/pro/client/${c.id}|">View</a></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <p class="empty-hint card" th:if="${clients == null or clients.isEmpty()}">No linked clients yet.</p>
+    </main>
+</div>
+<script th:src="'/static/js/app.js'" src="/static/js/app.js"></script>
+</body>
+</html>

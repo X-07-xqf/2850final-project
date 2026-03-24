@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title th:text="${client.fullName} + ' — Client'">Client — Good Food</title>
+    <link rel="stylesheet" th:href="'/static/css/styles.css'" href="/static/css/styles.css"/>
+</head>
+<body class="app-body">
+<div class="app-layout">
+    <aside class="sidebar sidebar--pro">
+        <div class="sidebar__brand">
+            <span class="sidebar__logo">📋</span>
+            <span class="sidebar__title">Pro portal</span>
+        </div>
+        <p class="sidebar__user" th:if="${session}" th:text="${session.fullName}">Pro</p>
+        <nav class="sidebar__nav" aria-label="Professional">
+            <a th:href="'/pro/dashboard'" th:classappend="${activePage == 'dashboard' or activePage == 'clients'} ? ' nav-link--active'" class="nav-link">Clients</a>
+            <a th:href="'/messages'" th:classappend="${activePage == 'messages'} ? ' nav-link--active'" class="nav-link">
+                Messages
+                <span th:if="${unreadMessages != null and unreadMessages > 0}" class="badge" th:text="${unreadMessages}">0</span>
+            </a>
+        </nav>
+        <a th:href="'/logout'" class="nav-link nav-link--muted sidebar__logout">Log out</a>
+    </aside>
+    <main class="main">
+        <p class="back-row"><a th:href="'/pro/dashboard'" class="link-back">← All clients</a></p>
+
+        <header class="page-header page-header--row">
+            <div>
+                <h1 class="page-title">
+                    <span class="table-avatar table-avatar--lg" th:text="${client.initials}">AB</span>
+                    <span th:text="${client.fullName}">Client</span>
+                </h1>
+                <p class="page-meta" th:text="${dateFormatted}">Date</p>
+            </div>
+            <div class="date-nav">
+                <a class="btn btn--ghost" th:href="|/pro/client/${client.id}?date=${prevDate}|">← Previous</a>
+                <a class="btn btn--ghost" th:href="|/pro/client/${client.id}|">Today</a>
+                <a class="btn btn--ghost" th:href="|/pro/client/${client.id}?date=${nextDate}|">Next →</a>
+            </div>
+        </header>
+
+        <section class="card summary-strip" aria-label="Client day summary">
+            <div class="summary-strip__item"><strong th:text="${summary.calories}">0</strong> kcal</div>
+            <div class="summary-strip__item">P <span th:text="${summary.protein}">0</span> g</div>
+            <div class="summary-strip__item">C <span th:text="${summary.carbs}">0</span> g</div>
+            <div class="summary-strip__item">F <span th:text="${summary.fat}">0</span> g</div>
+            <div class="summary-strip__item summary-strip__item--goals" th:if="${goals != null}">
+                Goals: <span th:text="${goals['calories']}">—</span> kcal
+            </div>
+        </section>
+
+        <section class="card">
+            <h2 class="section-title">Send advice</h2>
+            <form class="form-stack form-stack--horizontal" th:action="|/pro/client/${client.id}/advice|" method="post">
+                <label class="field field--grow">
+                    <span class="field__label">Message to client</span>
+                    <textarea name="message" rows="3" required placeholder="Encouragement or guidance…"></textarea>
+                </label>
+                <button type="submit" class="btn btn--primary">Send</button>
+            </form>
+        </section>
+
+        <section class="meals-section" th:each="meal : ${meals}">
+            <header class="meals-section__head">
+                <h2 class="meals-section__title" th:text="${#strings.capitalize(meal.type)}">Breakfast</h2>
+                <span class="meals-section__kcal"><span th:text="${meal.calories}">0</span> kcal</span>
+            </header>
+            <ul class="entry-list" th:if="${meal.entries != null and !meal.entries.isEmpty()}">
+                <li class="entry-list__item entry-list__item--row" th:each="e : ${meal.entries}">
+                    <div>
+                        <span class="entry-list__name" th:text="${e.foodName}">Food</span>
+                        <span class="entry-list__meta" th:if="${e.notes}" th:text="${e.notes}"></span>
+                    </div>
+                    <div class="entry-list__meta">
+                        <span th:text="${e.quantity}">100</span> g ·
+                        <span th:text="${e.calories}">0</span> kcal ·
+                        P <span th:text="${e.protein}">0</span>
+                    </div>
+                </li>
+            </ul>
+            <p class="empty-hint" th:if="${meal.entries == null or meal.entries.isEmpty()}">No entries.</p>
+        </section>
+    </main>
+</div>
+<script th:src="'/static/js/app.js'" src="/static/js/app.js"></script>
+</body>
+</html>

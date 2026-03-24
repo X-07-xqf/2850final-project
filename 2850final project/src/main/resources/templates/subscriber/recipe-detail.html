@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title th:text="${recipe.title} + ' — Good Food'">Recipe — Good Food</title>
+    <link rel="stylesheet" th:href="'/static/css/styles.css'" href="/static/css/styles.css"/>
+</head>
+<body class="app-body">
+<div class="app-layout">
+    <aside class="sidebar">
+        <div class="sidebar__brand">
+            <span class="sidebar__logo">🥗</span>
+            <span class="sidebar__title">Good Food</span>
+        </div>
+        <p class="sidebar__user" th:if="${session}" th:text="${session.fullName}">User</p>
+        <nav class="sidebar__nav" aria-label="Main">
+            <a th:href="'/dashboard'" th:classappend="${activePage == 'dashboard'} ? ' nav-link--active'" class="nav-link">Dashboard</a>
+            <a th:href="'/diary'" th:classappend="${activePage == 'diary'} ? ' nav-link--active'" class="nav-link">Diary</a>
+            <a th:href="'/recipes'" th:classappend="${activePage == 'recipes'} ? ' nav-link--active'" class="nav-link">Recipes</a>
+            <a th:href="'/goals'" th:classappend="${activePage == 'goals'} ? ' nav-link--active'" class="nav-link">Goals</a>
+            <a th:href="'/messages'" th:classappend="${activePage == 'messages'} ? ' nav-link--active'" class="nav-link">
+                Messages
+                <span th:if="${unreadMessages != null and unreadMessages > 0}" class="badge" th:text="${unreadMessages}">0</span>
+            </a>
+            <a th:href="'/profile'" th:classappend="${activePage == 'profile'} ? ' nav-link--active'" class="nav-link">Profile</a>
+        </nav>
+        <a th:href="'/logout'" class="nav-link nav-link--muted sidebar__logout">Log out</a>
+    </aside>
+    <main class="main">
+        <p class="back-row"><a th:href="'/recipes'" class="link-back">← All recipes</a></p>
+
+        <header class="recipe-hero card">
+            <div class="recipe-hero__text">
+                <h1 class="page-title" th:text="${recipe.title}">Recipe</h1>
+                <p class="recipe-hero__desc" th:text="${recipe.description}">Description</p>
+                <div class="recipe-hero__meta">
+                    <span th:text="${recipe.difficulty}">easy</span>
+                    · Prep <span th:text="${recipe.prepTime}">0</span> min
+                    · Cook <span th:text="${recipe.cookTime}">0</span> min
+                    · <span th:text="${recipe.servings}">1</span> servings
+                </div>
+                <div class="recipe-hero__rating">
+                    <span class="stars-display" th:attr="data-rating=${recipe.avgRating}">★</span>
+                    <span th:text="${recipe.avgRating}">0</span> / 5
+                    (<span th:text="${recipe.reviewCount}">0</span> reviews)
+                </div>
+            </div>
+            <form th:action="|/recipes/${recipe.id}/favourite|" method="post" class="fav-form">
+                <button type="submit" class="btn btn--ghost fav-btn" th:classappend="${isFavourite} ? ' fav-btn--on' : ''">
+                    <span th:text="${isFavourite} ? '★ Saved' : '☆ Save'">Favourite</span>
+                </button>
+            </form>
+        </header>
+
+        <div class="two-col">
+            <section class="card">
+                <h2 class="section-title">Nutrition (per serving)</h2>
+                <ul class="nutri-list">
+                    <li><span>Calories</span> <strong th:text="${recipe.calPerServing}">0</strong> kcal</li>
+                    <li><span>Protein</span> <strong th:text="${recipe.protPerServing}">0</strong> g</li>
+                    <li><span>Carbs</span> <strong th:text="${recipe.carbPerServing}">0</strong> g</li>
+                    <li><span>Fat</span> <strong th:text="${recipe.fatPerServing}">0</strong> g</li>
+                </ul>
+            </section>
+            <section class="card">
+                <h2 class="section-title">Ingredients</h2>
+                <ul class="ingredient-list">
+                    <li th:each="ing : ${recipe.ingredients}">
+                        <span th:text="${ing.name}">Item</span>
+                        <span class="ingredient-list__qty" th:text="|${ing.quantity} ${ing.unit}|">100 g</span>
+                    </li>
+                </ul>
+            </section>
+        </div>
+
+        <section class="card">
+            <h2 class="section-title">Steps</h2>
+            <ol class="steps-list">
+                <li th:each="step, iter : ${recipe.steps}" th:text="${step}">Step</li>
+            </ol>
+        </section>
+
+        <section class="card">
+            <h2 class="section-title">Rate this recipe</h2>
+            <form th:action="|/recipes/${recipe.id}/rate|" method="post" class="rate-form">
+                <input type="hidden" name="rating" id="rate-input" value="5"/>
+                <div class="star-rating js-star-rating" role="group" aria-label="Rating">
+                    <button type="button" class="star-rating__star" data-value="1" aria-label="1 star">★</button>
+                    <button type="button" class="star-rating__star" data-value="2" aria-label="2 stars">★</button>
+                    <button type="button" class="star-rating__star" data-value="3" aria-label="3 stars">★</button>
+                    <button type="button" class="star-rating__star" data-value="4" aria-label="4 stars">★</button>
+                    <button type="button" class="star-rating__star star-rating__star--active" data-value="5" aria-label="5 stars">★</button>
+                </div>
+                <label class="field">
+                    <span class="field__label">Comment (optional)</span>
+                    <textarea name="comment" rows="3" maxlength="1000"></textarea>
+                </label>
+                <button type="submit" class="btn btn--primary">Submit rating</button>
+            </form>
+        </section>
+
+        <section class="card" th:if="${recipe.ratings != null and !recipe.ratings.isEmpty()}">
+            <h2 class="section-title">Reviews</h2>
+            <ul class="review-list">
+                <li class="review-list__item" th:each="rev : ${recipe.ratings}">
+                    <div class="review-list__head">
+                        <strong th:text="${rev.userName}">User</strong>
+                        <span class="review-list__stars" th:text="${rev.rating} + ' / 5'">5 / 5</span>
+                        <span class="review-list__date" th:text="${rev.date}">2025-01-01</span>
+                    </div>
+                    <p th:if="${rev.comment}" th:text="${rev.comment}">Comment</p>
+                </li>
+            </ul>
+        </section>
+    </main>
+</div>
+<script th:src="'/static/js/app.js'" src="/static/js/app.js"></script>
+</body>
+</html>

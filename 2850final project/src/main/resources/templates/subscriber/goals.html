@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>Nutrition goals — Good Food</title>
+    <link rel="stylesheet" th:href="'/static/css/styles.css'" href="/static/css/styles.css"/>
+</head>
+<body class="app-body">
+<div class="app-layout">
+    <aside class="sidebar">
+        <div class="sidebar__brand">
+            <span class="sidebar__logo">🥗</span>
+            <span class="sidebar__title">Good Food</span>
+        </div>
+        <p class="sidebar__user" th:if="${session}" th:text="${session.fullName}">User</p>
+        <nav class="sidebar__nav" aria-label="Main">
+            <a th:href="'/dashboard'" th:classappend="${activePage == 'dashboard'} ? ' nav-link--active'" class="nav-link">Dashboard</a>
+            <a th:href="'/diary'" th:classappend="${activePage == 'diary'} ? ' nav-link--active'" class="nav-link">Diary</a>
+            <a th:href="'/recipes'" th:classappend="${activePage == 'recipes'} ? ' nav-link--active'" class="nav-link">Recipes</a>
+            <a th:href="'/goals'" th:classappend="${activePage == 'goals'} ? ' nav-link--active'" class="nav-link">Goals</a>
+            <a th:href="'/messages'" th:classappend="${activePage == 'messages'} ? ' nav-link--active'" class="nav-link">
+                Messages
+                <span th:if="${unreadMessages != null and unreadMessages > 0}" class="badge" th:text="${unreadMessages}">0</span>
+            </a>
+            <a th:href="'/profile'" th:classappend="${activePage == 'profile'} ? ' nav-link--active'" class="nav-link">Profile</a>
+        </nav>
+        <a th:href="'/logout'" class="nav-link nav-link--muted sidebar__logout">Log out</a>
+    </aside>
+    <main class="main">
+        <header class="page-header">
+            <h1 class="page-title">Nutrition goals</h1>
+            <p class="page-meta">Daily targets power your dashboard progress bars</p>
+        </header>
+
+        <div class="two-col two-col--goals">
+            <section class="card">
+                <h2 class="section-title">Daily targets</h2>
+                <form class="form-stack" th:action="'/goals'" method="post">
+                    <label class="field">
+                        <span class="field__label">Calories (kcal)</span>
+                        <input type="number" name="calories" step="1" min="0" th:value="${goals['calories']}"/>
+                    </label>
+                    <label class="field">
+                        <span class="field__label">Protein (g)</span>
+                        <input type="number" name="protein" step="0.1" min="0" th:value="${goals['protein']}"/>
+                    </label>
+                    <label class="field">
+                        <span class="field__label">Carbs (g)</span>
+                        <input type="number" name="carbs" step="0.1" min="0" th:value="${goals['carbs']}"/>
+                    </label>
+                    <label class="field">
+                        <span class="field__label">Fat (g)</span>
+                        <input type="number" name="fat" step="0.1" min="0" th:value="${goals['fat']}"/>
+                    </label>
+                    <label class="field">
+                        <span class="field__label">Fiber (g)</span>
+                        <input type="number" name="fiber" step="0.1" min="0" th:value="${goals['fiber']}"/>
+                    </label>
+                    <button type="submit" class="btn btn--primary">Save goals</button>
+                </form>
+            </section>
+
+            <section class="card">
+                <h2 class="section-title">This week (calories)</h2>
+                <p class="chart-caption">Each bar shows total kcal logged that day.</p>
+                <div class="weekly-chart" th:if="${weekly != null and !weekly.isEmpty()}">
+                    <div class="weekly-chart__row" th:each="w : ${weekly}">
+                        <span class="weekly-chart__label" th:text="${w.dayName}">Mon</span>
+                        <progress class="weekly-chart__bar" th:value="${w.calories}" max="3000"></progress>
+                        <span class="weekly-chart__val" th:text="${w.calories}">0</span>
+                    </div>
+                </div>
+                <p class="empty-hint" th:if="${weekly == null or weekly.isEmpty()}">No data for this week yet.</p>
+            </section>
+        </div>
+    </main>
+</div>
+<script th:src="'/static/js/app.js'" src="/static/js/app.js"></script>
+</body>
+</html>
