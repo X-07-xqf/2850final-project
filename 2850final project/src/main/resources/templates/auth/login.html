@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>Good Food — Sign in</title>
+    <link rel="stylesheet" th:href="'/static/css/styles.css'" href="/static/css/styles.css"/>
+</head>
+<body class="auth-body">
+<div class="auth-shell">
+    <div class="auth-card card">
+        <div class="auth-brand">
+            <span class="auth-logo" aria-hidden="true">🥗</span>
+            <h1 class="auth-title">Good Food</h1>
+            <p class="auth-sub">Healthy eating, tracked simply.</p>
+        </div>
+
+        <div class="tabs" role="tablist">
+            <button type="button" class="tab-btn" data-tab-target="login" id="tab-login" role="tab" aria-selected="true">Login</button>
+            <button type="button" class="tab-btn" data-tab-target="register" id="tab-register" role="tab" aria-selected="false">Register</button>
+        </div>
+
+        <div th:if="${error}" class="alert alert--error" role="alert">
+            <span th:text="${error}">Error message</span>
+        </div>
+
+        <div id="panel-login" data-tab-panel="login" role="tabpanel"
+             th:class="${tab == 'register'} ? 'tab-panel is-hidden' : 'tab-panel tab-panel--active'">
+            <form class="form-stack" th:action="'/login'" method="post">
+                <label class="field">
+                    <span class="field__label">Email</span>
+                    <input type="email" name="email" required autocomplete="email"/>
+                </label>
+                <label class="field">
+                    <span class="field__label">Password</span>
+                    <input type="password" name="password" required autocomplete="current-password"/>
+                </label>
+                <button type="submit" class="btn btn--primary btn--block">Sign in</button>
+            </form>
+        </div>
+
+        <div id="panel-register" data-tab-panel="register" role="tabpanel"
+             th:class="${tab == 'register'} ? 'tab-panel tab-panel--active' : 'tab-panel is-hidden'"
+             th:attr="aria-hidden=${tab == 'register'} ? 'false' : 'true'">
+            <form class="form-stack" th:action="'/register'" method="post">
+                <label class="field">
+                    <span class="field__label">Full name</span>
+                    <input type="text" name="fullName" required autocomplete="name"/>
+                </label>
+                <label class="field">
+                    <span class="field__label">Email</span>
+                    <input type="email" name="email" required autocomplete="email"/>
+                </label>
+                <label class="field">
+                    <span class="field__label">Password</span>
+                    <input type="password" name="password" required minlength="6" autocomplete="new-password"/>
+                </label>
+                <label class="field">
+                    <span class="field__label">Confirm password</span>
+                    <input type="password" name="confirmPassword" required minlength="6" autocomplete="new-password"/>
+                </label>
+                <label class="field">
+                    <span class="field__label">Role</span>
+                    <select name="role" class="input-select">
+                        <option value="subscriber" selected>Subscriber</option>
+                        <option value="professional">Professional</option>
+                    </select>
+                </label>
+                <button type="submit" class="btn btn--primary btn--block">Create account</button>
+            </form>
+        </div>
+    </div>
+</div>
+<script th:src="'/static/js/app.js'" src="/static/js/app.js"></script>
+<script th:inline="javascript">
+    window.__AUTH_TAB__ = /*[[${tab}]]*/ null;
+</script>
+</body>
+</html>

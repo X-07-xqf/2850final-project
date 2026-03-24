@@ -17,7 +17,6 @@ repositories {
 val ktorVersion = "2.3.7"
 val exposedVersion = "0.46.0"
 val h2Version = "2.2.224"
-val mysqlVersion = "8.0.33"
 val logbackVersion = "1.4.14"
 
 dependencies {
@@ -36,8 +35,6 @@ dependencies {
     implementation("org.jetbrains.exposed:exposed-java-time:$exposedVersion")
 
     implementation("com.h2database:h2:$h2Version")
-    implementation("mysql:mysql-connector-java:$mysqlVersion")
-
     implementation("at.favre.lib:bcrypt:0.10.2")
     implementation("ch.qos.logback:logback-classic:$logbackVersion")
 
