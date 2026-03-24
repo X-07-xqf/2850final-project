@@ -1,10 +1,9 @@
 FROM gradle:8.5-jdk17 AS build
 WORKDIR /app
-COPY 2850final\ project/build.gradle.kts 2850final\ project/settings.gradle.kts ./
-COPY 2850final\ project/gradle ./gradle
-COPY 2850final\ project/gradlew ./
-RUN gradle dependencies --no-daemon 2>/dev/null || true
-COPY 2850final\ project/src ./src
+COPY ["2850final project/build.gradle.kts", "./"]
+COPY ["2850final project/settings.gradle.kts", "./"]
+COPY ["2850final project/gradle", "./gradle"]
+COPY ["2850final project/src", "./src"]
 RUN gradle buildFatJar --no-daemon
 
 FROM eclipse-temurin:17-jre-alpine
