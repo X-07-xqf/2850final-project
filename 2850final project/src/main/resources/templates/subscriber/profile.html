@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>Profile — Good Food</title>
+    <link rel="stylesheet" th:href="'/static/css/styles.css'" href="/static/css/styles.css"/>
+</head>
+<body class="app-body">
+<div class="app-layout">
+    <aside class="sidebar">
+        <div class="sidebar__brand">
+            <span class="sidebar__logo">🥗</span>
+            <span class="sidebar__title">Good Food</span>
+        </div>
+        <p class="sidebar__user" th:if="${session}" th:text="${session.fullName}">User</p>
+        <nav class="sidebar__nav" aria-label="Main">
+            <a th:href="'/dashboard'" th:classappend="${activePage == 'dashboard'} ? ' nav-link--active'" class="nav-link">Dashboard</a>
+            <a th:href="'/diary'" th:classappend="${activePage == 'diary'} ? ' nav-link--active'" class="nav-link">Diary</a>
+            <a th:href="'/recipes'" th:classappend="${activePage == 'recipes'} ? ' nav-link--active'" class="nav-link">Recipes</a>
+            <a th:href="'/goals'" th:classappend="${activePage == 'goals'} ? ' nav-link--active'" class="nav-link">Goals</a>
+            <a th:href="'/messages'" th:classappend="${activePage == 'messages'} ? ' nav-link--active'" class="nav-link">
+                Messages
+                <span th:if="${unreadMessages != null and unreadMessages > 0}" class="badge" th:text="${unreadMessages}">0</span>
+            </a>
+            <a th:href="'/profile'" th:classappend="${activePage == 'profile'} ? ' nav-link--active'" class="nav-link">Profile</a>
+        </nav>
+        <a th:href="'/logout'" class="nav-link nav-link--muted sidebar__logout">Log out</a>
+    </aside>
+    <main class="main">
+        <header class="page-header">
+            <h1 class="page-title">Your profile</h1>
+            <p class="page-meta">Account details and saved recipes</p>
+        </header>
+
+        <div class="two-col">
+            <section class="card">
+                <h2 class="section-title">Account</h2>
+                <form class="form-stack" th:action="'/profile'" method="post">
+                    <label class="field">
+                        <span class="field__label">Full name</span>
+                        <input type="text" name="fullName" required th:value="${user.fullName}"/>
+                    </label>
+                    <label class="field">
+                        <span class="field__label">Email</span>
+                        <input type="email" name="email" required th:value="${user.email}"/>
+                    </label>
+                    <label class="field">
+                        <span class="field__label">New password (optional)</span>
+                        <input type="password" name="password" autocomplete="new-password" placeholder="Leave blank to keep current"/>
+                    </label>
+                    <p class="field-hint">Role: <strong th:text="${user.role}">subscriber</strong></p>
+                    <button type="submit" class="btn btn--primary">Save changes</button>
+                </form>
+            </section>
+
+            <section class="card">
+                <h2 class="section-title">Favourite recipes</h2>
+                <ul class="fav-recipe-list" th:if="${favourites != null and !favourites.isEmpty()}">
+                    <li th:each="f : ${favourites}">
+                        <a th:href="|/recipes/${f.id}|" class="fav-recipe-list__link">
+                            <span th:text="${f.title}">Recipe</span>
+                            <span class="fav-recipe-list__meta">
+                                <span th:text="${f.difficulty}">easy</span>
+                                · ★ <span th:text="${f.avgRating}">0</span>
+                            </span>
+                        </a>
+                    </li>
+                </ul>
+                <p class="empty-hint" th:if="${favourites == null or favourites.isEmpty()}">No favourites yet — explore recipes and tap Save.</p>
+            </section>
+        </div>
+    </main>
+</div>
+<script th:src="'/static/js/app.js'" src="/static/js/app.js"></script>
+</body>
+</html>
