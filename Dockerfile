@@ -4,7 +4,7 @@ COPY ["2850final project/build.gradle.kts", "./"]
 COPY ["2850final project/settings.gradle.kts", "./"]
 COPY ["2850final project/gradle", "./gradle"]
 COPY ["2850final project/src", "./src"]
-RUN gradle buildFatJar --no-daemon
+RUN gradle shadowJar --no-daemon
 
 FROM eclipse-temurin:17-jre-alpine
 WORKDIR /app

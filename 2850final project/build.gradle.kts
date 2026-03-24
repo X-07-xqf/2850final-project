@@ -1,6 +1,7 @@
 plugins {
     kotlin("jvm") version "1.9.22"
-    id("io.ktor.plugin") version "2.3.12"
+    id("application")
+    id("com.gradleup.shadow") version "8.3.0"
 }
 
 group = "com.goodfood"
@@ -8,12 +9,6 @@ version = "1.0.0"
 
 application {
     mainClass.set("com.goodfood.ApplicationKt")
-}
-
-ktor {
-    fatJar {
-        archiveFileName.set("good-food-healthy-eating-all.jar")
-    }
 }
 
 repositories {
