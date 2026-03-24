@@ -1,6 +1,6 @@
 plugins {
     kotlin("jvm") version "1.9.22"
-    id("io.ktor.plugin") version "2.3.7"
+    id("io.ktor.plugin") version "2.3.12"
 }
 
 group = "com.goodfood"
@@ -10,11 +10,17 @@ application {
     mainClass.set("com.goodfood.ApplicationKt")
 }
 
+ktor {
+    fatJar {
+        archiveFileName.set("good-food-healthy-eating-all.jar")
+    }
+}
+
 repositories {
     mavenCentral()
 }
 
-val ktorVersion = "2.3.7"
+val ktorVersion = "2.3.12"
 val exposedVersion = "0.46.0"
 val h2Version = "2.2.224"
 val logbackVersion = "1.4.14"
