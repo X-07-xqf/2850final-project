@@ -7,4 +7,4 @@ CREATE TABLE IF NOT EXISTS users (
     avatar_url VARCHAR(500),
     created_at TIMESTAMP NOT NULL,
     updated_at TIMESTAMP
-);
+);   
