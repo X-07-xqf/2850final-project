@@ -8,13 +8,26 @@ This project is COMP2850 Software Engineering — Group Project at the Universit
 
 - **Charlie Wu** (`Charlie-920`) — used Claude Opus 4.6 via Claude Code CLI for the contributions logged below. All AI-generated code was reviewed, tested, and merged manually.
 
-## Tool
+## Tools
 
 | Tool | Model | Vendor | Mode of use |
 |---|---|---|---|
 | Claude Code CLI | Claude Opus 4.6 | Anthropic | Pair-programming; AI drafts, human reviews + tests + merges |
+| Cursor | (in-editor model, not specifically logged at the time) | Anysphere | In-editor inline completion / chat; used for build-config and Dockerfile fixes early in the project. Each Cursor-assisted commit carries a `Made-with: Cursor` git trailer. |
 
 ## Log of AI-assisted contributions
+
+### Pre-v0.4.0 — Cursor-assisted build/deploy fixes (chlwu0777)
+
+These commits carry the `Made-with: Cursor` git trailer as the contemporaneous acknowledgment. Listed here for completeness:
+
+| Commit | Scope | Human verification |
+|---|---|---|
+| `32cf2c4` | feat: add Ktor full-stack web application with feature-based module structure | Charlie Wu reviewed and tested locally before push. |
+| `7ce9809` | fix: add Dockerfile to repo root for Render.com deployment | Confirmed Render build succeeded. |
+| `47bb180` | fix: use JSON array syntax in Dockerfile COPY for paths with spaces | Verified `docker build` against the spaced project path. |
+| `57adf8b` | fix: upgrade Ktor plugin to 2.3.12 for Gradle 8.5 compatibility | Verified `./gradlew run` boots without plugin errors. |
+| `0b0da55` | fix: replace io.ktor.plugin with shadow plugin for Gradle 8+ compatibility | Verified `./gradlew shadowJar` produces a runnable fat-jar. |
 
 ### v0.4.0 — UI visual refresh, dark mode, component polish (PR #2)
 

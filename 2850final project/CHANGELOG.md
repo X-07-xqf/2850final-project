@@ -4,6 +4,16 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [v0.4.3] - 2026-04-29 — Backfill Cursor acknowledgment in AI_USAGE.md
+
+### Added
+- `AI_USAGE.md` now lists the 5 pre-v0.4.0 commits assisted by Cursor (build-config / Dockerfile fixes by `chlwu0777`). The `Made-with: Cursor` git trailers on those commits remain as the contemporaneous acknowledgment; this update brings the project-level log to full coverage.
+
+### Notes
+- Documentation only. No code changes. The Cursor trailers were already valid amber-rating acknowledgments — this commit just consolidates them into the central log.
+
+---
+
 ## [v0.4.2] - 2026-04-29 — AI acknowledgment & code comments
 
 ### Added
