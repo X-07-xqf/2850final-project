@@ -4,6 +4,22 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [v0.4.2] - 2026-04-29 — AI acknowledgment & code comments
+
+### Added
+- `AI_USAGE.md` at the repo root — canonical log of every AI-assisted contribution (model, scope, what the human verified) for COMP2850 amber-rated AI use compliance.
+- Header comments in `static/css/styles.css` and `static/js/app.js` naming the AI model (Claude Opus 4.6) and the lines/sections it drafted, per the assessment brief example format.
+- README "Generative AI usage" section pointing to the log.
+
+### Changed
+- Going forward, no `Co-Authored-By: <AI>` git trailers and no `🤖 Generated with Claude Code` bot footers in PR descriptions — AI acknowledgment lives in code comments and `AI_USAGE.md` instead, treating AI as a supportive tool (not a contributor) in line with the amber rating.
+
+### Notes
+- No code behavior changes — comments and documentation only.
+- Retroactively documents AI assistance for v0.4.0 (UI refresh) and v0.4.1 (devcontainer config).
+
+---
+
 ## [v0.4.1] - 2026-04-29 — Codespace / dev container config
 
 ### Added

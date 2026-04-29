@@ -4,6 +4,16 @@
    Good Food — global styles
    Color tokens use semantic naming and resolve via theme.
    Dark mode: auto via prefers-color-scheme, override via [data-theme] on <html>.
+
+   ---- AI acknowledgment (COMP2850 amber-rated AI use) ----
+   The v0.4.0 visual refresh of this stylesheet (color-token reorganization,
+   dark-mode tokens, animation keyframes, focus-visible states, mobile drawer
+   styles, modal/toast/skeleton components) was drafted with Claude Opus 4.6
+   (Anthropic) acting as a front-end pair-programmer. Charlie Wu reviewed
+   every rule, ran the app locally, tested light/dark + mobile breakpoints in
+   Chrome DevTools, and approved before merge. Component class names and
+   structural CSS pre-dating v0.4.0 were authored by the team.
+   See AI_USAGE.md in the repo root for the full log.
    ============================================================ */
 
 :root {
