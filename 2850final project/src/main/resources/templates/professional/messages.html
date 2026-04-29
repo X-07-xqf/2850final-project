@@ -7,6 +7,8 @@
     <link rel="stylesheet" th:href="'/static/css/styles.css'" href="/static/css/styles.css"/>
 </head>
 <body class="app-body">
+<button type="button" class="menu-toggle js-menu-toggle" aria-label="Open menu" aria-expanded="false">☰</button>
+<div class="sidebar-backdrop js-sidebar-backdrop" aria-hidden="true"></div>
 <div class="app-layout">
     <aside class="sidebar sidebar--pro">
         <div class="sidebar__brand">
@@ -21,6 +23,7 @@
                 <span th:if="${unreadMessages != null and unreadMessages > 0}" class="badge" th:text="${unreadMessages}">0</span>
             </a>
         </nav>
+        <button type="button" class="sidebar__theme js-theme-toggle" aria-label="Toggle theme">Toggle theme</button>
         <a th:href="'/logout'" class="nav-link nav-link--muted sidebar__logout">Log out</a>
     </aside>
     <main class="main main--chat">
