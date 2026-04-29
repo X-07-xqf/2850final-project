@@ -4,6 +4,21 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [v0.4.1] - 2026-04-29 — Codespace / dev container config
+
+### Added
+- `.devcontainer/devcontainer.json` — pins JDK 17 (matches `build.gradle.kts` `jvmToolchain(17)`) so GitHub Codespaces and VS Code Dev Containers boot ready to run `./gradlew run` with no manual `apt-get install` or JDK switching.
+  - Base image: `mcr.microsoft.com/devcontainers/java:1-17-bookworm`
+  - Port `8080` auto-forwarded with `openBrowser` on first start
+  - `postCreateCommand` warms the Gradle daemon so the first build is faster
+  - Pre-installs Kotlin, Gradle, and Thymeleaf VS Code extensions
+
+### Notes
+- No code changes — config-only.
+- Existing local dev workflow (`./gradlew run` with a system JDK 17) is unaffected.
+
+---
+
 ## [v0.4.0] - 2026-04-29 — UI Upgrade: Visual refresh, dark mode, component polish
 
 ### Added

@@ -1,0 +1,28 @@
+{
+    "name": "Good Food (Ktor + JDK 17)",
+    "image": "mcr.microsoft.com/devcontainers/java:1-17-bookworm",
+    "features": {
+        "ghcr.io/devcontainers/features/java:1": {
+            "version": "17",
+            "installGradle": false
+        }
+    },
+    "forwardPorts": [8080],
+    "portsAttributes": {
+        "8080": {
+            "label": "Good Food app",
+            "onAutoForward": "openBrowser"
+        }
+    },
+    "postCreateCommand": "cd \"2850final project\" && chmod +x gradlew && ./gradlew --version",
+    "remoteUser": "vscode",
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "fwcd.kotlin",
+                "vscjava.vscode-gradle",
+                "redhat.vscode-thymeleaf"
+            ]
+        }
+    }
+}
