@@ -149,10 +149,89 @@
         });
     }
 
+    /* ---- Theme toggle (light / dark / auto) ---- */
+    function initTheme() {
+        var STORAGE_KEY = "gf-theme";
+        var root = document.documentElement;
+
+        function apply(theme) {
+            if (theme === "light" || theme === "dark") {
+                root.setAttribute("data-theme", theme);
+            } else {
+                root.removeAttribute("data-theme");
+            }
+        }
+
+        var saved = null;
+        try { saved = localStorage.getItem(STORAGE_KEY); } catch (_) {}
+        apply(saved);
+
+        function currentEffective() {
+            var explicit = root.getAttribute("data-theme");
+            if (explicit === "light" || explicit === "dark") return explicit;
+            return window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+        }
+
+        function updateLabel(btn) {
+            var eff = currentEffective();
+            btn.setAttribute("aria-label", "Switch to " + (eff === "dark" ? "light" : "dark") + " mode");
+            btn.textContent = eff === "dark" ? "☀ Light" : "☾ Dark";
+        }
+
+        document.querySelectorAll(".js-theme-toggle").forEach(function (btn) {
+            updateLabel(btn);
+            btn.addEventListener("click", function () {
+                var next = currentEffective() === "dark" ? "light" : "dark";
+                apply(next);
+                try { localStorage.setItem(STORAGE_KEY, next); } catch (_) {}
+                document.querySelectorAll(".js-theme-toggle").forEach(updateLabel);
+            });
+        });
+    }
+
+    /* ---- Mobile sidebar drawer ---- */
+    function initSidebarDrawer() {
+        var sidebar = document.querySelector(".sidebar");
+        var toggle = document.querySelector(".js-menu-toggle");
+        var backdrop = document.querySelector(".js-sidebar-backdrop");
+        if (!sidebar || !toggle) return;
+
+        function open() {
+            sidebar.classList.add("is-open");
+            if (backdrop) backdrop.classList.add("is-open");
+            toggle.setAttribute("aria-expanded", "true");
+        }
+        function close() {
+            sidebar.classList.remove("is-open");
+            if (backdrop) backdrop.classList.remove("is-open");
+            toggle.setAttribute("aria-expanded", "false");
+        }
+        toggle.addEventListener("click", function () {
+            sidebar.classList.contains("is-open") ? close() : open();
+        });
+        if (backdrop) backdrop.addEventListener("click", close);
+        sidebar.querySelectorAll("a.nav-link").forEach(function (a) {
+            a.addEventListener("click", close);
+        });
+        document.addEventListener("keydown", function (e) {
+            if (e.key === "Escape" && sidebar.classList.contains("is-open")) close();
+        });
+    }
+
+    /* Apply saved theme synchronously (before DOMContentLoaded) to avoid flash */
+    try {
+        var early = localStorage.getItem("gf-theme");
+        if (early === "light" || early === "dark") {
+            document.documentElement.setAttribute("data-theme", early);
+        }
+    } catch (_) {}
+
     document.addEventListener("DOMContentLoaded", function () {
         initAuthTabs();
         initFoodModal();
         initFoodSearch();
         initStarRating();
+        initTheme();
+        initSidebarDrawer();
     });
 })();
