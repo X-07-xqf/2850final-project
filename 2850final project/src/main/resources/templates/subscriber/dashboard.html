@@ -40,28 +40,28 @@
             <div class="macro-card">
                 <h2 class="macro-card__label">Calories</h2>
                 <p class="macro-card__value"><span th:text="${totalCalories}">0</span> / <span th:text="${goalCalories}">2000</span> kcal</p>
-                <div class="progress" role="progressbar" th:attr="aria-valuenow=${pctCalories}" aria-valuemin="0" aria-valuemax="100">
+                <div class="progress" role="progressbar" aria-label="Calories progress" th:attr="aria-valuenow=${pctCalories}" aria-valuemin="0" aria-valuemax="100">
                     <div class="progress__fill progress__fill--cal" th:style="|width: ${pctCalories}%;|"></div>
                 </div>
             </div>
             <div class="macro-card">
                 <h2 class="macro-card__label">Protein</h2>
                 <p class="macro-card__value"><span th:text="${totalProtein}">0</span> / <span th:text="${goalProtein}">80</span> g</p>
-                <div class="progress" role="progressbar" th:attr="aria-valuenow=${pctProtein}" aria-valuemin="0" aria-valuemax="100">
+                <div class="progress" role="progressbar" aria-label="Protein progress" th:attr="aria-valuenow=${pctProtein}" aria-valuemin="0" aria-valuemax="100">
                     <div class="progress__fill progress__fill--prot" th:style="|width: ${pctProtein}%;|"></div>
                 </div>
             </div>
             <div class="macro-card">
                 <h2 class="macro-card__label">Carbs</h2>
                 <p class="macro-card__value"><span th:text="${totalCarbs}">0</span> / <span th:text="${goalCarbs}">250</span> g</p>
-                <div class="progress" role="progressbar" th:attr="aria-valuenow=${pctCarbs}" aria-valuemin="0" aria-valuemax="100">
+                <div class="progress" role="progressbar" aria-label="Carbohydrates progress" th:attr="aria-valuenow=${pctCarbs}" aria-valuemin="0" aria-valuemax="100">
                     <div class="progress__fill progress__fill--carb" th:style="|width: ${pctCarbs}%;|"></div>
                 </div>
             </div>
             <div class="macro-card">
                 <h2 class="macro-card__label">Fat</h2>
                 <p class="macro-card__value"><span th:text="${totalFat}">0</span> / <span th:text="${goalFat}">65</span> g</p>
-                <div class="progress" role="progressbar" th:attr="aria-valuenow=${pctFat}" aria-valuemin="0" aria-valuemax="100">
+                <div class="progress" role="progressbar" aria-label="Fat progress" th:attr="aria-valuenow=${pctFat}" aria-valuemin="0" aria-valuemax="100">
                     <div class="progress__fill progress__fill--fat" th:style="|width: ${pctFat}%;|"></div>
                 </div>
             </div>

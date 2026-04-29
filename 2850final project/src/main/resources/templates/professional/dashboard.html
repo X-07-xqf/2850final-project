@@ -59,7 +59,7 @@
                     <td th:text="${c.calories}">0</td>
                     <td th:text="${c.goalCalories}">2000</td>
                     <td>
-                        <div class="progress progress--compact" role="progressbar" th:attr="aria-valuenow=${c.compliance}" aria-valuemin="0" aria-valuemax="100">
+                        <div class="progress progress--compact" role="progressbar" aria-label="Client compliance progress" th:attr="aria-valuenow=${c.compliance}" aria-valuemin="0" aria-valuemax="100">
                             <div class="progress__fill progress__fill--cal" th:style="|width: ${c.compliance}%;|"></div>
                         </div>
                         <span class="table-pct" th:text="${c.compliance} + '%'">0%</span>
