@@ -76,6 +76,10 @@ The database is auto-created on startup with seed data (sample users, foods, rec
 
 The original static HTML/CSS prototype is in `ui-prototype/`. Open `ui-prototype/index.html` in a browser to view it.
 
+## Generative AI usage
+
+Per the COMP2850 brief (amber rating for generative AI), AI-assisted contributions are logged in [`AI_USAGE.md`](AI_USAGE.md). All AI-assisted code was reviewed and tested by a human team member before merging into `main`.
+
 ## Team
 
 COMP2850 Group Project — University of Leeds, 2026

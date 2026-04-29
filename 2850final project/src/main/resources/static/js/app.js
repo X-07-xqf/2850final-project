@@ -1,3 +1,17 @@
+/*
+ * Good Food — front-end glue (auth tabs, food modal, food search, star rating,
+ * theme toggle, mobile sidebar drawer).
+ *
+ * AI acknowledgment (COMP2850 amber-rated AI use):
+ * The v0.4.0 additions — initTheme() and initSidebarDrawer(), plus the early
+ * synchronous theme application near the bottom of this file (~lines 162–220) —
+ * were drafted with Claude Opus 4.6 (Anthropic) acting as a front-end
+ * pair-programmer. Charlie Wu reviewed every line, tested the toggle and
+ * drawer end-to-end in Chrome DevTools, and approved before merge.
+ * initAuthTabs(), initFoodModal(), initFoodSearch(), and initStarRating()
+ * pre-date v0.4.0 and were authored by the team.
+ * See AI_USAGE.md in the repo root for the full log.
+ */
 (function () {
     "use strict";
 
