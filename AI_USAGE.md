@@ -51,6 +51,14 @@ These commits carry the `Made-with: Cursor` git trailer as the contemporaneous a
 | Header comments in `styles.css` and `app.js` | Wording of the AI-acknowledgment block | Charlie Wu reviewed the wording and confirmed it accurately describes what AI did and what the human did. |
 | `AI_USAGE.md` (this file) | Initial structure and entries | Charlie Wu reviewed every entry for accuracy. |
 
+### v0.4.4 — Critical security fixes (closes #16, #17, #18, #19)
+
+| File | What AI drafted | Human verification |
+|---|---|---|
+| `professional/ProfessionalRoutes.kt` — new `hasActiveRelationship()` helper + two authorisation gates on `GET /pro/client/{id}` and `POST /pro/client/{id}/advice` | Helper structure and the gate pattern (`return@get respondRedirect` on missing relationship) drafted with Claude Opus 4.6 acting as a Kotlin pair-programmer. | Charlie Wu reproduced the original IDOR with seeded users (Sarah supervises only Alice), confirmed `/pro/client/2` redirects to dashboard after the fix, confirmed `/pro/client/1` (the legitimate client) still works, posted advice to a non-client and verified no message row is created. |
+| `config/Security.kt` — `cookie.httpOnly = true` and `cookie.extensions["SameSite"] = "Lax"` plus a comment block explaining why `Secure` is left off in dev | Wording of the comment block; the two cookie property lines are standard Ktor API and were verified against the Ktor 2.3.7 docs. | Charlie Wu logged in via Chrome DevTools → Application → Cookies, confirmed the `user_session` cookie now shows `HttpOnly ✓` and `SameSite Lax`. |
+| `diary/DiaryService.kt` and `recipes/RecipeService.kt` — private `escapeLikePattern()` helpers escaping `\`, `%`, `_`, applied to the `LIKE` clauses in `searchFood()` and `searchRecipes()` | The escape helper and its three-step `replace()` chain. | Charlie Wu searched for `%` in food search → returned 0 rows (was previously the entire 50+ table); searched `apple` → still returns the apple food items as expected; same checks against recipe search. |
+
 ## Code/files NOT touched by AI
 
 The entire **backend** (Kotlin, Ktor, Exposed, routes, services, models, seed data, SQL files) was authored by the team. AI's role was strictly front-end polish + dev tooling.

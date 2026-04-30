@@ -19,6 +19,19 @@ import java.math.RoundingMode
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
+/**
+ * Returns true when [professionalId] currently supervises [subscriberId] via an
+ * active row in [ClientRelationships]. Used to gate the `/pro/client/{id}` routes
+ * so a professional can only access their assigned clients (issues #16, #17).
+ */
+private fun hasActiveRelationship(professionalId: Int, subscriberId: Int): Boolean = transaction {
+    ClientRelationships.selectAll().where {
+        (ClientRelationships.professionalId eq professionalId) and
+            (ClientRelationships.subscriberId eq subscriberId) and
+            (ClientRelationships.status eq "active")
+    }.limit(1).any()
+}
+
 fun Route.professionalRoutes() {
     get("/pro/dashboard") {
         val session = call.sessions.get<UserSession>() ?: return@get call.respondRedirect("/login")
@@ -48,6 +61,9 @@ fun Route.professionalRoutes() {
         val session = call.sessions.get<UserSession>() ?: return@get call.respondRedirect("/login")
         if (session.role != "professional") return@get call.respondRedirect("/dashboard")
         val clientId = call.parameters["id"]?.toIntOrNull() ?: return@get call.respondRedirect("/pro/dashboard")
+        // Authorisation gate: only show this client's data if the professional currently
+        // supervises them. Closes #16 (IDOR — any client visible to any professional).
+        if (!hasActiveRelationship(session.userId, clientId)) return@get call.respondRedirect("/pro/dashboard")
         val dateStr = call.request.queryParameters["date"]
         val date = if (dateStr != null) LocalDate.parse(dateStr) else LocalDate.now()
         val unread = MessageService.getUnreadCount(session.userId)
@@ -69,7 +85,11 @@ fun Route.professionalRoutes() {
 
     post("/pro/client/{id}/advice") {
         val session = call.sessions.get<UserSession>() ?: return@post call.respondRedirect("/login")
+        if (session.role != "professional") return@post call.respondRedirect("/dashboard")
         val clientId = call.parameters["id"]?.toIntOrNull() ?: return@post call.respondRedirect("/pro/dashboard")
+        // Authorisation gate: only let a professional message a current client of theirs.
+        // Closes #17 (IDOR — any user could be messaged via the advice endpoint).
+        if (!hasActiveRelationship(session.userId, clientId)) return@post call.respondRedirect("/pro/dashboard")
         val message = call.receiveParameters()["message"] ?: ""
         if (message.isNotBlank()) MessageService.sendMessage(session.userId, clientId, message)
         call.respondRedirect("/pro/client/$clientId")

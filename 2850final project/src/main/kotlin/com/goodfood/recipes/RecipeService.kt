@@ -11,10 +11,21 @@ import java.time.LocalDateTime
 
 object RecipeService {
 
+    /**
+     * Escape SQL `LIKE` wildcards (`%`, `_`) and the escape character itself so a
+     * user-supplied search term is matched as a literal substring. Closes issue #19
+     * for the recipe-title search call site below.
+     */
+    private fun escapeLikePattern(input: String): String =
+        input.replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_")
+
     fun searchRecipes(query: String?, difficulty: String?): List<Map<String, Any?>> = transaction {
         val baseQuery = Recipes.selectAll()
         val filtered = baseQuery.let { q ->
-            if (!query.isNullOrBlank()) q.andWhere { Recipes.title.lowerCase() like "%${query.lowercase()}%" }
+            if (!query.isNullOrBlank()) {
+                val safe = escapeLikePattern(query.lowercase())
+                q.andWhere { Recipes.title.lowerCase() like "%$safe%" }
+            }
             if (!difficulty.isNullOrBlank() && difficulty != "all") q.andWhere { Recipes.difficulty eq difficulty }
             q
         }
