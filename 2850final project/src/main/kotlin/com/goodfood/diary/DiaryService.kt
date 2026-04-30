@@ -54,8 +54,19 @@ object DiaryService {
         FoodDiaryEntries.deleteWhere { (FoodDiaryEntries.id eq entryId) and (FoodDiaryEntries.userId eq userId) }
     }
 
+    /**
+     * Escape the SQL `LIKE` wildcard characters (`%`, `_`) and the escape char itself
+     * so a user-supplied search term is treated as a literal substring rather than a
+     * pattern. Closes issue #19 for the food-search call site below. The escape
+     * character is the default `\\`, which Exposed maps to the underlying H2 / MySQL
+     * `LIKE ... ESCAPE '\\'` semantics.
+     */
+    private fun escapeLikePattern(input: String): String =
+        input.replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_")
+
     fun searchFood(query: String): List<Map<String, Any>> = transaction {
-        FoodItems.selectAll().where { FoodItems.name.lowerCase() like "%${query.lowercase()}%" }.limit(20).map { row ->
+        val safe = escapeLikePattern(query.lowercase())
+        FoodItems.selectAll().where { FoodItems.name.lowerCase() like "%$safe%" }.limit(20).map { row ->
             mapOf("id" to row[FoodItems.id], "name" to row[FoodItems.name], "category" to row[FoodItems.category], "calories" to row[FoodItems.caloriesPer100g])
         }
     }

@@ -4,6 +4,20 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [v0.4.4] - 2026-04-30 — Critical security fixes
+
+### Fixed
+- **IDOR on professional client view** (#16) — `GET /pro/client/{id}` previously returned any subscriber's diary, goals, and nutrition summary as long as the requester's session role was `professional`. Now also requires an active row in `client_relationships` between the professional and the requested subscriber; otherwise the request is redirected to `/pro/dashboard`.
+- **IDOR on professional advice endpoint** (#17) — `POST /pro/client/{id}/advice` previously created a message addressed to any user id. Same authorisation gate now applies; an extra role check was added on this route for parity with the GET. Submissions to non-client ids now redirect and create no message.
+- **Session cookie missing `HttpOnly` / `SameSite`** (#18) — `config/Security.kt` now sets `cookie.httpOnly = true` and `cookie.extensions["SameSite"] = "Lax"`. JavaScript can no longer read the session cookie, and browsers will not send it on cross-site POST submissions, blocking the standard form-based CSRF path. `Secure` is intentionally left off so `./gradlew run` over plain HTTP in dev / Codespaces keeps working; flip it on for production HTTPS.
+- **`LIKE` wildcard injection in food / recipe search** (#19) — `searchFood()` (DiaryService) and `searchRecipes()` (RecipeService) now escape the SQL wildcards `%` and `_` and the escape character `\` before substituting user input into the `LIKE` pattern. Submitting `%` no longer matches the entire table.
+
+### Notes
+- All four fixes are scoped to authorisation / cookie / search-input handling; no schema changes, no UI changes, no new dependencies.
+- Existing unit tests still pass; manual regression covered the happy paths (Sarah → Alice diary visible, food search for `apple`, recipe search for `salmon`).
+
+---
+
 ## [v0.4.3] - 2026-04-29 — Backfill Cursor acknowledgment in AI_USAGE.md
 
 ### Added
