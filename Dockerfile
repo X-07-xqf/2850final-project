@@ -1,4 +1,4 @@
-FROM gradle:7.6-jdk17 AS build
+FROM gradle:8.5-jdk17 AS build
 WORKDIR /app
 COPY ["2850final project/build.gradle.kts", "./"]
 COPY ["2850final project/settings.gradle.kts", "./"]

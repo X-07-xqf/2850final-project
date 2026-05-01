@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [v0.6.1] - 2026-05-01 — Fix Render build (Gradle 8.5)
+
+### Fixed
+- **Render deploy** — bumped the Dockerfile build-stage image from `gradle:7.6-jdk17` to `gradle:8.5-jdk17`. The Shadow plugin in `build.gradle.kts` is at `com.gradleup.shadow:8.3.0`, which requires Gradle 8.3+; the old base image shipped Gradle 7.6, so `gradle shadowJar` failed with *"This version of Shadow supports Gradle 8.3+ only"* and Render builds exited with status 1. The new image matches the project's wrapper version (`gradle-8.5-bin.zip`). Local dev and GitHub Actions were unaffected because they use `./gradlew`, not the Docker base image's `gradle` binary.
+
+---
+
 ## [v0.6.0] - 2026-05-01 — Warm wellness redesign + animated login background (closes #40)
 
 The team sat with v0.5.0 for a couple of days and decided it was the wrong fit. The disciplined research-journal aesthetic looked sharp in isolation but read as clinical and intimidating for a consumer app whose entire purpose is to *encourage* people to log meals and try home cooking. The brief is about warmth and habit-building, not editorial gravity. v0.6.0 swaps the system out for one that fits the product.
