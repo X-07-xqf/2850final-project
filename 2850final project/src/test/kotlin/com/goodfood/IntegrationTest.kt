@@ -21,27 +21,26 @@ import kotlin.test.assertTrue
  *
  * Acceptance criteria exercised:
  *  - AC-INT-1  GET `/dashboard` without a session does NOT serve the dashboard.   [unauthenticatedDashboardDoesNotServeDashboard]
- *  - AC-INT-2  GET `/login` returns 200 (the login route is reachable end-to-end). [loginPageRendersWithoutCrashing]
+ *  - AC-INT-2  GET `/login` reaches the route layer without a server crash.       [loginPageRendersWithoutCrashing]
  *  - AC-INT-3  POST `/login` with bogus credentials does NOT issue a session.     [postLoginWithBadCredentialsDoesNotSetSession]
  */
 class IntegrationTest {
 
     private fun ApplicationTestBuilder.bootApp() {
+        // Override only the database connection so each test gets an isolated
+        // in-memory H2. We deliberately do NOT touch `ktor.application.modules`
+        // here — `application { module() }` below registers the module manually,
+        // which is the cleanest way for testApplication to load it without
+        // having to encode a list-typed config value through MapApplicationConfig.
         environment {
-            // Replace the file-based dev DB with a per-test in-memory H2 so tests
-            // are isolated. We also re-declare `ktor.application.modules` because
-            // overriding `config = MapApplicationConfig(...)` replaces the merged
-            // config rather than augmenting it — the modules entry from
-            // application.conf would otherwise be lost and `module()` would not
-            // be auto-loaded by the test harness.
             config = MapApplicationConfig(
-                "ktor.application.modules" to "com.goodfood.ApplicationKt.module",
                 "database.driver" to "org.h2.Driver",
                 "database.url" to "jdbc:h2:mem:test-${UUID.randomUUID()};DB_CLOSE_DELAY=-1;MODE=MySQL",
                 "database.user" to "",
                 "database.password" to ""
             )
         }
+        application { module() }
     }
 
     @Test
@@ -51,10 +50,9 @@ class IntegrationTest {
 
         val response = client.get("/dashboard")
 
-        // Without a session the dashboard must NOT render. Acceptable shapes:
-        //  - 302 redirect to /login (current behaviour)
-        //  - any other non-2xx
-        // What is unacceptable: a 200 OK rendering of the dashboard template.
+        // Without a session the dashboard route must NOT serve the dashboard.
+        // Acceptable: any non-200 (the current implementation redirects 302 to /login).
+        // Unacceptable: a 200 OK rendering of the dashboard template.
         assertNotEquals(HttpStatusCode.OK, response.status,
             "GET /dashboard without a session must not serve the dashboard page")
     }
@@ -65,9 +63,9 @@ class IntegrationTest {
 
         val response = client.get("/login")
 
-        // The login page should be reachable end-to-end. Status is 200 OK in
-        // the current implementation; assert non-5xx to make the test resilient
-        // to incidental status-code changes (e.g. switching to 304-cached responses).
+        // The login page must be reachable end-to-end. Assert non-5xx (rather
+        // than == 200) so the test stays green if the route ever switches to
+        // a 304 cached response.
         assertTrue(response.status.value < 500,
             "GET /login crashed with a server error: ${response.status}")
         assertTrue(response.bodyAsText().isNotBlank(),
@@ -84,16 +82,16 @@ class IntegrationTest {
             setBody("email=nonexistent@example.com&password=wrong")
         }
 
-        // Bad credentials must not redirect to /dashboard or /pro/dashboard with
-        // a Set-Cookie session header. The current implementation re-renders the
-        // login template (200) with an error banner.
+        // Bad credentials must not redirect to /dashboard or /pro/dashboard
+        // and must not set a populated user_session cookie.
         val location = response.headers[HttpHeaders.Location].orEmpty()
         assertTrue(
             !location.contains("/dashboard") && !location.contains("/pro/dashboard"),
             "Bad credentials must not redirect to a dashboard; got Location=$location"
         )
-        assertEquals(null, response.headers[HttpHeaders.SetCookie]?.let { sc ->
-            if (sc.contains("user_session=") && !sc.contains("user_session=;")) sc else null
-        }, "Bad credentials must not set a populated user_session cookie")
+        val session = response.headers.getAll(HttpHeaders.SetCookie).orEmpty()
+            .firstOrNull { it.startsWith("user_session=") && !it.startsWith("user_session=;") }
+        assertEquals(null, session,
+            "Bad credentials must not set a populated user_session cookie; got: $session")
     }
 }
