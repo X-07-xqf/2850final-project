@@ -979,17 +979,39 @@ input::placeholder, textarea::placeholder {
     border-radius: var(--radius-md);
     background: var(--color-surface);
     box-shadow: var(--shadow-sm);
+    overflow: hidden;
     transition: transform var(--dur) var(--ease-out), box-shadow var(--dur) var(--ease-out);
 }
 .recipe-card:hover { transform: translateY(-3px); box-shadow: var(--shadow); }
 
 .recipe-card__link {
     display: block;
-    padding: 24px;
     color: inherit;
     text-decoration: none;
 }
 .recipe-card__link:hover { text-decoration: none; }
+
+.recipe-card__cover {
+    height: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, var(--color-sage-bg), var(--color-sage-soft));
+}
+.recipe-card__cover--sage  { background: linear-gradient(135deg, var(--color-sage-bg), var(--color-sage-soft)); }
+.recipe-card__cover--oat   { background: linear-gradient(135deg, var(--color-cream-warm), var(--color-oat)); }
+.recipe-card__cover--clay  { background: linear-gradient(135deg, var(--color-clay-bg), var(--color-clay-soft)); }
+.recipe-card__cover--berry { background: linear-gradient(135deg, var(--color-berry-soft), #f3c4cf); }
+
+.recipe-card__cover-emoji {
+    font-size: 56px;
+    line-height: 1;
+    filter: drop-shadow(0 2px 4px rgba(31, 42, 35, 0.12));
+}
+
+.recipe-card__body {
+    padding: 20px 24px 24px;
+}
 
 .recipe-card__title {
     margin: 0 0 8px;

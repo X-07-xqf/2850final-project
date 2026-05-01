@@ -2,6 +2,8 @@ package com.goodfood.recipes
 
 import com.goodfood.auth.Users
 import com.goodfood.diary.FoodItems
+import com.goodfood.util.recipeCoverEmoji
+import com.goodfood.util.recipeCoverTone
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -46,13 +48,15 @@ object RecipeService {
         }
         filtered.map { row ->
             val rid = row[Recipes.id]
+            val title = row[Recipes.title]
             val ratings = RecipeRatings.selectAll().where { RecipeRatings.recipeId eq rid }.toList()
             val avgRating = if (ratings.isNotEmpty()) ratings.map { it[RecipeRatings.rating] }.average() else 0.0
-            mapOf("id" to rid, "title" to row[Recipes.title], "description" to row[Recipes.description],
+            mapOf("id" to rid, "title" to title, "description" to row[Recipes.description],
                 "prepTime" to row[Recipes.prepTimeMinutes], "cookTime" to row[Recipes.cookTimeMinutes],
                 "totalTime" to (row[Recipes.prepTimeMinutes] + row[Recipes.cookTimeMinutes]),
                 "servings" to row[Recipes.servings], "difficulty" to row[Recipes.difficulty],
-                "avgRating" to BigDecimal(avgRating).setScale(1, RoundingMode.HALF_UP), "reviewCount" to ratings.size)
+                "avgRating" to BigDecimal(avgRating).setScale(1, RoundingMode.HALF_UP), "reviewCount" to ratings.size,
+                "coverEmoji" to recipeCoverEmoji(title), "coverTone" to recipeCoverTone(title))
         }
     }
 

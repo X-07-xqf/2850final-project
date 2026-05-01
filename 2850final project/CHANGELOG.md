@@ -4,6 +4,15 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [v0.6.3] - 2026-05-01 — UI detail bug fixes (closes #46)
+
+### Fixed
+- Trailing `.00` on numeric values across Dashboard / Diary / Goals / professional client-detail.
+- Raw ISO timestamps on Messages chat bubbles.
+- Bare text-only Recipe cards.
+
+---
+
 ## [v0.6.2] - 2026-05-01 — Persist accounts on Render via PostgreSQL (closes #44)
 
 ### Why
