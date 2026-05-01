@@ -1,6 +1,7 @@
 package com.goodfood.messages
 
 import com.goodfood.auth.Users
+import com.goodfood.util.fmtChatTime
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.time.LocalDateTime
@@ -60,7 +61,9 @@ object MessageService {
             ((AdviceMessages.senderId eq partnerId) and (AdviceMessages.receiverId eq userId))
         }.orderBy(AdviceMessages.sentAt).map { row ->
             mapOf("id" to row[AdviceMessages.id], "senderId" to row[AdviceMessages.senderId],
-                "message" to row[AdviceMessages.message], "sentAt" to row[AdviceMessages.sentAt], "isMine" to (row[AdviceMessages.senderId] == userId))
+                "message" to row[AdviceMessages.message],
+                "sentAt" to row[AdviceMessages.sentAt].fmtChatTime(),
+                "isMine" to (row[AdviceMessages.senderId] == userId))
         }
     }
 
