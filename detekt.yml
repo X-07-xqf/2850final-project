@@ -1,0 +1,72 @@
+# Detekt configuration for the Good Food project.
+#
+# Tuning philosophy:
+#  - Catch real correctness / bug-bait patterns (LongMethod, ComplexCondition,
+#    EmptyCatchBlock, ReturnCount, ...).
+#  - Don't drown the team in style noise on day one. Style rules that come
+#    from a base ruleset stay enabled-by-default, but thresholds are loosened
+#    so we don't fail CI on cosmetic issues. We can tighten incrementally.
+#  - `buildUponDefaultConfig = true` in build.gradle.kts means anything not
+#    listed here inherits Detekt's defaults.
+
+build:
+  maxIssues: 0           # CI fails when there's any *error*-severity finding
+  excludeCorrectable: false
+
+config:
+  validation: true
+  warningsAsErrors: false
+
+complexity:
+  LongMethod:
+    active: true
+    threshold: 80        # the project has a few legacy long render functions
+  LongParameterList:
+    active: true
+    functionThreshold: 8
+    constructorThreshold: 8
+  ComplexCondition:
+    active: true
+    threshold: 5
+  TooManyFunctions:
+    active: true
+    thresholdInClasses: 25
+    thresholdInObjects: 25
+
+style:
+  MagicNumber:
+    active: false        # too noisy on a HTML/CSS-templating + nutrition app
+  WildcardImport:
+    active: false        # Exposed DSL relies heavily on wildcard imports
+  MaxLineLength:
+    active: true
+    maxLineLength: 140
+  UnusedPrivateMember:
+    active: true
+  ReturnCount:
+    active: true
+    max: 6               # Ktor route handlers commonly use multiple return@get
+
+naming:
+  FunctionNaming:
+    active: true
+  TopLevelPropertyNaming:
+    active: true
+  ClassNaming:
+    active: true
+
+empty-blocks:
+  EmptyCatchBlock:
+    active: true
+
+exceptions:
+  TooGenericExceptionCaught:
+    active: false        # acceptable in transaction wrappers
+  SwallowedException:
+    active: true
+
+potential-bugs:
+  UnsafeCast:
+    active: true
+  UnsafeCallOnNullableType:
+    active: true

@@ -5,8 +5,23 @@ import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.time.LocalDateTime
 
+/**
+ * 1-on-1 messaging between subscribers and their professionals.
+ *
+ * Persistence is a single `advice_messages` table; conversations are derived
+ * by querying every row where the user is sender *or* receiver and grouping
+ * by the partner's user id. The "unread badge" feature relies on the
+ * `is_read` boolean flipping the moment a conversation is opened.
+ */
 object MessageService {
 
+    /**
+     * List of every distinct conversation partner of [userId], ordered by the
+     * most recent message exchanged. Each entry carries:
+     *  - `partnerId` / `partnerName` / `partnerInitials` / `partnerRole`
+     *  - `lastMessage` — the partner's most recent message body, truncated to 50 chars
+     *  - `unreadCount` — number of messages from this partner not yet read
+     */
     fun getConversationPartners(userId: Int): List<Map<String, Any>> = transaction {
         val partners = mutableMapOf<Int, MutableMap<String, Any>>()
         AdviceMessages.selectAll().where {
@@ -27,6 +42,15 @@ object MessageService {
         partners.values.toList()
     }
 
+    /**
+     * Full chronological transcript of the conversation between [userId] and
+     * [partnerId]. As a side-effect, marks every message **from** [partnerId]
+     * **to** [userId] as read — the unread badge in the sidebar will tick
+     * down on the next render.
+     *
+     * @return one map per message with `id`, `senderId`, `message`, `sentAt`,
+     *  and `isMine` (true when the row was sent by [userId]).
+     */
     fun getConversation(userId: Int, partnerId: Int): List<Map<String, Any>> = transaction {
         AdviceMessages.update({
             (AdviceMessages.senderId eq partnerId) and (AdviceMessages.receiverId eq userId) and (AdviceMessages.isRead eq false)
@@ -40,11 +64,20 @@ object MessageService {
         }
     }
 
+    /**
+     * Insert a new message row. Authorisation (e.g. "may this professional
+     * actually message this subscriber?") is enforced upstream by the route —
+     * see [com.goodfood.professional.professionalRoutes] / `hasActiveRelationship`.
+     */
     fun sendMessage(senderId: Int, receiverId: Int, message: String) = transaction {
         AdviceMessages.insert { it[AdviceMessages.senderId] = senderId; it[AdviceMessages.receiverId] = receiverId
             it[AdviceMessages.message] = message; it[isRead] = false; it[sentAt] = LocalDateTime.now() }
     }
 
+    /**
+     * Number of messages addressed to [userId] that are still flagged unread.
+     * Used by every page's sidebar to render the red badge next to "Messages".
+     */
     fun getUnreadCount(userId: Int): Long = transaction {
         AdviceMessages.selectAll().where { (AdviceMessages.receiverId eq userId) and (AdviceMessages.isRead eq false) }.count()
     }
