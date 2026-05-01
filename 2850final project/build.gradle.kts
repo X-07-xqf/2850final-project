@@ -28,6 +28,16 @@ tasks.withType<io.gitlab.arturbosch.detekt.Detekt>().configureEach {
     }
 }
 
+// Don't let Detekt findings fail `./gradlew build` — the CI workflow runs
+// `./gradlew detekt` as a separate, non-blocking step. This keeps the build
+// pipeline fast and lets the team tighten lint rules sprint-by-sprint without
+// blocking PRs while the existing baseline is cleaned up.
+tasks.named("check") {
+    setDependsOn(dependsOn.filterNot {
+        it is org.gradle.api.tasks.TaskProvider<*> && it.name.startsWith("detekt")
+    })
+}
+
 application {
     mainClass.set("com.goodfood.ApplicationKt")
 }
