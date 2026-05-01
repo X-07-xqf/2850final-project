@@ -51,6 +51,16 @@ These commits carry the `Made-with: Cursor` git trailer as the contemporaneous a
 | Header comments in `styles.css` and `app.js` | Wording of the AI-acknowledgment block | Charlie Wu reviewed the wording and confirmed it accurately describes what AI did and what the human did. |
 | `AI_USAGE.md` (this file) | Initial structure and entries | Charlie Wu reviewed every entry for accuracy. |
 
+### v0.4.6 — Detekt + class diagram + KDoc + user stories + accessibility audit (closes #25, #26, #27, #28, #29)
+
+| File | What AI drafted | Human verification |
+|---|---|---|
+| `2850final project/build.gradle.kts` (Detekt block) + `detekt.yml` + workflow Detekt step | Detekt plugin wiring, the `detekt {}` configuration block, the rule set in `detekt.yml` (rule names, thresholds, `buildUponDefaultConfig = true`), and the new CI step with `continue-on-error: true` for the first non-blocking run. | Charlie Wu reviewed the rule selection against the codebase shape (long Exposed-DSL expressions, multi-`return@get` route handlers, BCrypt magic numbers) and confirmed the thresholds avoid a first-run failure avalanche. |
+| `CLASS_diagram.md` | Whole file: Mermaid `classDiagram` syntax, the per-feature grouping, the dependency arrows, the layering-rules section. | Charlie Wu cross-checked every class node against the actual files in `src/main/kotlin/com/goodfood/` and every dependency arrow against the imports in those files. |
+| KDoc blocks on `UserService`, `DiaryService`, `GoalService`, `RecipeService`, `MessageService` | The wording of the class-level and method-level KDoc. AI did not change any function bodies. | Charlie Wu re-read each KDoc to make sure it matches what the function actually does (especially the security-sensitive notes on `authenticate()` returning the same `null` for "unknown email" and "wrong password", and on `deleteEntry()`'s defence-in-depth WHERE clause). |
+| `USER_STORIES.md` | The story phrasing, the MoSCoW priorities, the XS/S/M/L estimates, the AC-ID cross-references. | Charlie Wu reviewed each story against the wiki Job Stories so the mapping is accurate, and confirmed every AC ID referenced exists in the test suite. |
+| `ACCESSIBILITY.md` | The per-page WCAG checklist structure, the list of structural a11y patterns, and the wording of the known-gaps section. AI did not run an automated audit; the audit results are the team's self-assessment using the existing CSS / template features as evidence. | Charlie Wu confirmed every "✅" cell maps to a real pattern in the codebase, and that the "⚠️ / ❌" cells are honest gaps not glossed over. |
+
 ### v0.4.5 — CI workflow + test ↔ acceptance criteria mapping + README fix (closes #21, #22, #23)
 
 | File | What AI drafted | Human verification |

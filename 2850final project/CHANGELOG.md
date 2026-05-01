@@ -4,6 +4,24 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [v0.4.6] - 2026-05-01 — Detekt, class diagram, KDoc, user stories, accessibility audit
+
+### Added
+- **Detekt static analysis** (closes #25) — `io.gitlab.arturbosch.detekt` plugin in `build.gradle.kts`, repo-level `detekt.yml` tuned for the project (relaxed style rules, strict correctness rules), CI workflow runs `./gradlew detekt` after the unit tests and uploads the report as an artifact. Initial run is non-blocking (`continue-on-error: true`) so the team can tighten rules incrementally.
+- **Class diagram** (closes #26) — `CLASS_diagram.md` at the repo root: Mermaid `classDiagram` covering routes, services, table objects, and their dependencies, grouped by feature module. README now points to it alongside the ER diagram.
+- **KDoc on the five core service classes** (closes #27) — `UserService`, `DiaryService`, `GoalService`, `RecipeService`, `MessageService` now have class-level KDoc and method-level `@param` / `@return` notes on every public function. No behaviour changes.
+- **User stories** (closes #28) — `USER_STORIES.md` at the repo root: 15 stories in `As a [role], I want [...]` form, MoSCoW priority + XS/S/M/L estimate per story, mapped back to wiki Job Stories and forward to AC IDs that the test suite already covers.
+- **Accessibility self-audit** (closes #29) — `ACCESSIBILITY.md` at the repo root: per-page WCAG 2.1 AA checklist, list of structural patterns (`:focus-visible`, ARIA, prefers-reduced-motion, dark mode), honest list of known gaps. README now points to it.
+
+### Changed
+- README gains "Accessibility" and "Requirements" sections linking the new docs.
+- README "Database & class design" section consolidates ER + class diagram links.
+
+### Notes
+- Documentation and tooling only. No runtime behaviour changes; the existing 13 unit tests still pass.
+
+---
+
 ## [v0.4.5] - 2026-05-01 — CI workflow, test ↔ acceptance-criteria mapping, README fix
 
 ### Added

@@ -64,9 +64,10 @@ Then open http://localhost:8080 in your browser.
 | **Messages** | Conversation list, send/receive messages, unread count badge |
 | **Professional Panel** | Client list with compliance stats, view client diary (read-only), send advice |
 
-## Database Design
+## Database & class design
 
-See [ER_diagram.md](ER_diagram.md) for the full entity-relationship diagram.
+- [ER_diagram.md](ER_diagram.md) — entity-relationship diagram for the data layer.
+- [CLASS_diagram.md](CLASS_diagram.md) — application-layer class diagram (services, routes, table objects).
 
 **12 Tables:** users, professional_profiles, client_relationships, food_items, food_diary_entries, nutritional_goals, advice_messages, recipes, recipe_ingredients, recipe_steps, recipe_favourites, recipe_ratings
 
@@ -75,6 +76,14 @@ The database is auto-created on startup with seed data (sample users, foods, rec
 ## UI design
 
 The original static design pass — annotated wireframes and screen-by-screen rationale — lives in [`UI_wireframes.md`](UI_wireframes.md). The design tokens, dark-mode theme and component states landed iteratively (see CHANGELOG `v0.4.0` onward).
+
+## Accessibility
+
+Per-page WCAG 2.1 AA self-audit, structural a11y patterns, and known gaps are documented in [`ACCESSIBILITY.md`](ACCESSIBILITY.md).
+
+## Requirements
+
+The prioritised user-story backlog (with MoSCoW priority and acceptance-criteria IDs that map into the test suite) is in [`USER_STORIES.md`](USER_STORIES.md).
 
 ## Generative AI usage
 

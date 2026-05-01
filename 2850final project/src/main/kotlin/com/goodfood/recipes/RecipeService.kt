@@ -9,6 +9,13 @@ import java.math.BigDecimal
 import java.math.RoundingMode
 import java.time.LocalDateTime
 
+/**
+ * All recipe read paths plus the social actions on top of them (favourite, rate).
+ *
+ * Recipe data is stored across five tables (`recipes`, `recipe_ingredients`,
+ * `recipe_steps`, `recipe_ratings`, `recipe_favourites`); this service hides
+ * that fan-out behind ergonomic call sites for routes and templates.
+ */
 object RecipeService {
 
     /**
@@ -19,6 +26,14 @@ object RecipeService {
     private fun escapeLikePattern(input: String): String =
         input.replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_")
 
+    /**
+     * Title-substring + difficulty filter. Both filters are optional.
+     *
+     * @param query case-insensitive substring of the recipe title; wildcard-escaped.
+     * @param difficulty `"easy"`, `"medium"`, `"hard"`, or `"all"` / `null` to skip.
+     * @return one map per recipe with id, title, description, prep/cook/total time,
+     *  servings, difficulty, average rating, and review count.
+     */
     fun searchRecipes(query: String?, difficulty: String?): List<Map<String, Any?>> = transaction {
         val baseQuery = Recipes.selectAll()
         val filtered = baseQuery.let { q ->
@@ -41,6 +56,15 @@ object RecipeService {
         }
     }
 
+    /**
+     * Full recipe page payload — the recipe row, every ingredient (joined to its
+     * `food_items` row when one exists, for nutrition computation), every step
+     * ordered by `step_number`, every rating with the rater's name, and the
+     * macros-per-serving derived by summing each ingredient's nutrition and
+     * dividing by the recipe's servings count.
+     *
+     * @return `null` when [recipeId] does not exist.
+     */
     fun getRecipeDetail(recipeId: Int): Map<String, Any?>? = transaction {
         val recipe = Recipes.selectAll().where { Recipes.id eq recipeId }.singleOrNull() ?: return@transaction null
         val ingredients = RecipeIngredients.selectAll().where { RecipeIngredients.recipeId eq recipeId }.map { row ->
@@ -78,16 +102,30 @@ object RecipeService {
             "fatPerServing" to totalFat.divide(servings, 1, RoundingMode.HALF_UP))
     }
 
+    /** True when [userId] has favourited [recipeId]. Used to render the heart icon state. */
     fun isFavourite(userId: Int, recipeId: Int): Boolean = transaction {
         RecipeFavourites.selectAll().where { (RecipeFavourites.userId eq userId) and (RecipeFavourites.recipeId eq recipeId) }.count() > 0
     }
 
+    /**
+     * Flip the favourite state for ([userId], [recipeId]).
+     *
+     * @return `true` when the recipe is now favourited (was previously not),
+     *  `false` when it was previously favourited and has just been removed.
+     */
     fun toggleFavourite(userId: Int, recipeId: Int): Boolean = transaction {
         val existing = RecipeFavourites.selectAll().where { (RecipeFavourites.userId eq userId) and (RecipeFavourites.recipeId eq recipeId) }.singleOrNull()
         if (existing != null) { RecipeFavourites.deleteWhere { (RecipeFavourites.userId eq userId) and (RecipeFavourites.recipeId eq recipeId) }; false }
         else { RecipeFavourites.insert { it[RecipeFavourites.userId] = userId; it[RecipeFavourites.recipeId] = recipeId; it[RecipeFavourites.createdAt] = LocalDateTime.now() }; true }
     }
 
+    /**
+     * Add or update a rating row for ([userId], [recipeId]). One user can rate
+     * a recipe at most once — re-rating overwrites the previous row's `rating`
+     * and `comment` rather than appending a duplicate.
+     *
+     * @param rating expected to already be coerced into 1..5 by the route handler.
+     */
     fun addRating(userId: Int, recipeId: Int, rating: Int, comment: String?) = transaction {
         val existing = RecipeRatings.selectAll().where { (RecipeRatings.userId eq userId) and (RecipeRatings.recipeId eq recipeId) }.singleOrNull()
         if (existing != null) {
@@ -99,6 +137,10 @@ object RecipeService {
         }
     }
 
+    /**
+     * Every recipe [userId] has favourited, decorated with the recipe's average
+     * rating. Powers the "Favourites" section on the user's profile.
+     */
     fun getUserFavourites(userId: Int): List<Map<String, Any?>> = transaction {
         (RecipeFavourites innerJoin Recipes).selectAll().where { RecipeFavourites.userId eq userId }.map { row ->
             val rid = row[Recipes.id]; val ratings = RecipeRatings.selectAll().where { RecipeRatings.recipeId eq rid }.toList()

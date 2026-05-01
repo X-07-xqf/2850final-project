@@ -46,10 +46,22 @@ jobs:
       - name: Build and test
         run: ./gradlew build test --no-daemon --stacktrace
 
+      - name: Static analysis (Detekt)
+        run: ./gradlew detekt --no-daemon
+        continue-on-error: true   # report findings without blocking the build while we tune rules
+
       - name: Publish test report
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: test-report
           path: "2850final project/build/reports/tests/test"
+          if-no-files-found: ignore
+
+      - name: Publish detekt report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: detekt-report
+          path: "2850final project/build/reports/detekt"
           if-no-files-found: ignore
