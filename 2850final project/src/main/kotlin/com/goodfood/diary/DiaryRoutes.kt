@@ -49,7 +49,7 @@ fun Route.diaryRoutes() {
             "carbs" to (summary["carbs"] ?: BigDecimal.ZERO).fmt(1),
             "fat" to (summary["fat"] ?: BigDecimal.ZERO).fmt(1)
         )
-        val displayGoals = goals?.mapValues { (_, v) -> v.fmt(1) } ?: emptyMap()
+        val displayGoals = goals?.mapValues { (_, v) -> v?.fmt(1) ?: "" } ?: emptyMap()
         call.respond(ThymeleafContent("subscriber/diary", model(
             "session" to session, "date" to date, "dateFormatted" to date.format(DateTimeFormatter.ofPattern("MMMM d, yyyy")),
             "prevDate" to date.minusDays(1), "nextDate" to date.plusDays(1), "meals" to meals, "summary" to displaySummary,

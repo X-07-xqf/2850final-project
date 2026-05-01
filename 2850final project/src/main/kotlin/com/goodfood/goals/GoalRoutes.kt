@@ -19,7 +19,7 @@ fun Route.goalRoutes() {
         val goals = GoalService.getGoals(session.userId)
         val weekly = DiaryService.getWeeklySummary(session.userId)
         val unread = MessageService.getUnreadCount(session.userId)
-        val displayGoals = goals?.mapValues { (_, v) -> v.fmt(1) } ?: emptyMap()
+        val displayGoals = goals?.mapValues { (_, v) -> v?.fmt(1) ?: "" } ?: emptyMap()
         val displayWeekly = weekly.map { w -> mapOf(
             "date" to w["date"],
             "dayName" to w["dayName"],
