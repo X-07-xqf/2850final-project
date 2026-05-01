@@ -51,6 +51,14 @@ These commits carry the `Made-with: Cursor` git trailer as the contemporaneous a
 | Header comments in `styles.css` and `app.js` | Wording of the AI-acknowledgment block | Charlie Wu reviewed the wording and confirmed it accurately describes what AI did and what the human did. |
 | `AI_USAGE.md` (this file) | Initial structure and entries | Charlie Wu reviewed every entry for accuracy. |
 
+### v0.6.0 — Warm wellness redesign + animated login background (closes #40)
+
+| File | What AI drafted | Human verification |
+|---|---|---|
+| `2850final project/src/main/resources/static/css/styles.css` | Whole-file rewrite (~900 lines): the team chose the new design direction (warm cream / sage / terracotta wellness consumer feel) and Charlie Wu specified the must-have constraints (no class-name changes, dark mode preserved, animated login background); AI drafted the token system, the per-component restyling, the animated `::before` / `::after` blob keyframes on `.auth-body`, the dark-mode inversion, and the responsive breakpoints. | Charlie Wu walked every page in light + dark + the <840 px drawer, verified the animated login background renders without jank and respects `prefers-reduced-motion`, confirmed all 21 tests still pass, confirmed the v0.4.x JS (theme toggle, mobile drawer, food-search modal, star-rating) still works. |
+| `DESIGN_DECISIONS.md` (new entry D-12) | Wording of the design-rationale entry. | Charlie Wu cross-checked the entry against why the team actually wanted to retire v0.5.0. |
+| `CHANGELOG.md` (v0.6.0 entry) | The narrative paragraph and bullet list. | Charlie Wu confirmed the description matches the team's reasoning. |
+
 ### v0.5.1 — Food-search hint and threshold (closes #38)
 
 | File | What AI drafted | Human verification |
