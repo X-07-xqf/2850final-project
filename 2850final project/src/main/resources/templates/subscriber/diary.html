@@ -73,7 +73,9 @@
                     </form>
                 </li>
             </ul>
-            <p class="empty-hint" th:if="${meal.entries == null or meal.entries.isEmpty()}">Nothing logged yet.</p>
+            <p class="empty-hint empty-hint--soft" th:if="${meal.entries == null or meal.entries.isEmpty()}">
+                Empty plate. Tap <strong>Add food</strong> to log what you had.
+            </p>
         </section>
     </main>
 </div>
