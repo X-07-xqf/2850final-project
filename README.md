@@ -72,9 +72,9 @@ See [ER_diagram.md](ER_diagram.md) for the full entity-relationship diagram.
 
 The database is auto-created on startup with seed data (sample users, foods, recipes, diary entries, messages).
 
-## UI Prototype
+## UI design
 
-The original static HTML/CSS prototype is in `ui-prototype/`. Open `ui-prototype/index.html` in a browser to view it.
+The original static design pass — annotated wireframes and screen-by-screen rationale — lives in [`UI_wireframes.md`](UI_wireframes.md). The design tokens, dark-mode theme and component states landed iteratively (see CHANGELOG `v0.4.0` onward).
 
 ## Generative AI usage
 

@@ -7,6 +7,20 @@ import kotlin.test.assertTrue
 import java.math.BigDecimal
 import java.time.LocalDate
 
+/**
+ * Unit tests for [DiaryService].
+ *
+ * Job stories covered (see Wiki: Job-Stories — Subscriber Features):
+ *  - "Quick Meal Logging" — when I log a meal, I want to do it quickly using
+ *    recent or saved meals so that I don't spend too much time on the app.
+ *  - "Recipe Search" — when I want to cook, I want to search for recipes /
+ *    foods using ingredients I have on hand.
+ *
+ * Acceptance criteria exercised:
+ *  - AC-DIARY-1  A diary entry created today appears in the daily summary
+ *                with calories scaled by quantity.                            [addEntryAndGetDailySummary]
+ *  - AC-DIARY-2  Free-text food search returns the matching food item.       [searchFoodFindsMatchingFood]
+ */
 class DiaryServiceTest {
 
     @Test
