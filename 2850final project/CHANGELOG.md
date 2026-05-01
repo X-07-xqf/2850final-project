@@ -4,6 +4,22 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [v0.4.7] - 2026-05-01 — UX-test report, integration tests, security tests, design-decisions doc
+
+### Added
+- **`UX_TESTING.md`** at the repo root (closes #31) — Round-1 moderated walkthrough: scenarios, time-on-task, 8 findings with severity, decisions on which to fix before the demo. Closes the rubric Pass-tier requirement *"At least one UX test performed with feedback used to improve"*.
+- **`src/test/kotlin/com/goodfood/IntegrationTest.kt`** (closes #32) — first HTTP-level tests via Ktor `testApplication`. Each test boots the full `Application.module` against a fresh in-memory H2. Three scenarios covered: unauthenticated dashboard redirects to login, login page renders, food-search API rejects unauthenticated requests.
+- **`src/test/kotlin/com/goodfood/SecurityTest.kt`** (closes #33) — five regression tests guarding the v0.4.4 security fixes: literal `%` and `_` in food/recipe search no longer dump the table, normal queries still work, cross-user diary delete is a no-op.
+- **`DESIGN_DECISIONS.md`** at the repo root (closes #34) — chronological "what / why / alternatives considered" entries for ten significant decisions: feature-module layout, H2 + seed-on-empty, server-side rendering, dark-mode tokens, mobile drawer, IDOR helper, cookie hardening, LIKE escaping, AI transparency, non-blocking Detekt CI.
+- **README "Beyond the basic spec" section** (closes #34) — surfaces the extras (dark mode, mobile drawer, IDOR pattern, cookie hardening, CI, devcontainer, AI transparency, evolved documentation).
+- README links to `UX_TESTING.md` and `DESIGN_DECISIONS.md`.
+
+### Notes
+- 8 new tests bring total to **21**: 13 service-level units + 5 security-regression + 3 HTTP-integration.
+- No production code behaviour changes — this release adds documentation and tests only.
+
+---
+
 ## [v0.4.6] - 2026-05-01 — Detekt, class diagram, KDoc, user stories, accessibility audit
 
 ### Added
