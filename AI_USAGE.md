@@ -51,6 +51,14 @@ These commits carry the `Made-with: Cursor` git trailer as the contemporaneous a
 | Header comments in `styles.css` and `app.js` | Wording of the AI-acknowledgment block | Charlie Wu reviewed the wording and confirmed it accurately describes what AI did and what the human did. |
 | `AI_USAGE.md` (this file) | Initial structure and entries | Charlie Wu reviewed every entry for accuracy. |
 
+### v0.5.0 — Anthropic-inspired visual identity refresh (closes #36)
+
+| File | What AI drafted | Human verification |
+|---|---|---|
+| `2850final project/src/main/resources/static/css/styles.css` | Whole-file rewrite (~700 lines): the team supplied the Anthropic design reference (`tokens.json`, `variables.css`, `theme.css`, `DESIGN.md`) and the design direction; AI translated those tokens onto the existing class-name surface so the templates needed no edits. AI generated: the semantic-token mapping, the dark-mode inversion, the per-component restyling (buttons, cards, sidebar, forms, modal, toast, skeleton, macro/recipe/chat/table components), the underline-emphasis utility, the responsive breakpoints. | Charlie Wu walked every page in light and dark themes, tested the mobile drawer (`<840 px`), verified the hover / focus / active states on buttons, confirmed inputs and tables render correctly, and that all v0.4.x JS (theme toggle persistence, mobile drawer, food-search, modal) still works. |
+| `DESIGN_DECISIONS.md` (new entry D-11) | Wording of the design-rationale entry (what / why / trade-offs / alternatives). | Charlie Wu cross-checked the rationale against the team's actual reasoning for picking the Anthropic style over alternatives. |
+| `CHANGELOG.md` (v0.5.0 entry) | The narrative paragraph and the bullet list of changes. | Charlie Wu confirmed the narrative matches what the team actually did (studied Anthropic's public reference, applied it as a learning exercise to the existing class surface). |
+
 ### v0.4.7 — UX test report + integration tests + security tests + design-decisions doc (closes #31, #32, #33, #34)
 
 | File | What AI drafted | Human verification |
