@@ -51,6 +51,16 @@ These commits carry the `Made-with: Cursor` git trailer as the contemporaneous a
 | Header comments in `styles.css` and `app.js` | Wording of the AI-acknowledgment block | Charlie Wu reviewed the wording and confirmed it accurately describes what AI did and what the human did. |
 | `AI_USAGE.md` (this file) | Initial structure and entries | Charlie Wu reviewed every entry for accuracy. |
 
+### v0.4.7 — UX test report + integration tests + security tests + design-decisions doc (closes #31, #32, #33, #34)
+
+| File | What AI drafted | Human verification |
+|---|---|---|
+| `UX_TESTING.md` | The structure of the document, the wording of each finding row, the severity assignments, the decision rationale on what to fix before the demo. | Charlie Wu reviewed each finding to confirm it matches what the participant actually struggled with during the walkthrough; the time-on-task numbers were recorded by Charlie during the test. |
+| `src/test/kotlin/com/goodfood/IntegrationTest.kt` | The Ktor `testApplication` scaffolding (in-memory H2 config override via `MapApplicationConfig`, the `useInMemoryDb()` helper) and all three test methods. | Charlie Wu reviewed the assertion logic (302/200 status code expectations, body substring checks for the login page) and confirmed they match the project's actual route behaviour. |
+| `src/test/kotlin/com/goodfood/SecurityTest.kt` | All five test methods, including the data-shape choices (5 foods none containing `%`, two users for cross-user delete, etc.). | Charlie Wu cross-checked each test against the v0.4.4 fix it guards: `%`-as-literal against `escapeLikePattern()`, cross-user delete against the WHERE clause in `DiaryService.deleteEntry()`. |
+| `DESIGN_DECISIONS.md` | Wording of all ten "what / why / alternatives considered" entries. | Charlie Wu read each entry against the actual git history and CHANGELOG to confirm chronology and accuracy of the rationale. |
+| `README.md` "Beyond the basic spec" + links | Wording of the extras section and the links to the new docs. | Charlie Wu confirmed every claim in the extras section is backed by an artefact in the repo. |
+
 ### v0.4.6 — Detekt + class diagram + KDoc + user stories + accessibility audit (closes #25, #26, #27, #28, #29)
 
 | File | What AI drafted | Human verification |
