@@ -4,6 +4,21 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [v0.6.2] - 2026-05-01 — Persist accounts on Render via PostgreSQL (closes #44)
+
+### Why
+The H2 database file (`./data/goodfood.mv.db`) lives inside each container's local filesystem and is `.gitignore`d, so it never travels with the code. On Render's free tier the container is rebuilt on every deploy and on idle spin-up, which wipes `data/` and erases every account a user registered through the web UI. The seed accounts only appear permanent because `SeedData.insertIfEmpty()` re-runs against the fresh schema and re-creates them. The same dynamic explains why a Codespace registered account disappears the next time the codespace is recycled. For the assessment demo the marker needs to register an account and have it survive a redeploy, so production needs a database that lives outside the container.
+
+### Changed
+- **`Database.kt`** — new `resolveDbSettings()` helper. When the `DATABASE_URL` environment variable is present (Render injects this when a PostgreSQL service is linked to the web service) the libpq form `postgres://user:pass@host:port/db[?…]` is parsed into a JDBC URL plus separate credentials, and the connection goes through `org.postgresql.Driver`. When the variable is unset — Codespaces, local dev, CI — the existing H2 file path from `application.conf` is used unchanged. Any query string on the original URL (e.g. `sslmode=require` for an external Render endpoint) is preserved verbatim.
+- **`build.gradle.kts`** — added `org.postgresql:postgresql:42.7.4` alongside the existing H2 driver. Both ship in the fat jar so the same artifact runs locally on H2 and on Render against PostgreSQL.
+
+### Notes
+- Existing Exposed queries are dialect-portable (`Recipes.title.lowerCase() like ?`, `FoodItems.name.lowerCase() like ?`); `lowerCase()` compiles to `LOWER(col)` which works on H2, MySQL, and PostgreSQL alike. Schema generation is delegated to `SchemaUtils.create(...)` and Exposed picks the right DDL per dialect.
+- Render setup after merge: provision a PostgreSQL Free instance, attach it to the web service so `DATABASE_URL` is auto-injected, then redeploy. No code switch needed — the env var alone flips the runtime to PostgreSQL.
+
+---
+
 ## [v0.6.1] - 2026-05-01 — Fix Render build (Gradle 8.5)
 
 ### Fixed
