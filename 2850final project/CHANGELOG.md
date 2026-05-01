@@ -4,6 +4,15 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [v0.6.4] - 2026-05-02 — Dashboard polish: ring, thicker bars, warmer empty states (closes #50)
+
+### Fixed
+- Calories progress was a thin 6px line buried among three other macros — promoted to a conic-gradient ring centrepiece with the absolute number and percent inside.
+- Macro progress bars bumped from 6px to 10px with rounded ends and per-macro gradients (deep-sage → sage on calories, sage → sage-soft on protein, clay → clay-soft on fat).
+- Empty-state copy (`No foods logged for this meal.`, `Nothing logged yet.`, `No data for this week yet.`) replaced with friendlier nudges; diary empty meals point at the **Add food** button.
+
+---
+
 ## [v0.6.3] - 2026-05-01 — UI detail bug fixes (closes #46)
 
 ### Fixed
