@@ -4,6 +4,28 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [v0.6.0] - 2026-05-01 — Warm wellness redesign + animated login background (closes #40)
+
+The team sat with v0.5.0 for a couple of days and decided it was the wrong fit. The disciplined research-journal aesthetic looked sharp in isolation but read as clinical and intimidating for a consumer app whose entire purpose is to *encourage* people to log meals and try home cooking. The brief is about warmth and habit-building, not editorial gravity. v0.6.0 swaps the system out for one that fits the product.
+
+### Changed
+- **Palette** — cream / oat / sage / terracotta replaces ivory / slate / clay. Deep-forest text on warm cream surfaces. Sage as the calm primary; terracotta reserved as the single warm accent. Berry tone added for genuine alerts only.
+- **Type** — consolidated to **Plus Jakarta Sans** at every level. The v0.5.0 sans + serif + mono trio was elegant but added formality the product doesn't need; one friendly geometric family across the system reads as "consumer wellness" rather than "magazine".
+- **Geometry** — soft rounded corners throughout (8 / 14 / 16 / 20 px and pill). Buttons are now pills; modal corners 20 px; cards 16 px. Subtle layered shadows return as elevation cues — barely there but present, replacing the v0.5.0 zero-shadow rule.
+- **Sidebar** — deep-forest band with cream text; active nav entry uses a soft sage-tinted background instead of the previous accent border.
+- **Recipe cards** — inviting elevation on hover (translate-up + slightly heavier shadow). The home-cooking pillar of the brief is where the new system most obviously pays off.
+- **Macro progress bars** — gradient fill from deep sage to sage on the calorie bar, solid sage on protein, muted sage on carbs, terracotta on fat.
+- **Tabs in the auth card** — pill-tabs inside a warm tray with a soft shadow, replacing the underline-tab pattern.
+
+### Added
+- **Animated login background** — two large soft-edged colour fields (sage and terracotta tints) drift slowly behind the auth card. Pure CSS via `::before` and `::after` on `.auth-body`, `transform` and `opacity` only, GPU-composited, blurred for an organic feel. `prefers-reduced-motion` cuts the animation entirely. The auth card sits crisp on top — motion is wallpaper, not theatre.
+
+### Notes
+- Same constraint as v0.5.0: zero HTML class-name renames, JavaScript untouched, all 21 tests still green, dark mode keeps working (inverts into a deep-forest base with cream text).
+- `DESIGN_DECISIONS.md` gains entry **D-12** explaining why v0.5.0 was retired.
+
+---
+
 ## [v0.5.1] - 2026-05-01 — Food-search hint & threshold (closes #38)
 
 ### Changed

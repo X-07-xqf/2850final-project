@@ -96,6 +96,20 @@ A short, chronological record of the significant design and architecture choices
 
 ---
 
+## D-12 — Warm wellness redesign with animated login background (v0.6.0)
+
+**What.** Replaced v0.5.0's research-journal palette with a consumer-wellness system: warm cream surfaces, deep-forest text, sage green primary, terracotta as a single warm accent reserved for warnings and empty states. Type stack consolidated to one friendly geometric sans (Plus Jakarta Sans). Geometry shifted to soft rounded corners (8 px / 14 px / 16 px / 20 px / pill) and subtle layered shadows for elevation. The login page background now hosts two slowly drifting soft-edged colour fields behind the auth card, animated entirely with CSS keyframes so the page feels alive without any JavaScript.
+
+**Why.** The product owner's brief is explicitly about *encouraging* people to log their meals and try home cooking. The v0.5.0 aesthetic was disciplined but read as "research institution"; for a consumer wellness product that asks users to stick with a daily logging habit, the system should feel warm, friendly, and rewarding rather than austere. The brief's secondary pillar — home cooking — also benefits: recipe cards now have inviting elevation and rounded corners instead of the sharp newsprint feel.
+
+**Trade-off accepted.** Class names stay; only `static/css/styles.css` is rewritten (~900 lines replaced). The v0.4.0 dark-mode toggle is preserved by inverting the warm palette into a deep-forest base with cream text. Plus Jakarta Sans alone replaces the v0.5.0 sans + serif + mono trio — losing the editorial pairing in exchange for a more contemporary consumer-app feel; the trade is appropriate for the product's audience.
+
+**Animated background, performance.** The two drifting blobs use `transform` only (GPU-friendly), absolute-positioned outside the viewport, blurred with `filter: blur(40-50px)` so the pixel cost is amortised over a small composited region rather than per-pixel paint. `prefers-reduced-motion` collapses both keyframe durations to ~0 ms via the global rule. Print stylesheet hides them.
+
+**Alternatives considered.** Cookbook-editorial direction (deep serifs, food photography, magazine grid — rejected because we don't have shoot-quality food imagery and the palette would clash with the dietitian-supervision module). Clinical / data-rich direction (rejected because the brief emphasises encouragement, not clinical data display). Keep v0.5.0 unchanged (rejected — the team explicitly didn't like how it landed).
+
+---
+
 ## D-11 — Visual identity refresh inspired by Anthropic (v0.5.0)
 
 **What.** Replaced the v0.4.0 emerald-green token system with a palette and component vocabulary inspired by anthropic.com: a warm parchment ivory (`#faf9f5`) page base, near-black slate (`#141413`) primary text, the entire chromatic budget reserved for a single terracotta accent (`#d97757`). Type stack switched to `Inter` + `Playfair Display` + `JetBrains Mono` (the substitutes recommended by the Anthropic style reference for non-licensed deployments). Buttons now have a `0` border-radius, with the primary CTA carrying the asymmetric `0 0 8px 8px` Anthropic signature. Cards are `8px` radius; dark editorial cards `24px`. **Zero box-shadows** anywhere — depth is conveyed by surface contrast and 1 px hairlines. Headline emphasis uses a thick text-decoration underline rather than colour.
