@@ -96,6 +96,18 @@ A short, chronological record of the significant design and architecture choices
 
 ---
 
+## D-11 — Visual identity refresh inspired by Anthropic (v0.5.0)
+
+**What.** Replaced the v0.4.0 emerald-green token system with a palette and component vocabulary inspired by anthropic.com: a warm parchment ivory (`#faf9f5`) page base, near-black slate (`#141413`) primary text, the entire chromatic budget reserved for a single terracotta accent (`#d97757`). Type stack switched to `Inter` + `Playfair Display` + `JetBrains Mono` (the substitutes recommended by the Anthropic style reference for non-licensed deployments). Buttons now have a `0` border-radius, with the primary CTA carrying the asymmetric `0 0 8px 8px` Anthropic signature. Cards are `8px` radius; dark editorial cards `24px`. **Zero box-shadows** anywhere — depth is conveyed by surface contrast and 1 px hairlines. Headline emphasis uses a thick text-decoration underline rather than colour.
+
+**Why.** The team wanted a visual language that read as research-institution rather than fitness-startup — the "evidence-based healthy eating" positioning fits parchment-and-broadsheet better than emerald-and-shadows. The Anthropic site demonstrates exactly that direction: achromatic discipline, typographic gravity, hard-edged surfaces. We adopted the public design system (palette, type roles, geometry) as a learning exercise — the goal was to internalise how a token-driven design discipline differs from the more decorative starting point of v0.4.0.
+
+**Trade-off accepted.** The token rewrite is large-diff (~700 lines of CSS replaced) but the class-name surface stays identical, so HTML templates need zero edits. We also kept the v0.4.0 dark-mode toggle even though the Anthropic reference is light-only; in dark we invert into a slate-dark base with ivory text.
+
+**Alternatives considered.** Keep the green palette and bolt on Anthropic-style typography (rejected — half-measures land in the uncanny valley between two systems). Drop the dark-mode toggle to match Anthropic's light-only stance (rejected — we'd already shipped it and had positive feedback on it). Use the actual Anthropic Sans / Serif fonts (rejected — proprietary; their style reference recommends Inter / Playfair Display as substitutes for non-licensed work).
+
+---
+
 ## D-10 — CI workflow with non-blocking Detekt (v0.4.5 / v0.4.6)
 
 **What.** GitHub Actions `build-and-test` workflow runs `./gradlew build test` on every push to main and every PR. Detekt was added in v0.4.6 as a separate step with `continue-on-error: true` and detached from the default `check` task; its HTML report is uploaded as an artifact.

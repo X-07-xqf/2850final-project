@@ -4,6 +4,31 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [v0.5.0] - 2026-05-01 — Visual identity refresh inspired by Anthropic
+
+We've spent the last few weeks looking at how research-led companies communicate visually, and Anthropic's site (anthropic.com) kept coming up as a reference the team admired — the warm parchment ivory background instead of clinical white, the strict alternation of light and slate-dark surfaces, the serif-plus-grotesque type pairing that reads more "research journal" than "startup", and the discipline of holding the entire chromatic budget for a single terracotta accent. As a learning exercise we studied their public design tokens and component vocabulary, then translated the system onto the existing Good Food class names so we could see what our app looked like in that visual idiom without rewriting any templates.
+
+The result is v0.5.0 — same product, redesigned skin.
+
+### Changed
+- **Palette** — replaced the v0.4.0 emerald token system with the Anthropic-inspired palette: ivory (`#faf9f5`) page base, near-black slate (`#141413`) primary text, ivory-medium / oat for surfaces, clay (`#d97757`) reserved as the one accent.
+- **Surface alternation** — page base ivory; cards 8 px radius on ivory-medium / oat; sidebar a slate-dark band; "feature" cards 24 px radius on slate-dark with ivory text. Zero gradients, zero blur transitions.
+- **Typography** — switched to `Inter` (sans), `Playfair Display` (serif), and `JetBrains Mono` (mono) via Google Fonts. Type scale aligned to the Anthropic spec: 12 → 15 → 18 → 20 → 24 → 61 → 91 px. Body uses `-0.002em` tracking; display sizes use `-0.02em`.
+- **Geometry** — buttons radius `0`; the primary "Sign in" / "Add food" CTA gets the asymmetric `0 0 8px 8px` Anthropic signature; cards radius `8`; dark feature cards radius `24`. **All `box-shadow` rules deleted.** Depth is now conveyed by surface contrast and 1 px hairlines only.
+- **Emphasis** — headline keywords use a thick `text-decoration: underline` (`.text-emphasis` utility) rather than colour, matching the Anthropic underline-as-accent convention.
+- **Metadata labels** — `DATE`, `CATEGORY`, time-on-task and stat captions now use `JetBrains Mono` 12 px in uppercase with `0.06em` tracking, matching the Anthropic editorial/data-label pattern.
+- **Forms** — inputs are flat 1 px hairlines, focus ring is `clay`-coloured.
+- **Dark mode** — kept the toggle from v0.4.0 but inverted to a slate-dark base with ivory text (Anthropic's reference is light-only; we didn't want to drop a feature we'd already shipped).
+
+### Notes
+- **Zero template / class-name changes.** Every existing class (`.btn`, `.card`, `.sidebar`, `.macro-card`, `.recipe-card`, `.conv-list`, `.bubble`, `.modal`, `.toast`, `.skeleton`) is preserved with the same selector — only its styling has been redrawn. HTML templates were not touched.
+- All 21 tests still pass. Mobile drawer + theme toggle JS still work.
+
+### Inspiration
+- anthropic.com — the design tokens and component vocabulary we studied for this refresh. Substitute fonts (Inter, Playfair Display, JetBrains Mono) are the ones the Anthropic style reference recommends for non-licensed deployments.
+
+---
+
 ## [v0.4.7] - 2026-05-01 — UX-test report, integration tests, security tests, design-decisions doc
 
 ### Added
