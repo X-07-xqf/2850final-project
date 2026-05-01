@@ -6,6 +6,18 @@ import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 
+/**
+ * Unit tests for [UserService].
+ *
+ * Job stories covered (see Wiki: Job-Stories — Subscriber & Professional auth):
+ *  - "When I am new, I want to register with email + password so that I can start tracking my food."
+ *  - "When I return to the site, I want to log in so that I can see my own diary."
+ *
+ * Acceptance criteria exercised:
+ *  - AC-AUTH-1  A new subscriber can register with a valid email + password.   [registerCreatesNewUser]
+ *  - AC-AUTH-2  Registration is rejected when the email already exists.        [registerRejectsDuplicateEmail]
+ *  - AC-AUTH-3  Login returns the user record for a correct password.          [authenticateReturnsUserForCorrectPassword]
+ */
 class UserServiceTest {
 
     @Test

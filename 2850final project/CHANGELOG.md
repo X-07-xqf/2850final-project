@@ -4,6 +4,21 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [v0.4.5] - 2026-05-01 — CI workflow, test ↔ acceptance-criteria mapping, README fix
+
+### Added
+- **GitHub Actions** workflow at `.github/workflows/build.yml` (closes #21) — `build-and-test` job runs `./gradlew build test` on push to `main` and on every PR targeting `main`. JDK 17 (Temurin), Gradle cache, test report uploaded as an artifact on every run. Closes the rubric gap on *"Excellent use of Git with a clear strategy including Actions or other CICD tools"*.
+- **Acceptance-criteria headers** on every `*ServiceTest.kt` (closes #22) — each file now opens with a KDoc block naming the wiki Job Story it covers and the explicit ACs (`AC-AUTH-1`, `AC-DIARY-1`, `AC-GOAL-1`, `AC-RECIPE-1`, `AC-MSG-1`, `AC-DB-1` …) that each test method exercises. No test logic changed.
+
+### Changed
+- **README** (closes #23) — the `## UI Prototype` section pointed to a `ui-prototype/` folder that was removed long ago; replaced with a `## UI design` section pointing to `UI_wireframes.md`.
+
+### Notes
+- Documentation / process only. No runtime behaviour change.
+- The first run of the new workflow will be the merge commit of this PR.
+
+---
+
 ## [v0.4.4] - 2026-04-30 — Critical security fixes
 
 ### Fixed

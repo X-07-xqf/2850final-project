@@ -6,6 +6,17 @@ import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import java.math.BigDecimal
 
+/**
+ * Unit tests for [GoalService].
+ *
+ * Job stories covered (see Wiki: Job-Stories — Subscriber Features):
+ *  - "Personalised Goals" — when I sign up, I want to set my own daily
+ *    calorie / macro targets so the dashboard reflects my plan.
+ *
+ * Acceptance criteria exercised:
+ *  - AC-GOAL-1  A user can save their first set of nutritional goals.       [saveGoalsCreatesGoalsForUser]
+ *  - AC-GOAL-2  Re-saving overwrites the previous row, not duplicates it.   [saveGoalsUpdatesExistingGoals]
+ */
 class GoalServiceTest {
 
     @Test

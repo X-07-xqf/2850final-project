@@ -51,6 +51,14 @@ These commits carry the `Made-with: Cursor` git trailer as the contemporaneous a
 | Header comments in `styles.css` and `app.js` | Wording of the AI-acknowledgment block | Charlie Wu reviewed the wording and confirmed it accurately describes what AI did and what the human did. |
 | `AI_USAGE.md` (this file) | Initial structure and entries | Charlie Wu reviewed every entry for accuracy. |
 
+### v0.4.5 — CI workflow + test ↔ acceptance criteria mapping + README fix (closes #21, #22, #23)
+
+| File | What AI drafted | Human verification |
+|---|---|---|
+| `.github/workflows/build.yml` | Whole workflow file: triggers, JDK 17 setup-java, Gradle cache key strategy, working-directory pinning to the nested `2850final project/` gradle root, test-report artifact upload | Charlie Wu reviewed the YAML against the GitHub Actions schema and the Ktor + Gradle 8.5 toolchain pin in `build.gradle.kts`. Will verify green check on the merge commit. |
+| KDoc headers in 6 `*Test.kt` files (`UserServiceTest`, `DiaryServiceTest`, `GoalServiceTest`, `MessageServiceTest`, `RecipeServiceTest`, `NutritionalGoalsTest`) | Wording of the Job-Story → AC → test-method mapping blocks. AC IDs follow a consistent `AC-<MODULE>-<N>` scheme. | Charlie Wu cross-checked each AC against what the test method actually asserts, and against the Job Stories in the project wiki. No production / test code paths changed. |
+| `README.md` rewrite of the broken UI section | Replacement section text pointing to `UI_wireframes.md`. | Charlie Wu confirmed `UI_wireframes.md` exists and the `ui-prototype/` directory does not. |
+
 ### v0.4.4 — Critical security fixes (closes #16, #17, #18, #19)
 
 | File | What AI drafted | Human verification |
