@@ -90,11 +90,16 @@
         var submitBtn = document.getElementById("modal-submit");
         if (!input || !results) return;
 
+        // Minimum query length: 3 — matches the inline hint shown next to the
+        // search input in subscriber/diary.html. Bumping this here without also
+        // updating that hint would re-introduce the original UX problem
+        // (testers typing 1-2 chars and seeing nothing happen — issue #38).
+        var MIN_QUERY_LEN = 3;
         var t = null;
         input.addEventListener("input", function () {
             clearTimeout(t);
             var q = input.value.trim();
-            if (q.length < 2) {
+            if (q.length < MIN_QUERY_LEN) {
                 results.innerHTML = "";
                 results.classList.remove("is-visible");
                 return;

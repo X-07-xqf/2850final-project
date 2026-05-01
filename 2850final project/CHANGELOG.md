@@ -4,6 +4,18 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [v0.5.1] - 2026-05-01 — Food-search hint & threshold (closes #38)
+
+### Changed
+- The diary "Add food" search input now shows an inline hint underneath: *"Type at least 3 letters to search. Try ban, chi, or oat."* The placeholder also says *"Type at least 3 letters…"* instead of the vague *"Type to search…"*.
+- The JS minimum-query-length constant is bumped from 2 → 3 so the actual behaviour matches the hint exactly (extracted as `MIN_QUERY_LEN` so the next change is a one-liner).
+- `aria-describedby` wires the hint into the input's accessibility tree so screen-reader users hear the threshold too.
+
+### Why
+Testers (and one of our own teammates) kept typing 1–2 letters into the search and giving up when nothing appeared — the field looked broken on first interaction. The hint is the smallest possible fix.
+
+---
+
 ## [v0.5.0] - 2026-05-01 — Visual identity refresh inspired by Anthropic
 
 We've spent the last few weeks looking at how research-led companies communicate visually, and Anthropic's site (anthropic.com) kept coming up as a reference the team admired — the warm parchment ivory background instead of clinical white, the strict alternation of light and slate-dark surfaces, the serif-plus-grotesque type pairing that reads more "research journal" than "startup", and the discipline of holding the entire chromatic budget for a single terracotta accent. As a learning exercise we studied their public design tokens and component vocabulary, then translated the system onto the existing Good Food class names so we could see what our app looked like in that visual idiom without rewriting any templates.
