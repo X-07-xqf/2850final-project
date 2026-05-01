@@ -51,6 +51,13 @@ These commits carry the `Made-with: Cursor` git trailer as the contemporaneous a
 | Header comments in `styles.css` and `app.js` | Wording of the AI-acknowledgment block | Charlie Wu reviewed the wording and confirmed it accurately describes what AI did and what the human did. |
 | `AI_USAGE.md` (this file) | Initial structure and entries | Charlie Wu reviewed every entry for accuracy. |
 
+### v0.5.1 — Food-search hint and threshold (closes #38)
+
+| File | What AI drafted | Human verification |
+|---|---|---|
+| `src/main/resources/templates/subscriber/diary.html` | The wording of the inline hint (`"Type at least 3 letters to search. Try ban, chi, or oat."`) and the `aria-describedby` wiring. | Charlie Wu read the seeded food list and chose the example terms (`ban`, `chi`, `oat`) so the hint examples actually return results. |
+| `src/main/resources/static/js/app.js` | Pulling the magic number `2` out into a named `MIN_QUERY_LEN = 3` constant, plus the comment linking the threshold back to the hint in the template. | Charlie Wu confirmed the new threshold matches the hint exactly. |
+
 ### v0.5.0 — Anthropic-inspired visual identity refresh (closes #36)
 
 | File | What AI drafted | Human verification |
