@@ -96,7 +96,7 @@ fun Route.professionalRoutes() {
             "carbs" to (summary["carbs"] ?: BigDecimal.ZERO).fmt(1),
             "fat" to (summary["fat"] ?: BigDecimal.ZERO).fmt(1)
         )
-        val displayGoals = goals?.mapValues { (_, v) -> v.fmt(1) } ?: emptyMap()
+        val displayGoals = goals?.mapValues { (_, v) -> v?.fmt(1) ?: "" } ?: emptyMap()
         call.respond(ThymeleafContent("professional/client-detail", model(
             "session" to session,
             "client" to mapOf<String, Any>("id" to client[Users.id], "fullName" to client[Users.fullName],
