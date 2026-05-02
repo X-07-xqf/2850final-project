@@ -4,6 +4,15 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [v0.6.7] - 2026-05-02 — UI tier-up: unified radius, larger card padding, mint accent (closes #56)
+
+### Fixed
+- Corner radii collapsed onto a single 14px family — `--radius-md` 16→14, `--radius-sm` 8→10, `--radius-lg` 20→18 — so cards / buttons / modals all live in the same geometric tier.
+- `.card` padding bumped from 24px to 28px, `.recipe-card__body` from 18px to 20px so cards breathe like the dashboard summary already does.
+- New `--color-mint` (#b1dbb8) and `--color-mint-bg` (#e1f4df) palette tokens with dark-mode counterparts; the `Featured this week` heading underline now uses mint as a distinct accent from the rest of the sage-on-cream layout.
+
+---
+
 ## [v0.6.6] - 2026-05-02 — Recipes: real cover photos, per-serving nutrition, Featured strip (closes #54)
 
 ### Fixed
