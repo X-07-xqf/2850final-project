@@ -22,6 +22,79 @@
    ============================================================ */
 
 :root {
+    /* ---- Anthropic raw tokens ---- */
+    --color-slate-dark: #141413;
+    --color-ivory-light: #faf9f5;
+    --color-ivory-medium: #f0eee6;
+    --color-ivory-dark: #e8e6dc;
+    --color-oat: #e3dacc;
+    --color-cloud-medium: #b0aea5;
+    --color-cloud-light: #d1cfc5;
+    --color-cloud-dark: #87867f;
+    --color-slate-medium: #3d3d3a;
+    --color-slate-light: #5e5d59;
+    --color-clay: #d97757;
+    --color-accent-ember: #c6613f;
+    --color-olive: #788c5d;
+    --color-sky: #6a9bcc;
+    --color-fig: #c46686;
+    --color-cactus: #bcd1ca;
+
+    /* ---- Semantic mapping (light theme — default) ---- */
+    --color-bg: var(--color-ivory-light);
+    --color-bg-elevated: var(--color-ivory-medium);
+    --color-surface: var(--color-ivory-medium);
+    --color-surface-alt: var(--color-oat);
+    --color-text: var(--color-slate-dark);
+    --color-text-strong: var(--color-slate-dark);
+    --color-muted: var(--color-slate-light);
+    --color-border: var(--color-slate-dark);
+    --color-border-strong: var(--color-slate-dark);
+    --color-border-soft: var(--color-cloud-light);
+    --color-primary: var(--color-slate-dark);
+    --color-primary-dark: var(--color-slate-dark);
+    --color-primary-soft: var(--color-ivory-medium);
+    --color-primary-on: var(--color-ivory-light);
+    --color-accent: var(--color-clay);
+    --color-warn: var(--color-clay);
+    --color-warn-soft: rgba(217, 119, 87, 0.14);
+    --color-danger: var(--color-accent-ember);
+    --color-danger-soft: rgba(198, 97, 63, 0.14);
+    --color-progress-track: var(--color-ivory-dark);
+
+    /* ---- Sidebar (slate-dark band on ivory page) ---- */
+    --sidebar-bg: var(--color-slate-dark);
+    --sidebar-bg-pro: #0a0a09;
+    --sidebar-text: var(--color-ivory-light);
+    --sidebar-text-muted: var(--color-cloud-medium);
+    --sidebar-divider: rgba(250, 249, 245, 0.12);
+    --sidebar-hover: rgba(250, 249, 245, 0.06);
+    --sidebar-active: rgba(250, 249, 245, 0.16);
+
+    /* ---- Chat / table / bubble ---- */
+    --bubble-them-bg: var(--color-ivory-medium);
+    --chat-bg-grad-from: var(--color-ivory-light);
+    --chat-bg-grad-to: var(--color-ivory-medium);
+    --conv-active-bg: var(--color-ivory-medium);
+    --table-head-bg: var(--color-ivory-medium);
+
+    /* ---- Anthropic uses zero box-shadows. Surface contrast
+       and 1 px hairlines do all the depth signalling. ---- */
+    --shadow-sm: none;
+    --shadow: none;
+    --shadow-lg: none;
+    --ring: 0 0 0 2px var(--color-clay);
+
+    /* ---- Radii: 0 for buttons, 8 for cards, 24 for editorial ---- */
+    --radius: 8px;          /* card */
+    --radius-sm: 0px;       /* button — 0 is a deliberate Anthropic signature */
+    --radius-lg: 24px;      /* dark feature card */
+    --radius-cta: 0 0 8px 8px;  /* Anthropic primary CTA — flat top, rounded bottom */
+
+    /* ---- Type families ---- */
+    --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    --font-serif: "Playfair Display", ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+    --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
     /* ---- Warm wellness palette (light theme — default) ---- */
     --color-cream:        #fbf8f0;   /* page bg — warmer than ivory */
     --color-cream-warm:   #f5f0e2;   /* alt warm surface */
