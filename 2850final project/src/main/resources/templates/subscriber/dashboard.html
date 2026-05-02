@@ -58,7 +58,8 @@
                         <div class="progress__fill progress__fill--prot" th:style="|width: ${pctProtein}%;|"></div>
                     </div>
                     <span class="macro-row__value">
-                        <span th:text="${totalProtein}">0</span> / <span th:text="${goalProtein}">80</span> g
+                        <strong th:text="${totalProtein}">0</strong>
+                        <span class="macro-row__goal"> / <span th:text="${goalProtein}">80</span> g</span>
                     </span>
                 </div>
                 <div class="macro-row">
@@ -68,7 +69,8 @@
                         <div class="progress__fill progress__fill--carb" th:style="|width: ${pctCarbs}%;|"></div>
                     </div>
                     <span class="macro-row__value">
-                        <span th:text="${totalCarbs}">0</span> / <span th:text="${goalCarbs}">250</span> g
+                        <strong th:text="${totalCarbs}">0</strong>
+                        <span class="macro-row__goal"> / <span th:text="${goalCarbs}">250</span> g</span>
                     </span>
                 </div>
                 <div class="macro-row">
@@ -78,7 +80,8 @@
                         <div class="progress__fill progress__fill--fat" th:style="|width: ${pctFat}%;|"></div>
                     </div>
                     <span class="macro-row__value">
-                        <span th:text="${totalFat}">0</span> / <span th:text="${goalFat}">65</span> g
+                        <strong th:text="${totalFat}">0</strong>
+                        <span class="macro-row__goal"> / <span th:text="${goalFat}">65</span> g</span>
                     </span>
                 </div>
             </div>
