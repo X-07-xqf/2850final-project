@@ -121,6 +121,9 @@ object RecipeService {
      */
     fun getRecipeDetail(recipeId: Int): Map<String, Any?>? = transaction {
         val recipe = Recipes.selectAll().where { Recipes.id eq recipeId }.singleOrNull() ?: return@transaction null
+        val authorRow = Users.selectAll().where { Users.id eq recipe[Recipes.createdBy] }.singleOrNull()
+        val authorId = recipe[Recipes.createdBy]
+        val authorName = authorRow?.get(Users.fullName) ?: "the author"
         val ingredients = RecipeIngredients.selectAll().where { RecipeIngredients.recipeId eq recipeId }.map { row ->
             mapOf("name" to row[RecipeIngredients.ingredientName], "quantity" to row[RecipeIngredients.quantity],
                 "unit" to row[RecipeIngredients.unit], "foodItemId" to row[RecipeIngredients.foodItemId])
@@ -148,6 +151,7 @@ object RecipeService {
             "prepTime" to recipe[Recipes.prepTimeMinutes], "cookTime" to recipe[Recipes.cookTimeMinutes],
             "totalTime" to (recipe[Recipes.prepTimeMinutes] + recipe[Recipes.cookTimeMinutes]),
             "servings" to recipe[Recipes.servings], "difficulty" to recipe[Recipes.difficulty],
+            "authorId" to authorId, "authorName" to authorName,
             "ingredients" to ingredients, "steps" to steps, "ratings" to ratings,
             "avgRating" to BigDecimal(avgRating).setScale(1, RoundingMode.HALF_UP), "reviewCount" to ratings.size,
             "calPerServing" to totalCal.divide(servings, 0, RoundingMode.HALF_UP),

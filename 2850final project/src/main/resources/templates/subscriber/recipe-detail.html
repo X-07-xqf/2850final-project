@@ -49,6 +49,13 @@
                     <span th:text="${recipe.avgRating}">0</span> / 5
                     (<span th:text="${recipe.reviewCount}">0</span> reviews)
                 </div>
+                <a th:if="${recipe.authorId != null and recipe.authorId != session.userId}"
+                   th:href="|/messages/${recipe.authorId}|"
+                   class="recipe-hero__chat">
+                    <span class="recipe-hero__chat-label">Message</span>
+                    <span class="recipe-hero__chat-name" th:text="${recipe.authorName}">Author</span>
+                    <span class="recipe-hero__chat-arrow" aria-hidden="true">→</span>
+                </a>
             </div>
             <form th:action="|/recipes/${recipe.id}/favourite|" method="post" class="fav-form">
                 <button type="submit" class="btn btn--ghost fav-btn" th:classappend="${isFavourite} ? ' fav-btn--on' : ''">

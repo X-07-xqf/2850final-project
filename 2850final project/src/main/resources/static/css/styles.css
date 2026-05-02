@@ -1564,6 +1564,62 @@ input::placeholder, textarea::placeholder {
     border-color: var(--color-border-strong);
 }
 
+.recipe-hero__chat {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 14px;
+    padding: 10px 16px;
+    background: var(--color-mint-bg);
+    color: var(--color-sage-deep);
+    border-radius: var(--radius-pill);
+    text-decoration: none;
+    font-size: var(--text-sm);
+    font-weight: 600;
+    border: 1px solid transparent;
+    transition: background var(--dur-fast) var(--ease), border-color var(--dur-fast) var(--ease), transform var(--dur-fast) var(--ease-out);
+}
+.recipe-hero__chat:hover {
+    background: var(--color-mint);
+    border-color: var(--color-sage);
+    color: var(--color-sage-deep);
+    text-decoration: none;
+    transform: translateX(2px);
+}
+.recipe-hero__chat-label { color: var(--color-sage); font-weight: 500; }
+.recipe-hero__chat-name { color: var(--color-sage-deep); font-weight: 700; }
+.recipe-hero__chat-arrow {
+    font-weight: 700;
+    transition: transform var(--dur-fast) var(--ease-out);
+}
+.recipe-hero__chat:hover .recipe-hero__chat-arrow { transform: translateX(3px); }
+
+/* ============================================================
+   Reduced motion — universal opt-out.
+   Belt-and-suspenders to the per-feature gating: any animation /
+   transition still slips through gets clamped to ~instant. Continuous
+   loops (login background blobs, conv-active accent, etc.) are killed
+   outright.
+   ============================================================ */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+    .auth-body::before,
+    .auth-body::after {
+        animation: none !important;
+    }
+    .progress--lg::after {
+        animation: none !important;
+        opacity: 0;
+    }
+}
+
 .section-title {
     margin: 0 0 14px;
     font-size: var(--text-lg);
