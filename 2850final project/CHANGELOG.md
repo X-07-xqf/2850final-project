@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [v0.6.8] - 2026-05-02 — Six more recipes seeded into the catalogue (closes #58)
+
+### Added
+- Six new recipes covering breakfast / lunch / dinner: Avocado Toast, Greek Yogurt Parfait, Tofu & Brown Rice Bowl, Avocado Egg Wrap, Tofu Broccoli Stir-Fry, Lentil & Sweet Potato Curry. Each ships with a real Unsplash cover, an ingredient list linked to the existing `food_items` library (so per-serving nutrition computes automatically), and step-by-step instructions.
+- New `SeedData.backfillExtraRecipes()` — idempotent, runs on every boot, inserts only when the recipe title is missing — so the live Render PostgreSQL picks up the six new recipes on the next deploy without a fresh seed.
+
+---
+
 ## [v0.6.7] - 2026-05-02 — UI tier-up: unified radius, larger card padding, mint accent (closes #56)
 
 ### Fixed
