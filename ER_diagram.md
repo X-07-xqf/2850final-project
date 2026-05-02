@@ -139,9 +139,9 @@ erDiagram
 
 ## Key Relationships
 
-- A **user** can be a subscriber or a professional (role-based).
-- A **professional** manages multiple subscribers via `client_relationships`.
+- A user can be a subscriber or a professional (role-based).
+- A professional manages multiple subscribers via `client_relationships`.
 - Subscribers record daily food intake in `food_diary_entries`, referencing `food_items`.
 - Professionals send `advice_messages` to their subscribers.
-- Anyone can create **recipes**; subscribers can **favourite** and **rate** them.
+- Anyone can create recipes; subscribers can favourite and rate them.
 - `recipe_ingredients` optionally links to `food_items` for nutritional calculations.
