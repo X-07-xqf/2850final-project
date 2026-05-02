@@ -4,6 +4,7 @@ import com.goodfood.config.UserSession
 import com.goodfood.config.model
 import com.goodfood.goals.GoalService
 import com.goodfood.messages.MessageService
+import com.goodfood.util.fmt
 import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
@@ -24,12 +25,35 @@ fun Route.diaryRoutes() {
         val goals = GoalService.getGoals(session.userId)
         val unread = MessageService.getUnreadCount(session.userId)
         val meals = listOf("breakfast", "lunch", "snack", "dinner").map { meal ->
-            val me = entries.filter { it["mealType"] == meal }; mapOf("type" to meal, "entries" to me, "calories" to me.sumOf { it["calories"] as BigDecimal })
+            val me = entries.filter { it["mealType"] == meal }
+            val mealCalories = me.sumOf { it["calories"] as BigDecimal }
+            mapOf(
+                "type" to meal,
+                "entries" to me.map { e -> mapOf(
+                    "id" to e["id"],
+                    "foodName" to e["foodName"],
+                    "mealType" to e["mealType"],
+                    "quantity" to (e["quantity"] as BigDecimal).fmt(1),
+                    "calories" to (e["calories"] as BigDecimal).fmt(0),
+                    "protein" to (e["protein"] as BigDecimal).fmt(1),
+                    "carbs" to (e["carbs"] as BigDecimal).fmt(1),
+                    "fat" to (e["fat"] as BigDecimal).fmt(1),
+                    "notes" to e["notes"]
+                ) },
+                "calories" to mealCalories.fmt(0)
+            )
         }
+        val displaySummary = mapOf(
+            "calories" to (summary["calories"] ?: BigDecimal.ZERO).fmt(0),
+            "protein" to (summary["protein"] ?: BigDecimal.ZERO).fmt(1),
+            "carbs" to (summary["carbs"] ?: BigDecimal.ZERO).fmt(1),
+            "fat" to (summary["fat"] ?: BigDecimal.ZERO).fmt(1)
+        )
+        val displayGoals = goals?.mapValues { (_, v) -> v?.fmt(1) ?: "" } ?: emptyMap()
         call.respond(ThymeleafContent("subscriber/diary", model(
             "session" to session, "date" to date, "dateFormatted" to date.format(DateTimeFormatter.ofPattern("MMMM d, yyyy")),
-            "prevDate" to date.minusDays(1), "nextDate" to date.plusDays(1), "meals" to meals, "summary" to summary,
-            "goals" to (goals ?: emptyMap()), "unreadMessages" to unread, "activePage" to "diary")))
+            "prevDate" to date.minusDays(1), "nextDate" to date.plusDays(1), "meals" to meals, "summary" to displaySummary,
+            "goals" to displayGoals, "unreadMessages" to unread, "activePage" to "diary")))
     }
 
     post("/diary/add") {

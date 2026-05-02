@@ -2,7 +2,7 @@
 
 This diagram complements [`ER_diagram.md`](ER_diagram.md). The ER diagram covers the database layer; this one covers the application layer — Ktor route extension functions, the service layer that owns business logic, and the Exposed `Table` objects that map onto database tables.
 
-The codebase is organised by **feature module** (each module folder contains its own table objects, routes, and service), so the diagram is grouped that way.
+The codebase is organised by feature module (each module folder contains its own table objects, routes, and service), so the diagram is grouped that way.
 
 ## Application-layer class diagram
 
@@ -210,11 +210,11 @@ classDiagram
 
 ## Layering rules
 
-1. **Routes** depend on **services**; never on table objects directly.
-2. **Services** depend on **table objects** (Exposed DSL); never on routes.
-3. **Table objects** are pure schema definitions and depend on nothing in the codebase except other table objects (for foreign keys).
-4. `Application` wires everything together but contains no business logic.
-5. `SeedData` is allowed to write through table objects directly because it bootstraps the DB before services run.
+1. Routes depend on services, never on table objects directly.
+2. Services depend on table objects (Exposed DSL), never on routes.
+3. Table objects are pure schema definitions and depend on nothing in the codebase except other table objects (for foreign keys).
+4. Application wires everything together but contains no business logic.
+5. SeedData is allowed to write through table objects directly because it bootstraps the DB before services run.
 
 ## Cross-cutting
 

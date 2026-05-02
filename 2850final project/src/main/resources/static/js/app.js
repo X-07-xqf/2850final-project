@@ -237,6 +237,35 @@
         });
     }
 
+    /* ---- Count-up: numbers tween from 0 to their final value on first paint ---- */
+    function initCountUp() {
+        // Respect the user's motion preference.
+        if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+        var nodes = document.querySelectorAll("[data-count-up]");
+        if (!nodes.length) return;
+        var DURATION = 700;
+        Array.prototype.forEach.call(nodes, function (el) {
+            var raw = (el.textContent || "").trim();
+            var target = parseFloat(raw);
+            if (isNaN(target)) return;
+            var hasDecimal = raw.indexOf(".") !== -1;
+            var fmt = function (v) {
+                return hasDecimal ? v.toFixed(1) : Math.round(v).toString();
+            };
+            el.textContent = fmt(0);
+            var startedAt = performance.now();
+            function frame(now) {
+                var t = Math.min((now - startedAt) / DURATION, 1);
+                // ease-out cubic
+                var eased = 1 - Math.pow(1 - t, 3);
+                el.textContent = fmt(target * eased);
+                if (t < 1) requestAnimationFrame(frame);
+                else el.textContent = fmt(target);
+            }
+            requestAnimationFrame(frame);
+        });
+    }
+
     /* Apply saved theme synchronously (before DOMContentLoaded) to avoid flash */
     try {
         var early = localStorage.getItem("gf-theme");
@@ -252,5 +281,6 @@
         initStarRating();
         initTheme();
         initSidebarDrawer();
+        initCountUp();
     });
 })();

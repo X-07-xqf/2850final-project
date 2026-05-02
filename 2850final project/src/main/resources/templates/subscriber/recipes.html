@@ -7,6 +7,7 @@
     <link rel="stylesheet" th:href="'/static/css/styles.css'" href="/static/css/styles.css"/>
 </head>
 <body class="app-body">
+<a href="#main" class="skip-link">Skip to main content</a>
 <button type="button" class="menu-toggle js-menu-toggle" aria-label="Open menu" aria-expanded="false">☰</button>
 <div class="sidebar-backdrop js-sidebar-backdrop" aria-hidden="true"></div>
 <div class="app-layout">
@@ -30,41 +31,78 @@
         <button type="button" class="sidebar__theme js-theme-toggle" aria-label="Toggle theme">Toggle theme</button>
         <a th:href="'/logout'" class="nav-link nav-link--muted sidebar__logout">Log out</a>
     </aside>
-    <main class="main">
+    <main id="main" class="main">
         <header class="page-header">
             <h1 class="page-title">Recipes</h1>
             <p class="page-meta">Browse and cook balanced meals</p>
         </header>
 
-        <form class="card filter-bar" method="get" th:action="'/recipes'">
-            <label class="field field--inline">
-                <span class="field__label">Search</span>
-                <input type="search" name="q" placeholder="Title…" th:value="${query}"/>
-            </label>
-            <label class="field field--inline">
-                <span class="field__label">Difficulty</span>
-                <select name="difficulty" class="input-select">
-                    <option value="all" th:selected="${difficulty == 'all'}">All</option>
-                    <option value="easy" th:selected="${difficulty == 'easy'}">Easy</option>
-                    <option value="medium" th:selected="${difficulty == 'medium'}">Medium</option>
-                    <option value="hard" th:selected="${difficulty == 'hard'}">Hard</option>
-                </select>
-            </label>
+        <section class="featured" th:if="${featured != null and !featured.isEmpty()}" aria-label="Featured this week">
+            <h2 class="featured__title">Featured this week</h2>
+            <div class="featured__strip">
+                <article class="featured-card" th:each="f, fIter : ${featured}" th:style="|--i: ${fIter.index};|">
+                    <a th:href="|/recipes/${f.id}|" class="featured-card__link">
+                        <div class="featured-card__cover">
+                            <img th:if="${f.imageUrl != null}" th:src="${f.imageUrl}" th:alt="${f.title}"
+                                 width="800" height="500" loading="lazy"/>
+                            <div th:if="${f.imageUrl == null}" class="featured-card__cover-fallback"
+                                 th:classappend="|recipe-card__cover--${f.coverTone}|">
+                                <span th:text="${f.coverEmoji}">🍽️</span>
+                            </div>
+                            <span class="featured-card__badge" th:if="${f.reviewCount > 0}">★ <span th:text="${f.avgRating}">0</span></span>
+                        </div>
+                        <div class="featured-card__body">
+                            <h3 class="featured-card__title" th:text="${f.title}">Recipe</h3>
+                            <p class="featured-card__nutrition">
+                                <span th:text="${f.calPerServing}">320</span> kcal ·
+                                <span th:text="${f.protPerServing}">28</span>g protein
+                                <span class="featured-card__per">per serving</span>
+                            </p>
+                        </div>
+                    </a>
+                </article>
+            </div>
+        </section>
+
+        <form class="filter-bar filter-bar--inline" method="get" th:action="'/recipes'">
+            <input type="search" name="q" placeholder="Search recipes by title…"
+                   th:value="${query}" aria-label="Search recipes" class="filter-bar__search"/>
+            <select name="difficulty" class="input-select filter-bar__select" aria-label="Filter by difficulty">
+                <option value="all" th:selected="${difficulty == 'all'}">All difficulties</option>
+                <option value="easy" th:selected="${difficulty == 'easy'}">Easy</option>
+                <option value="medium" th:selected="${difficulty == 'medium'}">Medium</option>
+                <option value="hard" th:selected="${difficulty == 'hard'}">Hard</option>
+            </select>
             <button type="submit" class="btn btn--primary">Apply</button>
         </form>
 
         <div class="recipe-grid" th:if="${recipes != null and !recipes.isEmpty()}">
-            <article class="card recipe-card" th:each="r : ${recipes}">
+            <article class="card recipe-card" th:each="r, rIter : ${recipes}" th:style="|--i: ${rIter.index};|">
                 <a th:href="|/recipes/${r.id}|" class="recipe-card__link">
-                    <h2 class="recipe-card__title" th:text="${r.title}">Recipe</h2>
-                    <p class="recipe-card__desc" th:text="${r.description}">Description</p>
-                    <div class="recipe-card__meta">
-                        <span th:text="${r.difficulty}">easy</span>
-                        ·
-                        <span th:text="${r.totalTime}">30</span> min
-                        ·
-                        ★ <span th:text="${r.avgRating}">0</span>
-                        (<span th:text="${r.reviewCount}">0</span>)
+                    <div class="recipe-card__cover" th:classappend="${r.imageUrl == null} ? |recipe-card__cover--${r.coverTone}|">
+                        <img th:if="${r.imageUrl != null}" th:src="${r.imageUrl}" th:alt="${r.title}"
+                             width="800" height="500" loading="lazy" class="recipe-card__cover-img"/>
+                        <span th:if="${r.imageUrl == null}" class="recipe-card__cover-emoji" th:text="${r.coverEmoji}" aria-hidden="true">🍽️</span>
+                    </div>
+                    <div class="recipe-card__body">
+                        <h2 class="recipe-card__title" th:text="${r.title}">Recipe</h2>
+                        <p class="recipe-card__desc" th:text="${r.description}">Description</p>
+                        <p class="recipe-card__nutrition">
+                            <span th:text="${r.calPerServing}">320</span> kcal ·
+                            <span th:text="${r.protPerServing}">28</span>g protein
+                            <span class="recipe-card__per">per serving</span>
+                        </p>
+                        <div class="recipe-card__meta">
+                            <span th:text="${r.difficulty}">easy</span>
+                            ·
+                            <span th:text="${r.totalTime}">30</span> min
+                            <span th:if="${r.reviewCount > 0}">
+                                ·
+                                ★ <span th:text="${r.avgRating}">0</span>
+                                (<span th:text="${r.reviewCount}">0</span>)
+                            </span>
+                            <span th:if="${r.reviewCount == 0}" class="recipe-card__unrated"> · Not rated yet</span>
+                        </div>
                     </div>
                 </a>
             </article>

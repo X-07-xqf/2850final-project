@@ -4,6 +4,171 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [v0.6.14] - 2026-05-02 — Dark-mode pass: brand tones flip, scrim + emoji halo tokenized (closes #70)
+
+### Fixed
+- Recipe-card covers (`--sage`, `--oat`, `--clay`, `--berry`) and progress-bar fills no longer read as floating light pastels on a dark page. The brand "soft" tones (`--color-sage-bg/soft/deep`, `--color-clay-bg/soft`, `--color-berry-soft`, `--color-cream-warm`, `--color-oat`) were only declared in the light `:root` and silently fell back in dark; now defined in both `:root[data-theme="dark"]` and the `prefers-color-scheme: dark` media block with darker tone-shifted equivalents.
+- Featured-card badge (`.featured-card__badge`) was hardcoded `rgba(31, 42, 35, 0.78)` — a forest-tinted scrim that became invisible on the now-dark recipe cover gradients. Promoted to `--overlay-strong` (forest in light, near-black in dark).
+- Modal backdrop and mobile-sidebar backdrop both used the same hardcoded `rgba(31, 42, 35, 0.45)`. Promoted to `--overlay-modal` and lightened to pure-black-at-55% in dark mode so the page-already-dark doesn't double-tint.
+- Recipe-card emoji drop-shadow (`drop-shadow(... rgba(31, 42, 35, 0.12))`) was forest-tinted and disappeared on dark covers. Promoted to `--emoji-shadow` (stronger pure-black in dark).
+- Once-only progress-bar shimmer was a hardcoded `rgba(255, 255, 255, 0.55)` white sweep — too cold/bright on a warm dark UI. Promoted to `--shimmer-highlight` (cream-at-22% in dark).
+- Berry recipe-card gradient endpoint was a hardcoded `#f3c4cf`. Promoted to `--color-berry-tint` so the gradient tone-shifts with the rest of the card in dark mode.
+- Sidebar theme-toggle hover border was hardcoded cream-at-20%. Promoted to `--sidebar-border-hover` for parity (still cream in light, soft cream in dark — the sidebar is dark in both modes, so this is mostly token hygiene).
+
+---
+
+## [v0.6.13] - 2026-05-02 — Strategy pass: recipe→author chat, mint earns its keep, reduced-motion guard (closes #68)
+
+### Added
+- Recipe detail now shows a mint-tinted "Message *Dr. Sarah Williams* →" pill under the rating row, linking to `/messages/<authorId>`. Hidden when the viewing user is the author. `RecipeService.getRecipeDetail` returns `authorId` + `authorName` so the template doesn't have to look them up.
+- Mint accent now reads as a system, not an orphan token: Featured strip underline (v0.6.7) + Goals "This week" pill (v0.6.12) + Dashboard empty-day CTA gradient (v0.6.9) + new recipe→author chat button.
+
+### Fixed
+- Universal `prefers-reduced-motion: reduce` block clamps all animations / transitions to 0.01ms and disables continuous loops (login background blobs, progress-bar shimmer). Backstop to the per-feature gating already in place since v0.6.11.
+
+---
+
+## [v0.6.12] - 2026-05-02 — Layout pass: Goals chart promotion, week nav, profile fav cards, login toggle anchor (closes #66)
+
+### Changed
+- `.two-col--goals` now uses `grid-template-columns: 2fr 3fr` so the weekly chart card takes 60% of the row vs the form's 40%; on `<720px` the layout stacks chart-first.
+- New `weekly-head` block in the chart card with the week label (e.g. `May 4 – May 10, 2026`) and a compact `← / This week / →` nav. `GoalRoutes` accepts `?week=YYYY-MM-DD` and snaps any non-Monday to its Monday; `DiaryService` gains a `getWeeklySummary(userId, monday)` overload.
+- Profile favourites render as `.fav-card` rows with a 80×80 cover thumbnail (real Unsplash for seed recipes, emoji-on-tone fallback otherwise) plus title + difficulty + rating; "Not rated yet" replaces `★ 0.0` for unrated.
+- Login dark/light theme toggle moved out of `position:fixed` page chrome and into the auth card itself (top-right corner, pill outline) — reads as part of the form, not a stray dev button.
+
+---
+
+## [v0.6.11] - 2026-05-02 — Motion pass: stagger reveal, ring fill, count-up, shimmer (closes #64)
+
+### Added
+- Stagger reveal on Dashboard macro rows + Recipes grid via `@keyframes stagger-rise` and `--i` index passed inline; 60ms delay per item, ~420ms duration, spring `cubic-bezier(0.16, 1, 0.3, 1)`.
+- Calorie ring fills from 0% to target on mount via `@property --ring-pct` (registered custom property) + 0.85s spring transition.
+- `initCountUp()` in `app.js`: `[data-count-up]` numeric elements tween from 0 to their final value over 700ms with ease-out cubic; preserves integer / single-decimal formatting from the rendered text.
+- One-shot shimmer pass on the calorie / protein / carbs / fat progress bars 0.9s after page settle — fires once, never loops.
+- All four motion features gated under `@media (prefers-reduced-motion: no-preference)`; `initCountUp()` early-returns when the user prefers reduced motion.
+
+### Notes
+- Hover transitions across cards / buttons already used the spring `--ease-out` curve from earlier passes; no change needed for that bullet.
+
+---
+
+## [v0.6.10] - 2026-05-02 — A11y / perf audit: focus, skip-link, image dims (closes #62)
+
+### Fixed
+- Global `:focus-visible` now pairs the soft `--ring` box-shadow with a 2px solid `--color-primary` outline + offset, so keyboard focus is unambiguously visible across themes and browsers.
+- Skip-to-main-content link added to every authenticated app shell template (subscriber + professional, 10 templates) and revealed on focus; `<main>` carries `id="main"` as the target.
+- Recipe cover `<img>` tags now declare `width="800" height="500"` for explicit aspect ratio, preventing CLS while the image loads.
+- Confirmed already-in-place: `font-display: swap` (Google Fonts URL), `role="alert"` on login errors, and implicit `<label>`-wrap association on every form. No change needed; documented for the audit trail.
+
+---
+
+## [v0.6.9] - 2026-05-02 — Demo polish: today-anchor seeds, unrated rating, empty-day CTA (closes #60)
+
+### Fixed
+- New idempotent `SeedData.ensureAliceHasTodayEntries()` keeps the demo account populated for `LocalDate.now()` on every boot — Dashboard never opens to a hostile zero state.
+- Recipe meta line and Featured cover badge no longer render `★ 0.0 (0)` / `★ 0` for unrated recipes; show `Not rated yet` (italicised) in the meta line and hide the badge entirely.
+- Empty-day Dashboard collapses four `Nothing here yet.` rows into one mint-tinted CTA card pointing at Diary.
+
+---
+
+## [v0.6.8] - 2026-05-02 — Six more recipes seeded into the catalogue (closes #58)
+
+### Added
+- Six new recipes covering breakfast / lunch / dinner: Avocado Toast, Greek Yogurt Parfait, Tofu & Brown Rice Bowl, Avocado Egg Wrap, Tofu Broccoli Stir-Fry, Lentil & Sweet Potato Curry. Each ships with a real Unsplash cover, an ingredient list linked to the existing `food_items` library (so per-serving nutrition computes automatically), and step-by-step instructions.
+- New `SeedData.backfillExtraRecipes()` — idempotent, runs on every boot, inserts only when the recipe title is missing — so the live Render PostgreSQL picks up the six new recipes on the next deploy without a fresh seed.
+
+---
+
+## [v0.6.7] - 2026-05-02 — UI tier-up: unified radius, larger card padding, mint accent (closes #56)
+
+### Fixed
+- Corner radii collapsed onto a single 14px family — `--radius-md` 16→14, `--radius-sm` 8→10, `--radius-lg` 20→18 — so cards / buttons / modals all live in the same geometric tier.
+- `.card` padding bumped from 24px to 28px, `.recipe-card__body` from 18px to 20px so cards breathe like the dashboard summary already does.
+- New `--color-mint` (#b1dbb8) and `--color-mint-bg` (#e1f4df) palette tokens with dark-mode counterparts; the `Featured this week` heading underline now uses mint as a distinct accent from the rest of the sage-on-cream layout.
+
+---
+
+## [v0.6.6] - 2026-05-02 — Recipes: real cover photos, per-serving nutrition, Featured strip (closes #54)
+
+### Fixed
+- Seed recipes (`Grilled Chicken Salad`, `Overnight Oats Bowl`, `Grilled Salmon with Veggies`) now ship with real Unsplash cover photos via an idempotent `SeedData.backfillImageUrls()` that runs on every boot. User-added recipes still fall back to the emoji cover.
+- Recipe cards now show per-serving calories and protein under the description (`320 kcal · 28g protein per serving`) — same nutrition logic that already powered the detail page, lifted into `searchRecipes` via a shared `summariseRow` helper.
+- Added a `Featured this week` strip above the search filter, showing the top 3 recipes by average rating (ties broken by review count). Hidden when the user has applied a search or difficulty filter so it doesn't fight the results.
+
+---
+
+## [v0.6.5] - 2026-05-02 — Final polish: macro typography, date prominence, filter row, sidebar tone (closes #52)
+
+### Fixed
+- Macro rows now split current value (body-size, strong) from goal (`/ 80 g` muted) instead of one grey lump.
+- Page-header date bumped from small / soft to base size with a sage-soft left accent bar so the date reads as page context rather than fine print.
+- Recipes filter card collapsed from a 3-row stacked form into a single inline strip (search input + difficulty select + Apply); roughly 60px less vertical air on `/recipes`.
+- Sidebar bg softened from `#1f2a23` to `#2d3d34` (warmer, less editorial); active-link tint lifted to `rgba(184,209,168,0.26)` so the highlight reads on the new bg.
+
+---
+
+## [v0.6.4] - 2026-05-02 — Dashboard polish: ring, thicker bars, warmer empty states (closes #50)
+
+### Fixed
+- Calories progress was a thin 6px line buried among three other macros — promoted to a conic-gradient ring centrepiece with the absolute number and percent inside.
+- Macro progress bars bumped from 6px to 10px with rounded ends and per-macro gradients (deep-sage → sage on calories, sage → sage-soft on protein, clay → clay-soft on fat).
+- Empty-state copy (`No foods logged for this meal.`, `Nothing logged yet.`, `No data for this week yet.`) replaced with friendlier nudges; diary empty meals point at the **Add food** button.
+
+---
+
+## [v0.6.3] - 2026-05-01 — UI detail bug fixes (closes #46)
+
+### Fixed
+- Trailing `.00` on numeric values across Dashboard / Diary / Goals / professional client-detail.
+- Raw ISO timestamps on Messages chat bubbles.
+- Bare text-only Recipe cards.
+
+---
+
+## [v0.6.2] - 2026-05-01 — Persist accounts on Render via PostgreSQL (closes #44)
+
+### Why
+The H2 database file (`./data/goodfood.mv.db`) lives inside each container's local filesystem and is `.gitignore`d, so it never travels with the code. On Render's free tier the container is rebuilt on every deploy and on idle spin-up, which wipes `data/` and erases every account a user registered through the web UI. The seed accounts only appear permanent because `SeedData.insertIfEmpty()` re-runs against the fresh schema and re-creates them. The same dynamic explains why a Codespace registered account disappears the next time the codespace is recycled. For the assessment demo the marker needs to register an account and have it survive a redeploy, so production needs a database that lives outside the container.
+
+### Changed
+- **`Database.kt`** — new `resolveDbSettings()` helper. When the `DATABASE_URL` environment variable is present (Render injects this when a PostgreSQL service is linked to the web service) the libpq form `postgres://user:pass@host:port/db[?…]` is parsed into a JDBC URL plus separate credentials, and the connection goes through `org.postgresql.Driver`. When the variable is unset — Codespaces, local dev, CI — the existing H2 file path from `application.conf` is used unchanged. Any query string on the original URL (e.g. `sslmode=require` for an external Render endpoint) is preserved verbatim.
+- **`build.gradle.kts`** — added `org.postgresql:postgresql:42.7.4` alongside the existing H2 driver. Both ship in the fat jar so the same artifact runs locally on H2 and on Render against PostgreSQL.
+
+### Notes
+- Existing Exposed queries are dialect-portable (`Recipes.title.lowerCase() like ?`, `FoodItems.name.lowerCase() like ?`); `lowerCase()` compiles to `LOWER(col)` which works on H2, MySQL, and PostgreSQL alike. Schema generation is delegated to `SchemaUtils.create(...)` and Exposed picks the right DDL per dialect.
+- Render setup after merge: provision a PostgreSQL Free instance, attach it to the web service so `DATABASE_URL` is auto-injected, then redeploy. No code switch needed — the env var alone flips the runtime to PostgreSQL.
+
+---
+
+## [v0.6.1] - 2026-05-01 — Fix Render build (Gradle 8.5)
+
+### Fixed
+- **Render deploy** — bumped the Dockerfile build-stage image from `gradle:7.6-jdk17` to `gradle:8.5-jdk17`. The Shadow plugin in `build.gradle.kts` is at `com.gradleup.shadow:8.3.0`, which requires Gradle 8.3+; the old base image shipped Gradle 7.6, so `gradle shadowJar` failed with *"This version of Shadow supports Gradle 8.3+ only"* and Render builds exited with status 1. The new image matches the project's wrapper version (`gradle-8.5-bin.zip`). Local dev and GitHub Actions were unaffected because they use `./gradlew`, not the Docker base image's `gradle` binary.
+
+---
+
+## [v0.6.0] - 2026-05-01 — Warm wellness redesign + animated login background (closes #40)
+
+The team sat with v0.5.0 for a couple of days and decided it was the wrong fit. The disciplined research-journal aesthetic looked sharp in isolation but read as clinical and intimidating for a consumer app whose entire purpose is to *encourage* people to log meals and try home cooking. The brief is about warmth and habit-building, not editorial gravity. v0.6.0 swaps the system out for one that fits the product.
+
+### Changed
+- **Palette** — cream / oat / sage / terracotta replaces ivory / slate / clay. Deep-forest text on warm cream surfaces. Sage as the calm primary; terracotta reserved as the single warm accent. Berry tone added for genuine alerts only.
+- **Type** — consolidated to **Plus Jakarta Sans** at every level. The v0.5.0 sans + serif + mono trio was elegant but added formality the product doesn't need; one friendly geometric family across the system reads as "consumer wellness" rather than "magazine".
+- **Geometry** — soft rounded corners throughout (8 / 14 / 16 / 20 px and pill). Buttons are now pills; modal corners 20 px; cards 16 px. Subtle layered shadows return as elevation cues — barely there but present, replacing the v0.5.0 zero-shadow rule.
+- **Sidebar** — deep-forest band with cream text; active nav entry uses a soft sage-tinted background instead of the previous accent border.
+- **Recipe cards** — inviting elevation on hover (translate-up + slightly heavier shadow). The home-cooking pillar of the brief is where the new system most obviously pays off.
+- **Macro progress bars** — gradient fill from deep sage to sage on the calorie bar, solid sage on protein, muted sage on carbs, terracotta on fat.
+- **Tabs in the auth card** — pill-tabs inside a warm tray with a soft shadow, replacing the underline-tab pattern.
+
+### Added
+- **Animated login background** — two large soft-edged colour fields (sage and terracotta tints) drift slowly behind the auth card. Pure CSS via `::before` and `::after` on `.auth-body`, `transform` and `opacity` only, GPU-composited, blurred for an organic feel. `prefers-reduced-motion` cuts the animation entirely. The auth card sits crisp on top — motion is wallpaper, not theatre.
+
+### Notes
+- Same constraint as v0.5.0: zero HTML class-name renames, JavaScript untouched, all 21 tests still green, dark mode keeps working (inverts into a deep-forest base with cream text).
+- `DESIGN_DECISIONS.md` gains entry **D-12** explaining why v0.5.0 was retired.
+
+---
+
 ## [v0.5.1] - 2026-05-01 — Food-search hint & threshold (closes #38)
 
 ### Changed

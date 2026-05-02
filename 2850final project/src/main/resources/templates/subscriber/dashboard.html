@@ -7,6 +7,7 @@
     <link rel="stylesheet" th:href="'/static/css/styles.css'" href="/static/css/styles.css"/>
 </head>
 <body class="app-body">
+<a href="#main" class="skip-link">Skip to main content</a>
 <button type="button" class="menu-toggle js-menu-toggle" aria-label="Open menu" aria-expanded="false">☰</button>
 <div class="sidebar-backdrop js-sidebar-backdrop" aria-hidden="true"></div>
 <div class="app-layout">
@@ -30,44 +31,70 @@
         <button type="button" class="sidebar__theme js-theme-toggle" aria-label="Toggle theme">Toggle theme</button>
         <a th:href="'/logout'" class="nav-link nav-link--muted sidebar__logout">Log out</a>
     </aside>
-    <main class="main">
+    <main id="main" class="main">
         <header class="page-header">
             <h1 class="page-title">Today’s nutrition</h1>
             <p class="page-meta" th:text="${date}">Date</p>
         </header>
 
-        <section class="card macro-grid" aria-label="Daily macros">
-            <div class="macro-card">
-                <h2 class="macro-card__label">Calories</h2>
-                <p class="macro-card__value"><span th:text="${totalCalories}">0</span> / <span th:text="${goalCalories}">2000</span> kcal</p>
-                <div class="progress" role="progressbar" aria-label="Calories progress" th:attr="aria-valuenow=${pctCalories}" aria-valuemin="0" aria-valuemax="100">
-                    <div class="progress__fill progress__fill--cal" th:style="|width: ${pctCalories}%;|"></div>
+        <section class="card dashboard-summary" aria-label="Daily macros">
+            <div class="dashboard-summary__ring">
+                <div class="ring" th:style="|--ring-pct: ${pctCalories};|" role="img"
+                     th:attr="aria-label=|${pctCalories} percent of daily calorie goal|">
+                    <div class="ring__center">
+                        <span class="ring__value" th:text="${totalCalories}" data-count-up>0</span>
+                        <span class="ring__unit">kcal</span>
+                        <span class="ring__pct"><span th:text="${pctCalories}" data-count-up>0</span>% of goal</span>
+                    </div>
                 </div>
+                <p class="dashboard-summary__caption">
+                    <span th:text="${totalCalories}">0</span> / <span th:text="${goalCalories}">2000</span> kcal
+                </p>
             </div>
-            <div class="macro-card">
-                <h2 class="macro-card__label">Protein</h2>
-                <p class="macro-card__value"><span th:text="${totalProtein}">0</span> / <span th:text="${goalProtein}">80</span> g</p>
-                <div class="progress" role="progressbar" aria-label="Protein progress" th:attr="aria-valuenow=${pctProtein}" aria-valuemin="0" aria-valuemax="100">
-                    <div class="progress__fill progress__fill--prot" th:style="|width: ${pctProtein}%;|"></div>
+            <div class="dashboard-summary__bars">
+                <div class="macro-row" style="--i: 0;">
+                    <span class="macro-row__label">Protein</span>
+                    <div class="progress progress--lg" role="progressbar" aria-label="Protein progress"
+                         th:attr="aria-valuenow=${pctProtein}" aria-valuemin="0" aria-valuemax="100">
+                        <div class="progress__fill progress__fill--prot" th:style="|width: ${pctProtein}%;|"></div>
+                    </div>
+                    <span class="macro-row__value">
+                        <strong th:text="${totalProtein}" data-count-up>0</strong>
+                        <span class="macro-row__goal"> / <span th:text="${goalProtein}">80</span> g</span>
+                    </span>
                 </div>
-            </div>
-            <div class="macro-card">
-                <h2 class="macro-card__label">Carbs</h2>
-                <p class="macro-card__value"><span th:text="${totalCarbs}">0</span> / <span th:text="${goalCarbs}">250</span> g</p>
-                <div class="progress" role="progressbar" aria-label="Carbohydrates progress" th:attr="aria-valuenow=${pctCarbs}" aria-valuemin="0" aria-valuemax="100">
-                    <div class="progress__fill progress__fill--carb" th:style="|width: ${pctCarbs}%;|"></div>
+                <div class="macro-row" style="--i: 1;">
+                    <span class="macro-row__label">Carbs</span>
+                    <div class="progress progress--lg" role="progressbar" aria-label="Carbohydrates progress"
+                         th:attr="aria-valuenow=${pctCarbs}" aria-valuemin="0" aria-valuemax="100">
+                        <div class="progress__fill progress__fill--carb" th:style="|width: ${pctCarbs}%;|"></div>
+                    </div>
+                    <span class="macro-row__value">
+                        <strong th:text="${totalCarbs}" data-count-up>0</strong>
+                        <span class="macro-row__goal"> / <span th:text="${goalCarbs}">250</span> g</span>
+                    </span>
                 </div>
-            </div>
-            <div class="macro-card">
-                <h2 class="macro-card__label">Fat</h2>
-                <p class="macro-card__value"><span th:text="${totalFat}">0</span> / <span th:text="${goalFat}">65</span> g</p>
-                <div class="progress" role="progressbar" aria-label="Fat progress" th:attr="aria-valuenow=${pctFat}" aria-valuemin="0" aria-valuemax="100">
-                    <div class="progress__fill progress__fill--fat" th:style="|width: ${pctFat}%;|"></div>
+                <div class="macro-row" style="--i: 2;">
+                    <span class="macro-row__label">Fat</span>
+                    <div class="progress progress--lg" role="progressbar" aria-label="Fat progress"
+                         th:attr="aria-valuenow=${pctFat}" aria-valuemin="0" aria-valuemax="100">
+                        <div class="progress__fill progress__fill--fat" th:style="|width: ${pctFat}%;|"></div>
+                    </div>
+                    <span class="macro-row__value">
+                        <strong th:text="${totalFat}" data-count-up>0</strong>
+                        <span class="macro-row__goal"> / <span th:text="${goalFat}">65</span> g</span>
+                    </span>
                 </div>
             </div>
         </section>
 
-        <section class="meals-section" th:each="meal : ${meals}">
+        <section th:if="${isDayEmpty}" class="empty-day">
+            <h2 class="empty-day__title">Today's plate is empty</h2>
+            <p class="empty-day__text">Log your first meal to see your day come together.</p>
+            <a th:href="'/diary'" class="btn btn--primary empty-day__cta">Add a meal</a>
+        </section>
+
+        <section th:unless="${isDayEmpty}" class="meals-section" th:each="meal : ${meals}">
             <header class="meals-section__head">
                 <h2 class="meals-section__title" th:text="${#strings.capitalize(meal.type)}">Breakfast</h2>
                 <span class="meals-section__kcal"><span th:text="${meal.calories}">0</span> kcal</span>
@@ -81,7 +108,7 @@
                     </span>
                 </li>
             </ul>
-            <p class="empty-hint" th:if="${meal.entries == null or meal.entries.isEmpty()}">No foods logged for this meal.</p>
+            <p class="empty-hint" th:if="${meal.entries == null or meal.entries.isEmpty()}">Nothing here yet.</p>
         </section>
     </main>
 </div>

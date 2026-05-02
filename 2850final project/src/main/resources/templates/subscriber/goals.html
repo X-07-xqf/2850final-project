@@ -7,6 +7,7 @@
     <link rel="stylesheet" th:href="'/static/css/styles.css'" href="/static/css/styles.css"/>
 </head>
 <body class="app-body">
+<a href="#main" class="skip-link">Skip to main content</a>
 <button type="button" class="menu-toggle js-menu-toggle" aria-label="Open menu" aria-expanded="false">☰</button>
 <div class="sidebar-backdrop js-sidebar-backdrop" aria-hidden="true"></div>
 <div class="app-layout">
@@ -30,7 +31,7 @@
         <button type="button" class="sidebar__theme js-theme-toggle" aria-label="Toggle theme">Toggle theme</button>
         <a th:href="'/logout'" class="nav-link nav-link--muted sidebar__logout">Log out</a>
     </aside>
-    <main class="main">
+    <main id="main" class="main">
         <header class="page-header">
             <h1 class="page-title">Nutrition goals</h1>
             <p class="page-meta">Daily targets power your dashboard progress bars</p>
@@ -65,8 +66,19 @@
             </section>
 
             <section class="card">
-                <h2 class="section-title">This week (calories)</h2>
-                <p class="chart-caption">Each bar shows total kcal logged that day.</p>
+                <header class="weekly-head">
+                    <div>
+                        <h2 class="section-title weekly-head__title">Calories this week</h2>
+                        <p class="weekly-head__label" th:text="${weekLabel}">May 4 – May 10, 2026</p>
+                    </div>
+                    <div class="date-nav date-nav--compact">
+                        <a class="btn btn--ghost btn--small" th:href="|/goals?week=${prevWeek}|" aria-label="Previous week">←</a>
+                        <a class="btn btn--ghost btn--small"
+                           th:classappend="${isCurrentWeek} ? ' is-current'"
+                           th:href="'/goals'">This week</a>
+                        <a class="btn btn--ghost btn--small" th:href="|/goals?week=${nextWeek}|" aria-label="Next week">→</a>
+                    </div>
+                </header>
                 <div class="weekly-chart" th:if="${weekly != null and !weekly.isEmpty()}">
                     <div class="weekly-chart__row" th:each="w : ${weekly}">
                         <span class="weekly-chart__label" th:text="${w.dayName}">Mon</span>
@@ -74,7 +86,7 @@
                         <span class="weekly-chart__val" th:text="${w.calories}">0</span>
                     </div>
                 </div>
-                <p class="empty-hint" th:if="${weekly == null or weekly.isEmpty()}">No data for this week yet.</p>
+                <p class="empty-hint" th:if="${weekly == null or weekly.isEmpty()}">Quiet week so far — log a meal to see progress.</p>
             </section>
         </div>
     </main>

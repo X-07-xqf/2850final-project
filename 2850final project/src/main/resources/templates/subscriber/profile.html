@@ -7,6 +7,7 @@
     <link rel="stylesheet" th:href="'/static/css/styles.css'" href="/static/css/styles.css"/>
 </head>
 <body class="app-body">
+<a href="#main" class="skip-link">Skip to main content</a>
 <button type="button" class="menu-toggle js-menu-toggle" aria-label="Open menu" aria-expanded="false">☰</button>
 <div class="sidebar-backdrop js-sidebar-backdrop" aria-hidden="true"></div>
 <div class="app-layout">
@@ -30,7 +31,7 @@
         <button type="button" class="sidebar__theme js-theme-toggle" aria-label="Toggle theme">Toggle theme</button>
         <a th:href="'/logout'" class="nav-link nav-link--muted sidebar__logout">Log out</a>
     </aside>
-    <main class="main">
+    <main id="main" class="main">
         <header class="page-header">
             <h1 class="page-title">Your profile</h1>
             <p class="page-meta">Account details and saved recipes</p>
@@ -60,13 +61,24 @@
             <section class="card">
                 <h2 class="section-title">Favourite recipes</h2>
                 <ul class="fav-recipe-list" th:if="${favourites != null and !favourites.isEmpty()}">
-                    <li th:each="f : ${favourites}">
-                        <a th:href="|/recipes/${f.id}|" class="fav-recipe-list__link">
-                            <span th:text="${f.title}">Recipe</span>
-                            <span class="fav-recipe-list__meta">
-                                <span th:text="${f.difficulty}">easy</span>
-                                · ★ <span th:text="${f.avgRating}">0</span>
-                            </span>
+                    <li th:each="f : ${favourites}" class="fav-card">
+                        <a th:href="|/recipes/${f.id}|" class="fav-card__link">
+                            <div class="fav-card__cover">
+                                <img th:if="${f.imageUrl != null}" th:src="${f.imageUrl}" th:alt="${f.title}"
+                                     width="160" height="160" loading="lazy"/>
+                                <div th:if="${f.imageUrl == null}" class="fav-card__cover-fallback"
+                                     th:classappend="|recipe-card__cover--${f.coverTone}|">
+                                    <span th:text="${f.coverEmoji}">🍽️</span>
+                                </div>
+                            </div>
+                            <div class="fav-card__body">
+                                <span class="fav-card__title" th:text="${f.title}">Recipe</span>
+                                <span class="fav-card__meta">
+                                    <span th:text="${f.difficulty}">easy</span>
+                                    <span th:if="${f.reviewCount > 0}"> · ★ <span th:text="${f.avgRating}">0</span></span>
+                                    <span th:if="${f.reviewCount == 0}" class="fav-card__unrated"> · Not rated yet</span>
+                                </span>
+                            </div>
                         </a>
                     </li>
                 </ul>

@@ -2,6 +2,8 @@ package com.goodfood.recipes
 
 import com.goodfood.auth.Users
 import com.goodfood.diary.FoodItems
+import com.goodfood.util.recipeCoverEmoji
+import com.goodfood.util.recipeCoverTone
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -27,12 +29,60 @@ object RecipeService {
         input.replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_")
 
     /**
+     * Compute the per-serving macros for a recipe by summing each ingredient's
+     * scaled nutrition (factor = `quantity / 100g`) and dividing by `servings`.
+     * Returns a four-element pair-of-pairs: cal, protein, carbs, fat. Used by
+     * both [searchRecipes] (card meta line) and [getRecipeDetail].
+     */
+    private fun perServingMacros(recipeId: Int, servings: Int): Map<String, BigDecimal> {
+        val ingredients = RecipeIngredients.selectAll().where { RecipeIngredients.recipeId eq recipeId }.toList()
+        var cal = BigDecimal.ZERO; var prot = BigDecimal.ZERO; var carb = BigDecimal.ZERO; var fat = BigDecimal.ZERO
+        for (row in ingredients) {
+            val fid = row[RecipeIngredients.foodItemId] ?: continue
+            val food = FoodItems.selectAll().where { FoodItems.id eq fid }.singleOrNull() ?: continue
+            val qty = try { BigDecimal(row[RecipeIngredients.quantity]) } catch (_: Exception) { continue }
+            val factor = qty.divide(BigDecimal(100), 4, RoundingMode.HALF_UP)
+            cal += food[FoodItems.caloriesPer100g] * factor; prot += food[FoodItems.proteinPer100g] * factor
+            carb += food[FoodItems.carbsPer100g] * factor; fat += food[FoodItems.fatPer100g] * factor
+        }
+        val s = servings.toBigDecimal()
+        return mapOf(
+            "cal" to cal.divide(s, 0, RoundingMode.HALF_UP),
+            "prot" to prot.divide(s, 1, RoundingMode.HALF_UP),
+            "carb" to carb.divide(s, 1, RoundingMode.HALF_UP),
+            "fat" to fat.divide(s, 1, RoundingMode.HALF_UP)
+        )
+    }
+
+    /**
+     * Build the card-shaped summary map for a single recipe row — covers the
+     * `/recipes` listing and the `Featured this week` strip. Inside `transaction`.
+     */
+    private fun summariseRow(row: org.jetbrains.exposed.sql.ResultRow): Map<String, Any?> {
+        val rid = row[Recipes.id]
+        val title = row[Recipes.title]
+        val servings = row[Recipes.servings]
+        val ratings = RecipeRatings.selectAll().where { RecipeRatings.recipeId eq rid }.toList()
+        val avgRating = if (ratings.isNotEmpty()) ratings.map { it[RecipeRatings.rating] }.average() else 0.0
+        val macros = perServingMacros(rid, servings)
+        return mapOf("id" to rid, "title" to title, "description" to row[Recipes.description],
+            "prepTime" to row[Recipes.prepTimeMinutes], "cookTime" to row[Recipes.cookTimeMinutes],
+            "totalTime" to (row[Recipes.prepTimeMinutes] + row[Recipes.cookTimeMinutes]),
+            "servings" to servings, "difficulty" to row[Recipes.difficulty],
+            "avgRating" to BigDecimal(avgRating).setScale(1, RoundingMode.HALF_UP), "reviewCount" to ratings.size,
+            "imageUrl" to row[Recipes.imageUrl],
+            "coverEmoji" to recipeCoverEmoji(title), "coverTone" to recipeCoverTone(title),
+            "calPerServing" to macros["cal"], "protPerServing" to macros["prot"])
+    }
+
+    /**
      * Title-substring + difficulty filter. Both filters are optional.
      *
      * @param query case-insensitive substring of the recipe title; wildcard-escaped.
      * @param difficulty `"easy"`, `"medium"`, `"hard"`, or `"all"` / `null` to skip.
      * @return one map per recipe with id, title, description, prep/cook/total time,
-     *  servings, difficulty, average rating, and review count.
+     *  servings, difficulty, average rating, review count, cover image / fallback
+     *  emoji + tone, and per-serving calories / protein.
      */
     fun searchRecipes(query: String?, difficulty: String?): List<Map<String, Any?>> = transaction {
         val baseQuery = Recipes.selectAll()
@@ -44,16 +94,20 @@ object RecipeService {
             if (!difficulty.isNullOrBlank() && difficulty != "all") q.andWhere { Recipes.difficulty eq difficulty }
             q
         }
-        filtered.map { row ->
-            val rid = row[Recipes.id]
-            val ratings = RecipeRatings.selectAll().where { RecipeRatings.recipeId eq rid }.toList()
-            val avgRating = if (ratings.isNotEmpty()) ratings.map { it[RecipeRatings.rating] }.average() else 0.0
-            mapOf("id" to rid, "title" to row[Recipes.title], "description" to row[Recipes.description],
-                "prepTime" to row[Recipes.prepTimeMinutes], "cookTime" to row[Recipes.cookTimeMinutes],
-                "totalTime" to (row[Recipes.prepTimeMinutes] + row[Recipes.cookTimeMinutes]),
-                "servings" to row[Recipes.servings], "difficulty" to row[Recipes.difficulty],
-                "avgRating" to BigDecimal(avgRating).setScale(1, RoundingMode.HALF_UP), "reviewCount" to ratings.size)
-        }
+        filtered.map { summariseRow(it) }
+    }
+
+    /**
+     * Top [limit] recipes by average rating (ties broken by review count, then
+     * by recipe id for stability). Powers the `Featured this week` strip on
+     * `/recipes`. Recipes with zero ratings sort last.
+     */
+    fun getFeatured(limit: Int = 3): List<Map<String, Any?>> = transaction {
+        Recipes.selectAll().map { summariseRow(it) }
+            .sortedWith(compareByDescending<Map<String, Any?>> { (it["avgRating"] as BigDecimal) }
+                .thenByDescending { it["reviewCount"] as Int }
+                .thenBy { it["id"] as Int })
+            .take(limit)
     }
 
     /**
@@ -67,6 +121,9 @@ object RecipeService {
      */
     fun getRecipeDetail(recipeId: Int): Map<String, Any?>? = transaction {
         val recipe = Recipes.selectAll().where { Recipes.id eq recipeId }.singleOrNull() ?: return@transaction null
+        val authorRow = Users.selectAll().where { Users.id eq recipe[Recipes.createdBy] }.singleOrNull()
+        val authorId = recipe[Recipes.createdBy]
+        val authorName = authorRow?.get(Users.fullName) ?: "the author"
         val ingredients = RecipeIngredients.selectAll().where { RecipeIngredients.recipeId eq recipeId }.map { row ->
             mapOf("name" to row[RecipeIngredients.ingredientName], "quantity" to row[RecipeIngredients.quantity],
                 "unit" to row[RecipeIngredients.unit], "foodItemId" to row[RecipeIngredients.foodItemId])
@@ -94,6 +151,7 @@ object RecipeService {
             "prepTime" to recipe[Recipes.prepTimeMinutes], "cookTime" to recipe[Recipes.cookTimeMinutes],
             "totalTime" to (recipe[Recipes.prepTimeMinutes] + recipe[Recipes.cookTimeMinutes]),
             "servings" to recipe[Recipes.servings], "difficulty" to recipe[Recipes.difficulty],
+            "authorId" to authorId, "authorName" to authorName,
             "ingredients" to ingredients, "steps" to steps, "ratings" to ratings,
             "avgRating" to BigDecimal(avgRating).setScale(1, RoundingMode.HALF_UP), "reviewCount" to ratings.size,
             "calPerServing" to totalCal.divide(servings, 0, RoundingMode.HALF_UP),
@@ -143,9 +201,15 @@ object RecipeService {
      */
     fun getUserFavourites(userId: Int): List<Map<String, Any?>> = transaction {
         (RecipeFavourites innerJoin Recipes).selectAll().where { RecipeFavourites.userId eq userId }.map { row ->
-            val rid = row[Recipes.id]; val ratings = RecipeRatings.selectAll().where { RecipeRatings.recipeId eq rid }.toList()
+            val rid = row[Recipes.id]
+            val title = row[Recipes.title]
+            val ratings = RecipeRatings.selectAll().where { RecipeRatings.recipeId eq rid }.toList()
             val avg = if (ratings.isNotEmpty()) ratings.map { it[RecipeRatings.rating] }.average() else 0.0
-            mapOf("id" to rid, "title" to row[Recipes.title], "difficulty" to row[Recipes.difficulty], "avgRating" to BigDecimal(avg).setScale(1, RoundingMode.HALF_UP))
+            mapOf("id" to rid, "title" to title, "difficulty" to row[Recipes.difficulty],
+                "avgRating" to BigDecimal(avg).setScale(1, RoundingMode.HALF_UP),
+                "reviewCount" to ratings.size,
+                "imageUrl" to row[Recipes.imageUrl],
+                "coverEmoji" to recipeCoverEmoji(title), "coverTone" to recipeCoverTone(title))
         }
     }
 }

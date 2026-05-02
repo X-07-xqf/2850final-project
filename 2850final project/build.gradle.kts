@@ -67,6 +67,7 @@ dependencies {
     implementation("org.jetbrains.exposed:exposed-java-time:$exposedVersion")
 
     implementation("com.h2database:h2:$h2Version")
+    implementation("org.postgresql:postgresql:42.7.4")
     implementation("at.favre.lib:bcrypt:0.10.2")
     implementation("ch.qos.logback:logback-classic:$logbackVersion")
 
