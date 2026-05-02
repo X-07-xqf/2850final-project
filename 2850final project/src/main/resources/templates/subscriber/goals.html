@@ -66,8 +66,19 @@
             </section>
 
             <section class="card">
-                <h2 class="section-title">This week (calories)</h2>
-                <p class="chart-caption">Each bar shows total kcal logged that day.</p>
+                <header class="weekly-head">
+                    <div>
+                        <h2 class="section-title weekly-head__title">Calories this week</h2>
+                        <p class="weekly-head__label" th:text="${weekLabel}">May 4 – May 10, 2026</p>
+                    </div>
+                    <div class="date-nav date-nav--compact">
+                        <a class="btn btn--ghost btn--small" th:href="|/goals?week=${prevWeek}|" aria-label="Previous week">←</a>
+                        <a class="btn btn--ghost btn--small"
+                           th:classappend="${isCurrentWeek} ? ' is-current'"
+                           th:href="'/goals'">This week</a>
+                        <a class="btn btn--ghost btn--small" th:href="|/goals?week=${nextWeek}|" aria-label="Next week">→</a>
+                    </div>
+                </header>
                 <div class="weekly-chart" th:if="${weekly != null and !weekly.isEmpty()}">
                     <div class="weekly-chart__row" th:each="w : ${weekly}">
                         <span class="weekly-chart__label" th:text="${w.dayName}">Mon</span>

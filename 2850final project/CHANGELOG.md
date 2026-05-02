@@ -4,6 +4,16 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [v0.6.12] - 2026-05-02 — Layout pass: Goals chart promotion, week nav, profile fav cards, login toggle anchor (closes #66)
+
+### Changed
+- `.two-col--goals` now uses `grid-template-columns: 2fr 3fr` so the weekly chart card takes 60% of the row vs the form's 40%; on `<720px` the layout stacks chart-first.
+- New `weekly-head` block in the chart card with the week label (e.g. `May 4 – May 10, 2026`) and a compact `← / This week / →` nav. `GoalRoutes` accepts `?week=YYYY-MM-DD` and snaps any non-Monday to its Monday; `DiaryService` gains a `getWeeklySummary(userId, monday)` overload.
+- Profile favourites render as `.fav-card` rows with a 80×80 cover thumbnail (real Unsplash for seed recipes, emoji-on-tone fallback otherwise) plus title + difficulty + rating; "Not rated yet" replaces `★ 0.0` for unrated.
+- Login dark/light theme toggle moved out of `position:fixed` page chrome and into the auth card itself (top-right corner, pill outline) — reads as part of the form, not a stray dev button.
+
+---
+
 ## [v0.6.11] - 2026-05-02 — Motion pass: stagger reveal, ring fill, count-up, shimmer (closes #64)
 
 ### Added

@@ -197,9 +197,15 @@ object RecipeService {
      */
     fun getUserFavourites(userId: Int): List<Map<String, Any?>> = transaction {
         (RecipeFavourites innerJoin Recipes).selectAll().where { RecipeFavourites.userId eq userId }.map { row ->
-            val rid = row[Recipes.id]; val ratings = RecipeRatings.selectAll().where { RecipeRatings.recipeId eq rid }.toList()
+            val rid = row[Recipes.id]
+            val title = row[Recipes.title]
+            val ratings = RecipeRatings.selectAll().where { RecipeRatings.recipeId eq rid }.toList()
             val avg = if (ratings.isNotEmpty()) ratings.map { it[RecipeRatings.rating] }.average() else 0.0
-            mapOf("id" to rid, "title" to row[Recipes.title], "difficulty" to row[Recipes.difficulty], "avgRating" to BigDecimal(avg).setScale(1, RoundingMode.HALF_UP))
+            mapOf("id" to rid, "title" to title, "difficulty" to row[Recipes.difficulty],
+                "avgRating" to BigDecimal(avg).setScale(1, RoundingMode.HALF_UP),
+                "reviewCount" to ratings.size,
+                "imageUrl" to row[Recipes.imageUrl],
+                "coverEmoji" to recipeCoverEmoji(title), "coverTone" to recipeCoverTone(title))
         }
     }
 }
