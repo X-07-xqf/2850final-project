@@ -4,6 +4,17 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [v0.6.13] - 2026-05-02 — Strategy pass: recipe→author chat, mint earns its keep, reduced-motion guard (closes #68)
+
+### Added
+- Recipe detail now shows a mint-tinted "Message *Dr. Sarah Williams* →" pill under the rating row, linking to `/messages/<authorId>`. Hidden when the viewing user is the author. `RecipeService.getRecipeDetail` returns `authorId` + `authorName` so the template doesn't have to look them up.
+- Mint accent now reads as a system, not an orphan token: Featured strip underline (v0.6.7) + Goals "This week" pill (v0.6.12) + Dashboard empty-day CTA gradient (v0.6.9) + new recipe→author chat button.
+
+### Fixed
+- Universal `prefers-reduced-motion: reduce` block clamps all animations / transitions to 0.01ms and disables continuous loops (login background blobs, progress-bar shimmer). Backstop to the per-feature gating already in place since v0.6.11.
+
+---
+
 ## [v0.6.12] - 2026-05-02 — Layout pass: Goals chart promotion, week nav, profile fav cards, login toggle anchor (closes #66)
 
 ### Changed
