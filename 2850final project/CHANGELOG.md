@@ -4,6 +4,15 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [v0.6.6] - 2026-05-02 — Recipes: real cover photos, per-serving nutrition, Featured strip (closes #54)
+
+### Fixed
+- Seed recipes (`Grilled Chicken Salad`, `Overnight Oats Bowl`, `Grilled Salmon with Veggies`) now ship with real Unsplash cover photos via an idempotent `SeedData.backfillImageUrls()` that runs on every boot. User-added recipes still fall back to the emoji cover.
+- Recipe cards now show per-serving calories and protein under the description (`320 kcal · 28g protein per serving`) — same nutrition logic that already powered the detail page, lifted into `searchRecipes` via a shared `summariseRow` helper.
+- Added a `Featured this week` strip above the search filter, showing the top 3 recipes by average rating (ties broken by review count). Hidden when the user has applied a search or difficulty filter so it doesn't fight the results.
+
+---
+
 ## [v0.6.5] - 2026-05-02 — Final polish: macro typography, date prominence, filter row, sidebar tone (closes #52)
 
 ### Fixed

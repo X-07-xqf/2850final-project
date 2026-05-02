@@ -15,9 +15,14 @@ fun Route.recipeRoutes() {
         val session = call.sessions.get<UserSession>() ?: return@get call.respondRedirect("/login")
         val query = call.request.queryParameters["q"]; val difficulty = call.request.queryParameters["difficulty"]
         val recipes = RecipeService.searchRecipes(query, difficulty)
+        // Only show the Featured strip on the unfiltered landing — when the user
+        // is searching, hide it so the page is just their results.
+        val featured = if (query.isNullOrBlank() && (difficulty.isNullOrBlank() || difficulty == "all"))
+            RecipeService.getFeatured(3) else emptyList()
         val unread = MessageService.getUnreadCount(session.userId)
         call.respond(ThymeleafContent("subscriber/recipes", model(
-            "session" to session, "recipes" to recipes, "query" to (query ?: ""), "difficulty" to (difficulty ?: "all"),
+            "session" to session, "recipes" to recipes, "featured" to featured,
+            "query" to (query ?: ""), "difficulty" to (difficulty ?: "all"),
             "unreadMessages" to unread, "activePage" to "recipes")))
     }
 

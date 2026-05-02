@@ -69,4 +69,7 @@ fun Application.configureDatabase() {
     }
 
     SeedData.insertIfEmpty()
+    // Idempotent — fills in image_url on the seed recipes for any DB that
+    // came up before that column was being populated. Safe on every boot.
+    SeedData.backfillImageUrls()
 }

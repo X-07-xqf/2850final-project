@@ -6,15 +6,41 @@ import com.goodfood.diary.*
 import com.goodfood.messages.AdviceMessages
 import com.goodfood.professional.*
 import com.goodfood.recipes.*
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
+import org.jetbrains.exposed.sql.update
 import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.LocalDateTime
 
 object SeedData {
     private fun hash(pw: String): String = BCrypt.withDefaults().hashToString(12, pw.toCharArray())
+
+    /**
+     * Image-URL backfill for the three seed recipes. Idempotent — only sets
+     * `image_url` when the row exists *and* the column is currently null, so
+     * it's safe to run on every boot regardless of whether the deploy started
+     * from a fresh DB or one that's been live since before this column was
+     * being populated.
+     */
+    private val seedRecipeImages = mapOf(
+        "Grilled Chicken Salad" to "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=800&auto=format&fit=crop&q=80",
+        "Overnight Oats Bowl" to "https://images.unsplash.com/photo-1517673400267-0251440c45dc?w=800&auto=format&fit=crop&q=80",
+        "Grilled Salmon with Veggies" to "https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=800&auto=format&fit=crop&q=80"
+    )
+
+    fun backfillImageUrls() {
+        transaction {
+            for ((title, url) in seedRecipeImages) {
+                Recipes.update({ (Recipes.title eq title) and Recipes.imageUrl.isNull() }) {
+                    it[imageUrl] = url
+                }
+            }
+        }
+    }
 
     fun insertIfEmpty() {
         transaction {
@@ -100,7 +126,8 @@ object SeedData {
             val r1 = Recipes.insert {
                 it[createdBy] = drSarah; it[title] = "Grilled Chicken Salad"
                 it[description] = "A fresh and healthy salad with grilled chicken breast, mixed greens, and a light olive oil dressing."
-                it[prepTimeMinutes] = 10; it[cookTimeMinutes] = 15; it[servings] = 2; it[difficulty] = "easy"; it[createdAt] = now
+                it[prepTimeMinutes] = 10; it[cookTimeMinutes] = 15; it[servings] = 2; it[difficulty] = "easy"
+                it[imageUrl] = seedRecipeImages["Grilled Chicken Salad"]; it[createdAt] = now
             } get Recipes.id
             for ((ing, qty, u) in listOf(Triple("Chicken Breast (grilled)", "200", "g"), Triple("Mixed Salad Greens", "150", "g"),
                 Triple("Cherry Tomatoes", "100", "g"), Triple("Cucumber", "50", "g"), Triple("Olive Oil", "2", "tbsp"))) {
@@ -115,7 +142,8 @@ object SeedData {
             val r2 = Recipes.insert {
                 it[createdBy] = drSarah; it[title] = "Overnight Oats Bowl"
                 it[description] = "A quick and nutritious breakfast bowl prepared the night before."
-                it[prepTimeMinutes] = 10; it[cookTimeMinutes] = 0; it[servings] = 1; it[difficulty] = "easy"; it[createdAt] = now
+                it[prepTimeMinutes] = 10; it[cookTimeMinutes] = 0; it[servings] = 1; it[difficulty] = "easy"
+                it[imageUrl] = seedRecipeImages["Overnight Oats Bowl"]; it[createdAt] = now
             } get Recipes.id
             for ((ing, qty, u) in listOf(Triple("Oatmeal", "80", "g"), Triple("Greek Yogurt", "100", "g"),
                 Triple("Banana", "1", "medium"), Triple("Chia Seeds", "15", "g"), Triple("Almonds", "20", "g"))) {
@@ -129,7 +157,8 @@ object SeedData {
             val r3 = Recipes.insert {
                 it[createdBy] = drSarah; it[title] = "Grilled Salmon with Veggies"
                 it[description] = "Omega-3 rich salmon fillet with roasted broccoli and sweet potato."
-                it[prepTimeMinutes] = 15; it[cookTimeMinutes] = 25; it[servings] = 2; it[difficulty] = "medium"; it[createdAt] = now
+                it[prepTimeMinutes] = 15; it[cookTimeMinutes] = 25; it[servings] = 2; it[difficulty] = "medium"
+                it[imageUrl] = seedRecipeImages["Grilled Salmon with Veggies"]; it[createdAt] = now
             } get Recipes.id
             for ((ing, qty, u) in listOf(Triple("Salmon (grilled)", "300", "g"), Triple("Broccoli", "200", "g"),
                 Triple("Sweet Potato", "200", "g"), Triple("Olive Oil", "1", "tbsp"))) {
