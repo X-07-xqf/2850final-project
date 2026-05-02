@@ -47,7 +47,7 @@
                                  th:classappend="|recipe-card__cover--${f.coverTone}|">
                                 <span th:text="${f.coverEmoji}">🍽️</span>
                             </div>
-                            <span class="featured-card__badge">★ <span th:text="${f.avgRating}">0</span></span>
+                            <span class="featured-card__badge" th:if="${f.reviewCount > 0}">★ <span th:text="${f.avgRating}">0</span></span>
                         </div>
                         <div class="featured-card__body">
                             <h3 class="featured-card__title" th:text="${f.title}">Recipe</h3>
@@ -93,9 +93,12 @@
                             <span th:text="${r.difficulty}">easy</span>
                             ·
                             <span th:text="${r.totalTime}">30</span> min
-                            ·
-                            ★ <span th:text="${r.avgRating}">0</span>
-                            (<span th:text="${r.reviewCount}">0</span>)
+                            <span th:if="${r.reviewCount > 0}">
+                                ·
+                                ★ <span th:text="${r.avgRating}">0</span>
+                                (<span th:text="${r.reviewCount}">0</span>)
+                            </span>
+                            <span th:if="${r.reviewCount == 0}" class="recipe-card__unrated"> · Not rated yet</span>
                         </div>
                     </div>
                 </a>
