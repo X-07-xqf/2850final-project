@@ -36,20 +36,15 @@
             <p class="page-meta">Browse and cook balanced meals</p>
         </header>
 
-        <form class="card filter-bar" method="get" th:action="'/recipes'">
-            <label class="field field--inline">
-                <span class="field__label">Search</span>
-                <input type="search" name="q" placeholder="Title…" th:value="${query}"/>
-            </label>
-            <label class="field field--inline">
-                <span class="field__label">Difficulty</span>
-                <select name="difficulty" class="input-select">
-                    <option value="all" th:selected="${difficulty == 'all'}">All</option>
-                    <option value="easy" th:selected="${difficulty == 'easy'}">Easy</option>
-                    <option value="medium" th:selected="${difficulty == 'medium'}">Medium</option>
-                    <option value="hard" th:selected="${difficulty == 'hard'}">Hard</option>
-                </select>
-            </label>
+        <form class="filter-bar filter-bar--inline" method="get" th:action="'/recipes'">
+            <input type="search" name="q" placeholder="Search recipes by title…"
+                   th:value="${query}" aria-label="Search recipes" class="filter-bar__search"/>
+            <select name="difficulty" class="input-select filter-bar__select" aria-label="Filter by difficulty">
+                <option value="all" th:selected="${difficulty == 'all'}">All difficulties</option>
+                <option value="easy" th:selected="${difficulty == 'easy'}">Easy</option>
+                <option value="medium" th:selected="${difficulty == 'medium'}">Medium</option>
+                <option value="hard" th:selected="${difficulty == 'hard'}">Hard</option>
+            </select>
             <button type="submit" class="btn btn--primary">Apply</button>
         </form>
 

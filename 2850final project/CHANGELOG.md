@@ -4,6 +4,16 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [v0.6.5] - 2026-05-02 — Final polish: macro typography, date prominence, filter row, sidebar tone (closes #52)
+
+### Fixed
+- Macro rows now split current value (body-size, strong) from goal (`/ 80 g` muted) instead of one grey lump.
+- Page-header date bumped from small / soft to base size with a sage-soft left accent bar so the date reads as page context rather than fine print.
+- Recipes filter card collapsed from a 3-row stacked form into a single inline strip (search input + difficulty select + Apply); roughly 60px less vertical air on `/recipes`.
+- Sidebar bg softened from `#1f2a23` to `#2d3d34` (warmer, less editorial); active-link tint lifted to `rgba(184,209,168,0.26)` so the highlight reads on the new bg.
+
+---
+
 ## [v0.6.4] - 2026-05-02 — Dashboard polish: ring, thicker bars, warmer empty states (closes #50)
 
 ### Fixed
