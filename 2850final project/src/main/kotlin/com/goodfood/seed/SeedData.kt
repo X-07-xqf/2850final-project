@@ -178,6 +178,40 @@ object SeedData {
      * the seed data) is set as the author; if for some reason she isn't in the DB,
      * we silently no-op rather than crash startup.
      */
+    /**
+     * Demo-account convenience: ensure the seeded `alice@email.com` user has
+     * diary entries for **today** so the marker doesn't open `/dashboard` and
+     * see "Nothing here yet" rows. Idempotent — only inserts when Alice has
+     * zero entries for `LocalDate.now()`. Real users (who registered through
+     * the UI) are untouched. Real entries Alice added on previous days are
+     * untouched too; this only fills today's gap.
+     */
+    fun ensureAliceHasTodayEntries() {
+        transaction {
+            val alice = Users.selectAll().where { Users.email eq "alice@email.com" }.singleOrNull() ?: return@transaction
+            val aliceId = alice[Users.id]
+            val today = LocalDate.now()
+            val hasToday = FoodDiaryEntries.selectAll().where {
+                (FoodDiaryEntries.userId eq aliceId) and (FoodDiaryEntries.entryDate eq today)
+            }.count() > 0L
+            if (hasToday) return@transaction
+
+            val foodMap = FoodItems.selectAll().associate { it[FoodItems.name] to it[FoodItems.id] }
+            val now = LocalDateTime.now()
+            fun diary(food: String, meal: String, grams: String) {
+                val foodId = foodMap[food] ?: return
+                FoodDiaryEntries.insert {
+                    it[userId] = aliceId; it[foodItemId] = foodId; it[mealType] = meal
+                    it[quantityGrams] = BigDecimal(grams); it[entryDate] = today; it[createdAt] = now
+                }
+            }
+            diary("Oatmeal", "breakfast", "250"); diary("Banana", "breakfast", "120")
+            diary("Green Tea", "breakfast", "250"); diary("Chicken Breast (grilled)", "lunch", "200")
+            diary("Mixed Salad Greens", "lunch", "150"); diary("Brown Rice", "lunch", "200")
+            diary("Greek Yogurt", "snack", "150"); diary("Almonds", "snack", "30")
+        }
+    }
+
     fun backfillExtraRecipes() {
         transaction {
             val sarah = Users.selectAll().where { Users.email eq "sarah@clinic.com" }.singleOrNull() ?: return@transaction

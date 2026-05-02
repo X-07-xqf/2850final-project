@@ -50,8 +50,10 @@ fun Route.dashboardRoutes() {
         val goalProt = goals?.get("protein") ?: BigDecimal("80")
         val goalCarb = goals?.get("carbs") ?: BigDecimal("250")
         val goalFat = goals?.get("fat") ?: BigDecimal("65")
+        val isDayEmpty = entries.isEmpty()
         call.respond(ThymeleafContent("subscriber/dashboard", model(
             "session" to session, "date" to today.format(DateTimeFormatter.ofPattern("EEEE, MMMM d, yyyy")), "meals" to meals,
+            "isDayEmpty" to isDayEmpty,
             "totalCalories" to (summary["calories"] ?: BigDecimal.ZERO).fmt(0),
             "totalProtein" to (summary["protein"] ?: BigDecimal.ZERO).fmt(1),
             "totalCarbs" to (summary["carbs"] ?: BigDecimal.ZERO).fmt(1),

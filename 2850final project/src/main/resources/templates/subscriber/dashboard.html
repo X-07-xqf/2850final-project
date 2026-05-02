@@ -87,7 +87,13 @@
             </div>
         </section>
 
-        <section class="meals-section" th:each="meal : ${meals}">
+        <section th:if="${isDayEmpty}" class="empty-day">
+            <h2 class="empty-day__title">Today's plate is empty</h2>
+            <p class="empty-day__text">Log your first meal to see your day come together.</p>
+            <a th:href="'/diary'" class="btn btn--primary empty-day__cta">Add a meal</a>
+        </section>
+
+        <section th:unless="${isDayEmpty}" class="meals-section" th:each="meal : ${meals}">
             <header class="meals-section__head">
                 <h2 class="meals-section__title" th:text="${#strings.capitalize(meal.type)}">Breakfast</h2>
                 <span class="meals-section__kcal"><span th:text="${meal.calories}">0</span> kcal</span>

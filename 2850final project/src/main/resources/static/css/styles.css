@@ -931,6 +931,30 @@ a:hover { text-decoration: underline; text-decoration-thickness: 1.5px; text-und
     margin: 0;
     line-height: var(--leading-snug);
 }
+
+.empty-day {
+    background: linear-gradient(140deg, var(--color-mint-bg), var(--color-cream-warm));
+    border-radius: var(--radius-md);
+    padding: 56px 32px;
+    text-align: center;
+    margin: 8px 0 24px;
+    border: 1px dashed var(--color-sage-soft);
+}
+.empty-day__title {
+    font-size: var(--text-xl);
+    font-weight: 700;
+    color: var(--text-strong);
+    margin: 0 0 6px;
+    letter-spacing: var(--tracking-snug);
+}
+.empty-day__text {
+    color: var(--text-soft);
+    font-size: var(--text-body);
+    margin: 0 0 22px;
+}
+.empty-day__cta {
+    min-width: 180px;
+}
 .empty-hint--soft {
     padding: 16px 18px;
     background: var(--color-surface-warm);
@@ -1185,6 +1209,13 @@ input::placeholder, textarea::placeholder {
     color: var(--text-strong);
     font-weight: 600;
     line-height: var(--leading-snug);
+}
+.recipe-card__unrated {
+    color: var(--text-soft);
+    font-style: italic;
+    text-transform: none;
+    letter-spacing: 0;
+    font-weight: 500;
 }
 .recipe-card__per {
     color: var(--text-soft);

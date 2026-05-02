@@ -4,6 +4,15 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [v0.6.9] - 2026-05-02 — Demo polish: today-anchor seeds, unrated rating, empty-day CTA (closes #60)
+
+### Fixed
+- New idempotent `SeedData.ensureAliceHasTodayEntries()` keeps the demo account populated for `LocalDate.now()` on every boot — Dashboard never opens to a hostile zero state.
+- Recipe meta line and Featured cover badge no longer render `★ 0.0 (0)` / `★ 0` for unrated recipes; show `Not rated yet` (italicised) in the meta line and hide the badge entirely.
+- Empty-day Dashboard collapses four `Nothing here yet.` rows into one mint-tinted CTA card pointing at Diary.
+
+---
+
 ## [v0.6.8] - 2026-05-02 — Six more recipes seeded into the catalogue (closes #58)
 
 ### Added
