@@ -61,6 +61,15 @@ object DiaryService {
      */
     fun getWeeklySummary(userId: Int): List<Map<String, Any>> {
         val today = LocalDate.now(); val monday = today.minusDays(today.dayOfWeek.value.toLong() - 1)
+        return getWeeklySummary(userId, monday)
+    }
+
+    /**
+     * Mon–Sun calorie roll-up for the week starting at [monday]. Always returns
+     * 7 rows; days with no entries appear as 0. Used by the goals page when
+     * the marker scrolls back/forwards to inspect a different week.
+     */
+    fun getWeeklySummary(userId: Int, monday: LocalDate): List<Map<String, Any>> {
         return (0..6).map { offset ->
             val d = monday.plusDays(offset.toLong()); val summary = getDailySummary(userId, d)
             mapOf("date" to d, "dayName" to d.dayOfWeek.name.take(3).lowercase().replaceFirstChar { it.uppercase() }, "calories" to summary["calories"]!!)
