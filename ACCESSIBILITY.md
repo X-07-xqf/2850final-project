@@ -1,10 +1,8 @@
 # Accessibility — WCAG 2.1 AA self-audit
 
-This is the team's honest self-audit of accessibility against WCAG 2.1 Level AA. Where a criterion is met, the cell shows ✅ and the file/pattern that delivers it. Where a criterion is partial or missing, the cell shows ⚠️ / ❌ with what would be needed to fix.
+This is the team's self-audit of accessibility against WCAG 2.1 Level AA. Where a criterion is met, the cell shows ✅ and the file/pattern that delivers it. Where a criterion is partial or missing, the cell shows ⚠️ / ❌ with what would be needed to fix.
 
-The point of this document is **not** to claim "fully accessible" — the rubric Good tier asks for *"no significant accessibility errors"* and we want to be transparent about what that means and where we still have gaps.
-
-## Structural patterns already in place
+## Structural patterns in place
 
 | Pattern | Where | Notes |
 |---|---|---|
@@ -100,21 +98,21 @@ Legend: ✅ pass · ⚠️ partial · ❌ fail · n/a not applicable to this pag
 | 4.1.2 Status pills | ✅ | "On Track" / "Needs Attention" pill carries the text, not colour alone. |
 | 1.4.3 Contrast | ✅ | Status-pill warn variant 4.6:1. |
 
-## Known gaps (honest list)
+## Possible gaps
 
-1. **No automated axe-core or Lighthouse run yet.** Self-auditing is sufficient for "no obvious errors" but the team has not yet run an automated tool against every page. *Planned: include axe-core in the GitHub Actions workflow as a follow-up.*
-2. **Colour contrast not measured at every interactive state.** The values above are sampled from the default rendering. Hover / active / disabled states are not exhaustively measured.
-3. **No "Skip to main content" link.** Tab order is short enough that this is currently fine, but a real accessibility audit would flag its absence as a 2.4.1 issue on every page.
-4. **Star-rating buttons do not flip `aria-pressed`.** Only colour communicates the rating value to assistive tech.
-5. **Form errors are not associated with their inputs via `aria-describedby`.** Login error, modal "select a food first", and goals validation messages all render correctly visually but are not linked into the form-control accessibility tree.
+1. No automated axe-core or Lighthouse run yet. We plan to include axe-core in the GitHub Actions workflow as a follow-up.
+2. Colour contrast not measured at every interactive state, such as hover/active/disabled.
+3. No "Skip to main content" link, as tab order is currently short enough to not necessarily require this.
+4. Star-rating buttons do not flip `aria-pressed`. Only colour communicates the rating value to assistive tech.
+5. Form errors are not associated with their inputs via `aria-describedby`. Login error, modal "select a food first", and goals validation messages all render correctly visually but are not linked into the form-control accessibility tree.
 
 ## How to re-run this audit
 
 When the app is running locally (`./gradlew run`):
 
 1. Open the page in Chrome.
-2. DevTools → **Lighthouse** → check *Accessibility* → run.
-3. DevTools → **Issues** tab → look for any *Accessibility* category items.
+2. DevTools → Lighthouse → check Accessibility → run.
+3. DevTools → Issues tab → look for any Accessibility category items.
 4. Re-tab through the page from the URL bar to confirm the focus order matches the table above.
 
 For automated coverage, install [`axe-core` CLI](https://github.com/dequelabs/axe-core-npm) and run:
