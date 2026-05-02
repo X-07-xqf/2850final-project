@@ -7,6 +7,7 @@
     <link rel="stylesheet" th:href="'/static/css/styles.css'" href="/static/css/styles.css"/>
 </head>
 <body class="app-body">
+<a href="#main" class="skip-link">Skip to main content</a>
 <button type="button" class="menu-toggle js-menu-toggle" aria-label="Open menu" aria-expanded="false">☰</button>
 <div class="sidebar-backdrop js-sidebar-backdrop" aria-hidden="true"></div>
 <div class="app-layout">
@@ -30,7 +31,7 @@
         <button type="button" class="sidebar__theme js-theme-toggle" aria-label="Toggle theme">Toggle theme</button>
         <a th:href="'/logout'" class="nav-link nav-link--muted sidebar__logout">Log out</a>
     </aside>
-    <main class="main">
+    <main id="main" class="main">
         <header class="page-header">
             <h1 class="page-title">Recipes</h1>
             <p class="page-meta">Browse and cook balanced meals</p>
@@ -42,7 +43,8 @@
                 <article class="featured-card" th:each="f : ${featured}">
                     <a th:href="|/recipes/${f.id}|" class="featured-card__link">
                         <div class="featured-card__cover">
-                            <img th:if="${f.imageUrl != null}" th:src="${f.imageUrl}" th:alt="${f.title}" loading="lazy"/>
+                            <img th:if="${f.imageUrl != null}" th:src="${f.imageUrl}" th:alt="${f.title}"
+                                 width="800" height="500" loading="lazy"/>
                             <div th:if="${f.imageUrl == null}" class="featured-card__cover-fallback"
                                  th:classappend="|recipe-card__cover--${f.coverTone}|">
                                 <span th:text="${f.coverEmoji}">🍽️</span>
@@ -78,7 +80,8 @@
             <article class="card recipe-card" th:each="r : ${recipes}">
                 <a th:href="|/recipes/${r.id}|" class="recipe-card__link">
                     <div class="recipe-card__cover" th:classappend="${r.imageUrl == null} ? |recipe-card__cover--${r.coverTone}|">
-                        <img th:if="${r.imageUrl != null}" th:src="${r.imageUrl}" th:alt="${r.title}" loading="lazy" class="recipe-card__cover-img"/>
+                        <img th:if="${r.imageUrl != null}" th:src="${r.imageUrl}" th:alt="${r.title}"
+                             width="800" height="500" loading="lazy" class="recipe-card__cover-img"/>
                         <span th:if="${r.imageUrl == null}" class="recipe-card__cover-emoji" th:text="${r.coverEmoji}" aria-hidden="true">🍽️</span>
                     </div>
                     <div class="recipe-card__body">

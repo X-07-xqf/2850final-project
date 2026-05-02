@@ -4,6 +4,16 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [v0.6.10] - 2026-05-02 — A11y / perf audit: focus, skip-link, image dims (closes #62)
+
+### Fixed
+- Global `:focus-visible` now pairs the soft `--ring` box-shadow with a 2px solid `--color-primary` outline + offset, so keyboard focus is unambiguously visible across themes and browsers.
+- Skip-to-main-content link added to every authenticated app shell template (subscriber + professional, 10 templates) and revealed on focus; `<main>` carries `id="main"` as the target.
+- Recipe cover `<img>` tags now declare `width="800" height="500"` for explicit aspect ratio, preventing CLS while the image loads.
+- Confirmed already-in-place: `font-display: swap` (Google Fonts URL), `role="alert"` on login errors, and implicit `<label>`-wrap association on every form. No change needed; documented for the audit trail.
+
+---
+
 ## [v0.6.9] - 2026-05-02 — Demo polish: today-anchor seeds, unrated rating, empty-day CTA (closes #60)
 
 ### Fixed
