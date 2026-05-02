@@ -4,6 +4,19 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [v0.6.14] - 2026-05-02 — Dark-mode pass: brand tones flip, scrim + emoji halo tokenized (closes #70)
+
+### Fixed
+- Recipe-card covers (`--sage`, `--oat`, `--clay`, `--berry`) and progress-bar fills no longer read as floating light pastels on a dark page. The brand "soft" tones (`--color-sage-bg/soft/deep`, `--color-clay-bg/soft`, `--color-berry-soft`, `--color-cream-warm`, `--color-oat`) were only declared in the light `:root` and silently fell back in dark; now defined in both `:root[data-theme="dark"]` and the `prefers-color-scheme: dark` media block with darker tone-shifted equivalents.
+- Featured-card badge (`.featured-card__badge`) was hardcoded `rgba(31, 42, 35, 0.78)` — a forest-tinted scrim that became invisible on the now-dark recipe cover gradients. Promoted to `--overlay-strong` (forest in light, near-black in dark).
+- Modal backdrop and mobile-sidebar backdrop both used the same hardcoded `rgba(31, 42, 35, 0.45)`. Promoted to `--overlay-modal` and lightened to pure-black-at-55% in dark mode so the page-already-dark doesn't double-tint.
+- Recipe-card emoji drop-shadow (`drop-shadow(... rgba(31, 42, 35, 0.12))`) was forest-tinted and disappeared on dark covers. Promoted to `--emoji-shadow` (stronger pure-black in dark).
+- Once-only progress-bar shimmer was a hardcoded `rgba(255, 255, 255, 0.55)` white sweep — too cold/bright on a warm dark UI. Promoted to `--shimmer-highlight` (cream-at-22% in dark).
+- Berry recipe-card gradient endpoint was a hardcoded `#f3c4cf`. Promoted to `--color-berry-tint` so the gradient tone-shifts with the rest of the card in dark mode.
+- Sidebar theme-toggle hover border was hardcoded cream-at-20%. Promoted to `--sidebar-border-hover` for parity (still cream in light, soft cream in dark — the sidebar is dark in both modes, so this is mostly token hygiene).
+
+---
+
 ## [v0.6.13] - 2026-05-02 — Strategy pass: recipe→author chat, mint earns its keep, reduced-motion guard (closes #68)
 
 ### Added
