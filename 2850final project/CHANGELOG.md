@@ -4,6 +4,20 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [v0.6.11] - 2026-05-02 — Motion pass: stagger reveal, ring fill, count-up, shimmer (closes #64)
+
+### Added
+- Stagger reveal on Dashboard macro rows + Recipes grid via `@keyframes stagger-rise` and `--i` index passed inline; 60ms delay per item, ~420ms duration, spring `cubic-bezier(0.16, 1, 0.3, 1)`.
+- Calorie ring fills from 0% to target on mount via `@property --ring-pct` (registered custom property) + 0.85s spring transition.
+- `initCountUp()` in `app.js`: `[data-count-up]` numeric elements tween from 0 to their final value over 700ms with ease-out cubic; preserves integer / single-decimal formatting from the rendered text.
+- One-shot shimmer pass on the calorie / protein / carbs / fat progress bars 0.9s after page settle — fires once, never loops.
+- All four motion features gated under `@media (prefers-reduced-motion: no-preference)`; `initCountUp()` early-returns when the user prefers reduced motion.
+
+### Notes
+- Hover transitions across cards / buttons already used the spring `--ease-out` curve from earlier passes; no change needed for that bullet.
+
+---
+
 ## [v0.6.10] - 2026-05-02 — A11y / perf audit: focus, skip-link, image dims (closes #62)
 
 ### Fixed

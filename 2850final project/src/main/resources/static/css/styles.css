@@ -1976,6 +1976,56 @@ input::placeholder, textarea::placeholder {
     to   { opacity: 1; transform: translateY(0); }
 }
 
+/* ============================================================
+   Motion: stagger reveal, ring fill, one-shot shimmer.
+   All gated behind prefers-reduced-motion: no-preference.
+   ============================================================ */
+@keyframes stagger-rise {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes shimmer-once {
+    0%   { transform: translateX(-100%); }
+    100% { transform: translateX(220%); }
+}
+
+/* @property lets the conic-gradient stop position animate as a real number,
+   not as a string interpolation between gradient images. Without it,
+   the ring would snap rather than fill smoothly. */
+@property --ring-pct {
+    syntax: '<number>';
+    initial-value: 0;
+    inherits: false;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    .ring {
+        transition: --ring-pct 0.85s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .recipe-card,
+    .featured-card,
+    .macro-row {
+        opacity: 0;
+        animation: stagger-rise 0.42s var(--ease-out) both;
+        animation-delay: calc(var(--i, 0) * 60ms);
+    }
+
+    .progress--lg {
+        position: relative;
+        overflow: hidden;
+    }
+    .progress--lg::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.55), transparent);
+        animation: shimmer-once 1.4s 0.9s ease-out 1 both;
+        pointer-events: none;
+    }
+}
+
 .sr-only {
     position: absolute;
     width: 1px;
