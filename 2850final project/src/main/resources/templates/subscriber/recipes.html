@@ -40,7 +40,7 @@
         <section class="featured" th:if="${featured != null and !featured.isEmpty()}" aria-label="Featured this week">
             <h2 class="featured__title">Featured this week</h2>
             <div class="featured__strip">
-                <article class="featured-card" th:each="f : ${featured}">
+                <article class="featured-card" th:each="f, fIter : ${featured}" th:style="|--i: ${fIter.index};|">
                     <a th:href="|/recipes/${f.id}|" class="featured-card__link">
                         <div class="featured-card__cover">
                             <img th:if="${f.imageUrl != null}" th:src="${f.imageUrl}" th:alt="${f.title}"
@@ -77,7 +77,7 @@
         </form>
 
         <div class="recipe-grid" th:if="${recipes != null and !recipes.isEmpty()}">
-            <article class="card recipe-card" th:each="r : ${recipes}">
+            <article class="card recipe-card" th:each="r, rIter : ${recipes}" th:style="|--i: ${rIter.index};|">
                 <a th:href="|/recipes/${r.id}|" class="recipe-card__link">
                     <div class="recipe-card__cover" th:classappend="${r.imageUrl == null} ? |recipe-card__cover--${r.coverTone}|">
                         <img th:if="${r.imageUrl != null}" th:src="${r.imageUrl}" th:alt="${r.title}"
