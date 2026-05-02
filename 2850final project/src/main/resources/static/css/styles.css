@@ -33,6 +33,9 @@
     --color-sage-soft:    #b8d1a8;
     --color-sage-bg:      #e8efe1;
 
+    --color-mint:         #b1dbb8;   /* fresher accent than sage-soft */
+    --color-mint-bg:      #e1f4df;   /* lightest sage tier — surface differentiation w/o shadows */
+
     --color-clay:         #d97757;   /* warm accent — kept from v0.5 */
     --color-clay-soft:    #f3d9cc;
     --color-clay-bg:      #fbeae0;
@@ -98,11 +101,12 @@
     --shadow-lg: 0 16px 48px rgba(31, 42, 35, 0.10), 0 0 0 1px rgba(31, 42, 35, 0.04);
     --ring:      0 0 0 3px rgba(94, 125, 79, 0.30);
 
-    /* radii */
-    --radius-sm:   8px;
+    /* radii — collapsed onto a single 14px family for cards / buttons / modals,
+       with 10px for tighter inputs and 18px for hero-tier elements. */
+    --radius-sm:   10px;
     --radius:      14px;
-    --radius-md:   16px;
-    --radius-lg:   20px;
+    --radius-md:   14px;
+    --radius-lg:   18px;
     --radius-pill: 999px;
 
     /* type */
@@ -158,6 +162,9 @@
         --color-primary-soft: #2c3a2e;
         --color-primary-on:   #14201a;
 
+        --color-mint:         #8ab092;
+        --color-mint-bg:      #2a3a2c;
+
         --color-accent:       #e8a584;
         --color-warn:         #e8a584;
         --color-warn-soft:    #3a2820;
@@ -210,6 +217,9 @@
     --color-primary-hover:#bdd4af;
     --color-primary-soft: #2c3a2e;
     --color-primary-on:   #14201a;
+
+    --color-mint:         #8ab092;
+    --color-mint-bg:      #2a3a2c;
 
     --color-accent:       #e8a584;
     --color-warn:         #e8a584;
@@ -658,7 +668,7 @@ a:hover { text-decoration: underline; text-decoration-thickness: 1.5px; text-und
     background: var(--color-surface);
     border-radius: var(--radius-md);
     border: none;
-    padding: 24px;
+    padding: 28px;
     box-shadow: var(--shadow-sm);
     transition: background var(--dur) var(--ease), transform var(--dur) var(--ease), box-shadow var(--dur) var(--ease);
 }
@@ -1166,7 +1176,7 @@ input::placeholder, textarea::placeholder {
 }
 
 .recipe-card__body {
-    padding: 18px 22px 22px;
+    padding: 20px 24px 24px;
 }
 
 .recipe-card__nutrition {
@@ -1204,9 +1214,9 @@ input::placeholder, textarea::placeholder {
 }
 .featured__title::before {
     content: '';
-    width: 24px;
-    height: 2px;
-    background: var(--color-sage);
+    width: 28px;
+    height: 3px;
+    background: var(--color-mint);
     border-radius: var(--radius-pill);
 }
 .featured__strip {
