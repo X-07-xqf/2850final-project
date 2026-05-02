@@ -42,6 +42,7 @@
 
     --color-berry:        #c44569;   /* alerts only */
     --color-berry-soft:   #f5d6dc;
+    --color-berry-tint:   #f3c4cf;   /* gradient endpoint for berry recipe-card cover */
 
     --color-deep:         #1f2a23;   /* darkest text — forest-tinted */
     --color-strong:       #2a3830;
@@ -100,6 +101,13 @@
     --shadow:    0 6px 20px rgba(31, 42, 35, 0.07), 0 0 0 1px rgba(31, 42, 35, 0.04);
     --shadow-lg: 0 16px 48px rgba(31, 42, 35, 0.10), 0 0 0 1px rgba(31, 42, 35, 0.04);
     --ring:      0 0 0 3px rgba(94, 125, 79, 0.30);
+
+    /* scrims & emoji halo — extracted so dark mode can swap to pure-black overlays */
+    --overlay-strong:       rgba(31, 42, 35, 0.78);  /* opaque pill on light gradient (recipe badge) */
+    --overlay-modal:        rgba(31, 42, 35, 0.45);  /* modal & mobile-sidebar veil */
+    --sidebar-border-hover: rgba(251, 248, 240, 0.20);
+    --emoji-shadow:         drop-shadow(0 2px 4px rgba(31, 42, 35, 0.12));
+    --shimmer-highlight:    rgba(255, 255, 255, 0.55); /* once-only progress sweep */
 
     /* radii — collapsed onto a single 14px family for cards / buttons / modals,
        with 10px for tighter inputs and 18px for hero-tier elements. */
@@ -171,6 +179,18 @@
         --color-danger:       #e8829b;
         --color-danger-soft:  #3a1f29;
 
+        /* Brand soft tones — must follow surface tone, otherwise recipe-card covers and
+           progress fills read as floating pastels on a dark page. */
+        --color-cream-warm:   #283328;
+        --color-oat:          #303d2f;
+        --color-sage-bg:      #2a3a2c;
+        --color-sage-soft:    #4a6b3c;
+        --color-sage-deep:    #8aac76;
+        --color-clay-bg:      #3a2820;
+        --color-clay-soft:    #6b4530;
+        --color-berry-soft:   #4a2530;
+        --color-berry-tint:   #5e3540;
+
         --color-progress-track: #2a3a30;
         --color-border:       #3a4a3d;
         --color-border-soft:  #2c3a2e;
@@ -197,6 +217,12 @@
         --shadow:    0 6px 20px rgba(0, 0, 0, 0.40), 0 0 0 1px rgba(0, 0, 0, 0.4);
         --shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(0, 0, 0, 0.4);
         --ring:      0 0 0 3px rgba(168, 199, 156, 0.35);
+
+        --overlay-strong:       rgba(0, 0, 0, 0.65);
+        --overlay-modal:        rgba(0, 0, 0, 0.55);
+        --sidebar-border-hover: rgba(232, 228, 214, 0.18);
+        --emoji-shadow:         drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
+        --shimmer-highlight:    rgba(232, 228, 214, 0.22); /* dimmer cream sweep so dark UI doesn't flash white */
 
         color-scheme: dark;
     }
@@ -227,6 +253,17 @@
     --color-danger:       #e8829b;
     --color-danger-soft:  #3a1f29;
 
+    /* Brand soft tones — keep parity with the @media block above. */
+    --color-cream-warm:   #283328;
+    --color-oat:          #303d2f;
+    --color-sage-bg:      #2a3a2c;
+    --color-sage-soft:    #4a6b3c;
+    --color-sage-deep:    #8aac76;
+    --color-clay-bg:      #3a2820;
+    --color-clay-soft:    #6b4530;
+    --color-berry-soft:   #4a2530;
+    --color-berry-tint:   #5e3540;
+
     --color-progress-track: #2a3a30;
     --color-border:       #3a4a3d;
     --color-border-soft:  #2c3a2e;
@@ -253,6 +290,12 @@
     --shadow:    0 6px 20px rgba(0, 0, 0, 0.40), 0 0 0 1px rgba(0, 0, 0, 0.4);
     --shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(0, 0, 0, 0.4);
     --ring:      0 0 0 3px rgba(168, 199, 156, 0.35);
+
+    --overlay-strong:       rgba(0, 0, 0, 0.65);
+    --overlay-modal:        rgba(0, 0, 0, 0.55);
+    --sidebar-border-hover: rgba(232, 228, 214, 0.18);
+    --emoji-shadow:         drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
+    --shimmer-highlight:    rgba(232, 228, 214, 0.22);
 
     color-scheme: dark;
 }
@@ -596,7 +639,7 @@ a:hover { text-decoration: underline; text-decoration-thickness: 1.5px; text-und
 }
 .sidebar__theme:hover {
     background: var(--sidebar-hover);
-    border-color: rgba(251, 248, 240, 0.20);
+    border-color: var(--sidebar-border-hover);
 }
 
 .nav-link {
@@ -1214,12 +1257,12 @@ input::placeholder, textarea::placeholder {
 .recipe-card__cover--sage  { background: linear-gradient(135deg, var(--color-sage-bg), var(--color-sage-soft)); }
 .recipe-card__cover--oat   { background: linear-gradient(135deg, var(--color-cream-warm), var(--color-oat)); }
 .recipe-card__cover--clay  { background: linear-gradient(135deg, var(--color-clay-bg), var(--color-clay-soft)); }
-.recipe-card__cover--berry { background: linear-gradient(135deg, var(--color-berry-soft), #f3c4cf); }
+.recipe-card__cover--berry { background: linear-gradient(135deg, var(--color-berry-soft), var(--color-berry-tint)); }
 
 .recipe-card__cover-emoji {
     font-size: 56px;
     line-height: 1;
-    filter: drop-shadow(0 2px 4px rgba(31, 42, 35, 0.12));
+    filter: var(--emoji-shadow);
 }
 
 .recipe-card__body {
@@ -1325,7 +1368,7 @@ input::placeholder, textarea::placeholder {
     position: absolute;
     top: 10px;
     right: 10px;
-    background: rgba(31, 42, 35, 0.78);
+    background: var(--overlay-strong);
     color: var(--color-cream);
     padding: 4px 10px;
     border-radius: var(--radius-pill);
@@ -1990,7 +2033,7 @@ input::placeholder, textarea::placeholder {
 .modal__backdrop {
     position: absolute;
     inset: 0;
-    background: rgba(31, 42, 35, 0.45);
+    background: var(--overlay-modal);
     cursor: pointer;
     backdrop-filter: blur(6px);
     -webkit-backdrop-filter: blur(6px);
@@ -2204,7 +2247,7 @@ input::placeholder, textarea::placeholder {
         content: '';
         position: absolute;
         inset: 0;
-        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.55), transparent);
+        background: linear-gradient(90deg, transparent, var(--shimmer-highlight), transparent);
         animation: shimmer-once 1.4s 0.9s ease-out 1 both;
         pointer-events: none;
     }
@@ -2253,7 +2296,7 @@ input::placeholder, textarea::placeholder {
         display: none;
         position: fixed;
         inset: 0;
-        background: rgba(31, 42, 35, 0.45);
+        background: var(--overlay-modal);
         z-index: 140;
         backdrop-filter: blur(2px);
         -webkit-backdrop-filter: blur(2px);
