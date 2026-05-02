@@ -42,6 +42,186 @@ object SeedData {
         }
     }
 
+    /**
+     * Specs for the six recipes added in v0.6.8 — six titles covering
+     * breakfast / lunch / dinner that re-use the existing `food_items`
+     * library so per-serving nutrition computes automatically. Single
+     * source of truth used by both [insertIfEmpty] (fresh DB) and
+     * [backfillExtraRecipes] (existing live DB on Render).
+     */
+    private data class IngredientSpec(val foodName: String, val quantity: String, val unit: String = "g")
+    private data class ExtraRecipe(
+        val title: String, val description: String,
+        val prepMin: Int, val cookMin: Int, val servings: Int, val difficulty: String,
+        val imageUrl: String,
+        val ingredients: List<IngredientSpec>, val steps: List<String>
+    )
+
+    private val extraRecipes: List<ExtraRecipe> = listOf(
+        ExtraRecipe(
+            "Avocado Toast",
+            "Smashed avocado on whole wheat with a soft-boiled egg, cherry tomatoes, and a drizzle of olive oil.",
+            5, 5, 1, "easy",
+            "https://images.unsplash.com/photo-1525351484163-7529414344d8?w=800&auto=format&fit=crop&q=80",
+            listOf(
+                IngredientSpec("Whole Wheat Bread", "60"),
+                IngredientSpec("Avocado", "100"),
+                IngredientSpec("Egg (boiled)", "50"),
+                IngredientSpec("Cherry Tomatoes", "60"),
+                IngredientSpec("Olive Oil", "5", "tsp")
+            ),
+            listOf(
+                "Toast the bread until golden.",
+                "Mash the avocado with a drizzle of olive oil and a pinch of salt; spread over the toast.",
+                "Slice the boiled egg in half and arrange on top.",
+                "Halve the cherry tomatoes and scatter over the toast."
+            )
+        ),
+        ExtraRecipe(
+            "Greek Yogurt Parfait",
+            "Layered breakfast bowl with creamy yogurt, sweet banana, crunchy almonds, and chia.",
+            5, 0, 1, "easy",
+            "https://images.unsplash.com/photo-1488477181946-6428a0291777?w=800&auto=format&fit=crop&q=80",
+            listOf(
+                IngredientSpec("Greek Yogurt", "200"),
+                IngredientSpec("Banana", "100"),
+                IngredientSpec("Almonds", "15"),
+                IngredientSpec("Chia Seeds", "10")
+            ),
+            listOf(
+                "Spoon half the yogurt into a glass or jar.",
+                "Slice the banana and add a layer over the yogurt.",
+                "Top with the rest of the yogurt and a sprinkle of chia seeds.",
+                "Finish with the almonds for crunch."
+            )
+        ),
+        ExtraRecipe(
+            "Tofu & Brown Rice Bowl",
+            "Seared tofu, fluffy brown rice, steamed broccoli, and fresh greens — a balanced lunch bowl.",
+            10, 15, 2, "easy",
+            "https://images.unsplash.com/photo-1543339308-43e59d6b73a6?w=800&auto=format&fit=crop&q=80",
+            listOf(
+                IngredientSpec("Tofu", "200"),
+                IngredientSpec("Brown Rice", "250"),
+                IngredientSpec("Broccoli", "150"),
+                IngredientSpec("Mixed Salad Greens", "80"),
+                IngredientSpec("Olive Oil", "10", "tsp")
+            ),
+            listOf(
+                "Cook the brown rice according to package instructions.",
+                "Cube the tofu and pan-sear in olive oil until golden on all sides.",
+                "Steam the broccoli for 4-5 minutes until tender-crisp.",
+                "Divide rice between two bowls; top with tofu, broccoli, and greens."
+            )
+        ),
+        ExtraRecipe(
+            "Avocado Egg Wrap",
+            "Boiled egg and avocado folded into a soft wholewheat wrap with crunchy greens and tomato.",
+            10, 5, 1, "easy",
+            "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=800&auto=format&fit=crop&q=80",
+            listOf(
+                IngredientSpec("Whole Wheat Bread", "80"),
+                IngredientSpec("Egg (boiled)", "100"),
+                IngredientSpec("Avocado", "80"),
+                IngredientSpec("Mixed Salad Greens", "50"),
+                IngredientSpec("Cherry Tomatoes", "60")
+            ),
+            listOf(
+                "Warm the bread briefly to soften it.",
+                "Mash the avocado and spread across the bread.",
+                "Slice the boiled egg and layer on top with the greens and halved tomatoes.",
+                "Roll up tightly and slice in half."
+            )
+        ),
+        ExtraRecipe(
+            "Tofu Broccoli Stir-Fry",
+            "Crisp tofu and bright broccoli over brown rice — fast, vegan, satisfying weeknight dinner.",
+            15, 15, 2, "medium",
+            "https://images.unsplash.com/photo-1512058564366-18510be2db19?w=800&auto=format&fit=crop&q=80",
+            listOf(
+                IngredientSpec("Tofu", "250"),
+                IngredientSpec("Broccoli", "250"),
+                IngredientSpec("Brown Rice", "300"),
+                IngredientSpec("Olive Oil", "15", "tsp")
+            ),
+            listOf(
+                "Cook the brown rice while you prep.",
+                "Press and cube the tofu; sear in a hot pan with half the olive oil until golden on each side.",
+                "Add the broccoli florets and the rest of the oil; stir-fry for 4-5 minutes until tender-crisp.",
+                "Serve over the rice with a splash of soy sauce if you like."
+            )
+        ),
+        ExtraRecipe(
+            "Lentil & Sweet Potato Curry",
+            "Warming fibre-rich curry — sweet potato and broccoli in a lightly spiced lentil base.",
+            15, 30, 4, "medium",
+            "https://images.unsplash.com/photo-1580013759032-c96505e24c1f?w=800&auto=format&fit=crop&q=80",
+            listOf(
+                IngredientSpec("Lentils (cooked)", "400"),
+                IngredientSpec("Sweet Potato", "400"),
+                IngredientSpec("Broccoli", "200"),
+                IngredientSpec("Olive Oil", "20", "tsp")
+            ),
+            listOf(
+                "Cube the sweet potato and sauté in olive oil for 5 minutes.",
+                "Add curry powder, ground cumin, and a pinch of chilli; toast for 30 seconds.",
+                "Stir in the lentils and 200ml water; simmer for 15 minutes until the sweet potato is tender.",
+                "Add the broccoli florets and cook for a final 5-7 minutes.",
+                "Season generously and serve with rice or flatbread."
+            )
+        )
+    )
+
+    /**
+     * Insert the recipes from [extraRecipes] that aren't already present, by title.
+     * Idempotent — safe to call on every boot. Sarah Williams (the professional in
+     * the seed data) is set as the author; if for some reason she isn't in the DB,
+     * we silently no-op rather than crash startup.
+     */
+    fun backfillExtraRecipes() {
+        transaction {
+            val sarah = Users.selectAll().where { Users.email eq "sarah@clinic.com" }.singleOrNull() ?: return@transaction
+            val sarahId = sarah[Users.id]
+            val foodMap = FoodItems.selectAll().associate { it[FoodItems.name] to it[FoodItems.id] }
+            val now = LocalDateTime.now()
+
+            for (extra in extraRecipes) {
+                val exists = Recipes.selectAll().where { Recipes.title eq extra.title }.count() > 0L
+                if (exists) continue
+
+                val rid = Recipes.insert {
+                    it[createdBy] = sarahId
+                    it[title] = extra.title
+                    it[description] = extra.description
+                    it[prepTimeMinutes] = extra.prepMin
+                    it[cookTimeMinutes] = extra.cookMin
+                    it[servings] = extra.servings
+                    it[difficulty] = extra.difficulty
+                    it[imageUrl] = extra.imageUrl
+                    it[createdAt] = now
+                } get Recipes.id
+
+                for (ing in extra.ingredients) {
+                    RecipeIngredients.insert {
+                        it[recipeId] = rid
+                        it[foodItemId] = foodMap[ing.foodName]
+                        it[ingredientName] = ing.foodName
+                        it[quantity] = ing.quantity
+                        it[unit] = ing.unit
+                    }
+                }
+
+                for ((idx, step) in extra.steps.withIndex()) {
+                    RecipeSteps.insert {
+                        it[recipeId] = rid
+                        it[stepNumber] = idx + 1
+                        it[instruction] = step
+                    }
+                }
+            }
+        }
+    }
+
     fun insertIfEmpty() {
         transaction {
             if (Users.selectAll().count() > 0L) return@transaction

@@ -72,4 +72,7 @@ fun Application.configureDatabase() {
     // Idempotent — fills in image_url on the seed recipes for any DB that
     // came up before that column was being populated. Safe on every boot.
     SeedData.backfillImageUrls()
+    // Idempotent — inserts the v0.6.8 recipe pack (titles checked first), so
+    // the live Render PostgreSQL gets six new recipes without a fresh seed.
+    SeedData.backfillExtraRecipes()
 }
