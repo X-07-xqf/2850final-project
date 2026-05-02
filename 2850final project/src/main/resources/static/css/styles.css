@@ -52,7 +52,7 @@
     --color-surface-alt: var(--color-oat);
     --color-text: var(--color-slate-dark);
     --color-text-strong: var(--color-slate-dark);
-    --color-muted: var(--color-cloud-dark);
+    --color-muted: var(--color-slate-light);
     --color-border: var(--color-slate-dark);
     --color-border-strong: var(--color-slate-dark);
     --color-border-soft: var(--color-cloud-light);
