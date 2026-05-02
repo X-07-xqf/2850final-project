@@ -2,11 +2,6 @@
 
 
 build:
-  # First-pass tolerance — the team is wiring Detekt up for the first time and
-  # there is a baseline of pre-existing style findings to clean up incrementally.
-  # The CI workflow uploads the HTML report on every run so the team can browse
-  # findings and tighten this number per sprint. Set back to 0 once the codebase
-  # is clean.
   maxIssues: 250
   excludeCorrectable: false
 
