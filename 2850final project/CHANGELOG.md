@@ -1,6 +1,18 @@
-# Changelog - Good Food & Healthy Eating
+# Changelog - Sage — Healthy Eating
 
 All notable changes to this project will be documented in this file.
+
+---
+
+## [v0.6.18] - 2026-05-03 — Rebrand: Good Food → Sage, salad emoji → SVG sage-leaf mark (closes #83)
+
+### Changed
+- Product name renamed from "Good Food" to **Sage** across every user-facing string: 11 page `<title>`s, sidebar brand text in 8 templates, the auth login title. Rationale: the brand color is already `--color-sage-deep / --color-sage / --color-sage-bg` so the name and visual identity collapse into one cohesive thing; "sage" is a culinary herb (food-coded) and means "wise" (fits the "make smarter food choices" positioning); one syllable, real word, premium minimal feel.
+- Logo `🥗` salad emoji replaced with an inline-SVG sage-leaf mark — a single confident curve plus midrib stroke, `stroke="currentColor"` so it inherits the brand-disc foreground color and flips correctly in dark mode. 18px in the 32px sidebar disc, 26px in the 48px auth-page disc.
+- The professional sidebar's `📋` clipboard emoji is also replaced with the same Sage leaf so the brand mark is consistent across consumer + practitioner surfaces; "Pro portal" is kept as a contextual subtitle so practitioners still know which mode they're in.
+- `.auth-logo` switched from text-centering (`line-height: 48px; text-align: center; font-size: 22px`) to flex-centering (`inline-flex` + `align-items: center` + `justify-content: center`) so the SVG centers cleanly without leftover text-rendering metrics.
+- File-header doc comments in `styles.css`, `app.js`, and `UserService.kt` updated for consistency. `README.md` and the CHANGELOG title line updated to the new brand.
+- Kotlin package `com.goodfood.*` is unchanged — this is a brand refresh, not an architectural refactor.
 
 ---
 

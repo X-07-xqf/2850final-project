@@ -1,5 +1,5 @@
 /*
- * Good Food — front-end glue (auth tabs, food modal, food search, star rating,
+ * Sage — front-end glue (auth tabs, food modal, food search, star rating,
  * theme toggle, mobile sidebar drawer).
  *
  * AI acknowledgment (COMP2850 amber-rated AI use):

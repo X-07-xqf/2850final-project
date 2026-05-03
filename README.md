@@ -1,4 +1,4 @@
-# Good Food & Healthy Eating
+# Sage — Healthy Eating
 
 COMP2850 Software Engineering — Group Project
 
