@@ -40,13 +40,14 @@ fun Route.messageRoutes() {
     get("/messages") {
         val session = call.sessions.get<UserSession>() ?: return@get call.respondRedirect("/login")
         val partners = MessageService.getConversationPartners(session.userId)
+        val directory = MessageService.getEligibleNewPartners(session.userId, session.role)
         val unread = MessageService.getUnreadCount(session.userId)
         val firstPartner = partners.firstOrNull(); val firstPartnerId = firstPartner?.get("partnerId") as? Int
         val conversation = if (firstPartnerId != null) MessageService.getConversation(session.userId, firstPartnerId) else emptyList()
         val groups = groupByDate(conversation, LocalDate.now())
         val template = if (session.role == "professional") "professional/messages" else "subscriber/messages"
         call.respond(ThymeleafContent(template, model(
-            "session" to session, "partners" to partners,
+            "session" to session, "partners" to partners, "directory" to directory,
             "conversation" to conversation, "conversationGroups" to groups,
             "activePartnerId" to firstPartnerId, "activePartnerName" to (firstPartner?.get("partnerName") ?: ""),
             "activePartnerInitials" to (firstPartner?.get("partnerInitials") ?: ""),
@@ -58,6 +59,7 @@ fun Route.messageRoutes() {
         val session = call.sessions.get<UserSession>() ?: return@get call.respondRedirect("/login")
         val partnerId = call.parameters["partnerId"]?.toIntOrNull() ?: return@get call.respondRedirect("/messages")
         val partners = MessageService.getConversationPartners(session.userId)
+        val directory = MessageService.getEligibleNewPartners(session.userId, session.role)
         val conversation = MessageService.getConversation(session.userId, partnerId)
         val groups = groupByDate(conversation, LocalDate.now())
         val partner = UserService.getById(partnerId)
@@ -67,7 +69,7 @@ fun Route.messageRoutes() {
         val pRole = partner?.get(Users.role) ?: ""
         val template = if (session.role == "professional") "professional/messages" else "subscriber/messages"
         call.respond(ThymeleafContent(template, model(
-            "session" to session, "partners" to partners,
+            "session" to session, "partners" to partners, "directory" to directory,
             "conversation" to conversation, "conversationGroups" to groups,
             "activePartnerId" to partnerId, "activePartnerName" to pName,
             "activePartnerInitials" to pInitials, "activePartnerRole" to pRole,

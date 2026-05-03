@@ -4,6 +4,29 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [v0.6.30] - 2026-05-03 — Messages: anyone can DM anyone — full directory of opposite-role users (closes #107)
+
+### Added
+- **Directory section** in both subscriber and professional message sidebars listing every user of the opposite role you haven't yet exchanged messages with. Subscribers see "All professionals", professionals see "All clients". Conversations you've already started stay at the top in their own section; the directory sits below the divider.
+- New `MessageService.getEligibleNewPartners(userId, currentUserRole)` returns users with the opposite `role`, excluding the current user and excluding the IDs already in the conversation history.
+
+### Changed
+- `MessageRoutes` (both `GET /messages` and `GET /messages/{partnerId}`) now pass `directory` in addition to the existing `partners`.
+- Subscriber + professional message templates updated with the new section. Empty-state copy refreshed: `No conversations yet — start one below.` (subscriber) / `No conversations yet — pick a client below to start one.` (professional).
+- Directory rows reuse the existing `.conv-list__row` markup so the search filter and `data-name` attribute keep working across both sections without any JS change.
+- Directory items get a subtle `+` glyph in a dashed circle (replaces the unread badge slot) so they read as "start a chat" affordances.
+
+### Implementation notes
+- `GET /messages/{partnerId}` already worked for never-messaged partners (it fetches the partner via `UserService.getById` and `MessageService.getConversation` returns an empty list cleanly), so no route changes were needed beyond passing the directory list.
+- Initials computed the same way as for conversation partners (first letter of each space-separated word) so avatars render consistently between the two sidebar sections.
+- The directory section's `.conv-list__divider` header sits below the conversations list with `margin: 18px 16px 6px` so the two sections feel related but distinct.
+
+### Out of scope
+- Subscriber-to-subscriber DMs and pro-to-pro DMs (the requirement was "professionals talk to clients, clients talk to professionals", not full social networking).
+- Authorization gating beyond the existing pro-only `hasActiveRelationship` check on the professional dashboard endpoints — basic messaging stays open to any logged-in user-pair.
+
+---
+
 ## [v0.6.29] - 2026-05-03 — Dashboard "For tonight" cards now show real recipe images (closes #105)
 
 ### Fixed

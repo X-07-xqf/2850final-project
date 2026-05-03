@@ -2193,6 +2193,55 @@ input::placeholder, textarea::placeholder {
     color: var(--color-primary);
 }
 
+/* Directory section: section header + new-conversation row variant */
+.conv-list__divider {
+    margin: 18px 16px 6px;
+    padding: 0 4px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-wide);
+    color: var(--text-soft);
+    opacity: 0.7;
+}
+.conv-list__divider span { display: inline-block; }
+
+.conv-list__item--new .conv-list__preview {
+    text-transform: capitalize;
+    color: var(--color-primary);
+    font-weight: 500;
+}
+.conv-list__item--active.conv-list__item--new .conv-list__preview {
+    color: var(--color-primary-on);
+    opacity: 0.85;
+}
+.conv-list__new {
+    flex-shrink: 0;
+    width: 22px;
+    height: 22px;
+    border-radius: var(--radius-pill);
+    background: transparent;
+    border: 1px dashed var(--color-border-strong);
+    color: var(--text-soft);
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 18px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: background var(--dur-fast) var(--ease), color var(--dur-fast) var(--ease);
+}
+.conv-list__item--new:hover .conv-list__new {
+    background: var(--color-primary);
+    color: var(--color-primary-on);
+    border-color: var(--color-primary);
+}
+.conv-list__item--active .conv-list__new {
+    background: var(--color-primary-on);
+    border-color: var(--color-primary-on);
+    color: var(--color-primary);
+}
+
 /* ---- Main chat panel ---- */
 .chat-main {
     display: flex;
