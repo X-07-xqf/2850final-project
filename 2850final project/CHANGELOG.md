@@ -4,6 +4,35 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [v0.6.28] - 2026-05-03 — Liquid Glass pass — translucent cards + atmospheric backdrop (closes #103)
+
+CSS-only rendition of Apple's Tahoe / iOS 26 Liquid Glass material. Reference: [rdev/liquid-glass-react](https://github.com/rdev/liquid-glass-react) (which is React + WebGL — we hit ~95% of the visual via `backdrop-filter` + multi-layer shadows + an atmospheric backdrop layer).
+
+### Added
+- **Liquid-glass token family** in all three `:root` variants (light, `[data-theme="dark"]`, `prefers-color-scheme: dark`):
+  - `--glass-bg / --glass-bg-warm / --glass-bg-tinted` — translucent surface tints (~58–62% alpha)
+  - `--glass-blur / --glass-blur-strong` — `saturate(180%) blur(20-28px)`
+  - `--glass-border / --glass-border-soft` — thin edge highlight (white in light, faint white in dark)
+  - `--glass-shadow / --glass-shadow-strong` — multi-layer recipe: top `inset 0 1px 0` highlight + bottom `inset 0 -1px 0` shadow + soft outer drop
+- **Atmospheric backdrop layer** at `.app-body::before` — three soft radial-gradient blobs (sage / clay / berry) fixed to the viewport. Subtle (≤30% peak opacity in light, ≤42% in dark) so they don't compete with content but provide colour for the glass surfaces above to refract. Without this layer, glass cards on a flat cream page would just look like translucent rectangles.
+
+### Changed
+- `.card` (every card, 69 placements across the app) — solid `var(--color-surface)` swapped to `var(--glass-bg-warm)` with `backdrop-filter: var(--glass-blur)`, edge highlight via `var(--glass-border)`, multi-layer `var(--glass-shadow)`. Cards now read as thick translucent material with light catching the top edge.
+- `.chat-main__head` — sticky chat header is the canonical glass use case (refracts the messages scrolling beneath it). Now uses `--glass-blur-strong` plus a single `inset 0 1px 0 rgba(255,255,255,0.6)` highlight stripe along the top edge.
+- `.modal__panel` — strong-blur glass panel over the existing scrim, so the page behind reads as an impressionistic backdrop instead of detail noise.
+- `.landing-hero__metric` — the three floating metric chips (`1,842 kcal today` / `124 g protein` / `187 recipes saved`) are now glass tiles letting the sage brand-disc colour bleed through.
+
+### Not changed
+- Buttons (`.btn`), the composer textarea, sidebar nav, message bubbles, and `.card--feature-dark` keep their solid backgrounds — tactile / readability surfaces where translucency would hurt.
+- All `-webkit-backdrop-filter` mirrors added everywhere `backdrop-filter` appears, for Safari.
+
+### Implementation notes
+- `app-body::before` sits at `z-index: 0`; `.app-layout` is bumped to `z-index: 1` so the layout (cards included) renders above the blobs. `.app-body` itself stays at the cream background.
+- Hover transforms on cards (`.recipe-card:hover { transform: translateY(-2px) }` etc.) create a stacking context that briefly disables `backdrop-filter` during the hover. Acceptable trade-off — solid hover state is fine, the glass settles back when not interacting.
+- Total CSS added: one `::before` block + ~30 lines of token declarations across three `:root` variants. No new HTML structure, no new classes applied to templates — every existing `.card` automatically inherits the new look.
+
+---
+
 ## [v0.6.27] - 2026-05-03 — Fluid main width — pages no longer cap at 1200px on wide displays (closes #101)
 
 ### Changed
