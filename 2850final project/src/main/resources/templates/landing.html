@@ -21,8 +21,15 @@
     </a>
     <div class="landing-nav__links">
         <button type="button" class="landing-nav__theme js-theme-toggle" aria-label="Toggle theme">Toggle theme</button>
-        <a href="/login" class="btn btn--ghost btn--small">Sign in</a>
-        <a href="/login?tab=register" class="btn btn--primary btn--small">Start free</a>
+        <th:block th:if="${session == null}">
+            <a href="/login" class="btn btn--ghost btn--small">Sign in</a>
+            <a href="/login?tab=register" class="btn btn--primary btn--small">Start free</a>
+        </th:block>
+        <th:block th:if="${session != null}">
+            <a th:href="${session.role == 'professional'} ? '/pro/dashboard' : '/dashboard'"
+               class="btn btn--primary btn--small">Go to dashboard</a>
+            <a href="/logout" class="btn btn--ghost btn--small">Sign out</a>
+        </th:block>
     </div>
 </header>
 
@@ -40,8 +47,15 @@
                 Track what you eat, plan what you cook, and stay close to a registered nutritionist when you want one. Built for people who'd rather know than guess.
             </p>
             <div class="landing-hero__ctas" data-reveal style="--i:3">
-                <a href="/login?tab=register" class="btn btn--primary btn--block landing-hero__cta">Start free</a>
-                <a href="/login" class="btn btn--ghost landing-hero__cta">I have an account</a>
+                <th:block th:if="${session == null}">
+                    <a href="/login?tab=register" class="btn btn--primary btn--block landing-hero__cta">Start free</a>
+                    <a href="/login" class="btn btn--ghost landing-hero__cta">I have an account</a>
+                </th:block>
+                <th:block th:if="${session != null}">
+                    <a th:href="${session.role == 'professional'} ? '/pro/dashboard' : '/dashboard'"
+                       class="btn btn--primary btn--block landing-hero__cta">Go to dashboard</a>
+                    <a href="/logout" class="btn btn--ghost landing-hero__cta">Sign out</a>
+                </th:block>
             </div>
         </div>
         <div class="landing-hero__visual" aria-hidden="true">
@@ -154,12 +168,21 @@
 
     <!-- ========== CLOSING CTA ========== -->
     <section class="landing-cta" data-reveal>
-        <div class="landing-cta__inner">
+        <div class="landing-cta__inner" th:if="${session == null}">
             <h2 class="landing-cta__title">Start cooking<br/>with intention.</h2>
             <p class="landing-cta__sub">Free to start. No credit card. Bring your appetite.</p>
             <div class="landing-cta__buttons">
                 <a href="/login?tab=register" class="btn btn--primary landing-cta__btn">Create your account</a>
                 <a href="/login" class="btn btn--ghost landing-cta__btn">Sign in</a>
+            </div>
+        </div>
+        <div class="landing-cta__inner" th:if="${session != null}">
+            <h2 class="landing-cta__title">Welcome back,<br/><span th:text="${session.fullName}">friend</span>.</h2>
+            <p class="landing-cta__sub">Pick up where you left off.</p>
+            <div class="landing-cta__buttons">
+                <a th:href="${session.role == 'professional'} ? '/pro/dashboard' : '/dashboard'"
+                   class="btn btn--primary landing-cta__btn">Go to dashboard</a>
+                <a href="/logout" class="btn btn--ghost landing-cta__btn">Sign out</a>
             </div>
         </div>
     </section>

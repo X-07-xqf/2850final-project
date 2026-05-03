@@ -36,17 +36,12 @@ fun Application.configureRouting() {
         profileRoutes()
         professionalRoutes()
 
-        // Authenticated users go straight to their dashboard. Unauthenticated visitors
-        // see the marketing landing page instead of being dumped on the bare login form
-        // — gives them a chance to understand what Sage is before signing up.
+        // The landing page is the entry point for everyone — signed-out and signed-in
+        // alike. The template adapts its CTAs based on whether `session` is present
+        // (Sign in / Start free vs Go to dashboard / Sign out).
         get("/") {
             val session = call.sessions.get<UserSession>()
-            if (session != null) {
-                if (session.role == "professional") call.respondRedirect("/pro/dashboard")
-                else call.respondRedirect("/dashboard")
-            } else {
-                call.respond(ThymeleafContent("landing", emptyMap()))
-            }
+            call.respond(ThymeleafContent("landing", model("session" to session)))
         }
     }
 }

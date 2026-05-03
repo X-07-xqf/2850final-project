@@ -4,6 +4,17 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [v0.6.21] - 2026-05-03 — Landing at / for ALL users with session-aware CTAs (closes #89)
+
+### Changed
+- `Routing.kt`: `get("/")` no longer redirects authenticated users to their dashboard — the landing page is now the entry point for everyone. The session is passed through to the template so CTAs adapt.
+- `landing.html`: every CTA cluster (top nav, hero, closing CTA band) splits into a `${session == null}` branch and a `${session != null}` branch via `<th:block>`.
+  - Signed-out: `Sign in` / `Start free`, `Start free` / `I have an account`, `Create your account` / `Sign in` (unchanged copy).
+  - Signed-in: `Go to dashboard` / `Sign out` everywhere; the closing band's headline becomes `Welcome back, <fullName>.` with a `Pick up where you left off.` subtitle pointing into the app.
+- The pro/subscriber dashboard distinction is preserved — every "Go to dashboard" link uses `${session.role == 'professional'} ? '/pro/dashboard' : '/dashboard'` so practitioners still land in their portal.
+
+---
+
 ## [v0.6.20] - 2026-05-03 — Public landing page at / with scroll-reveal animations (closes #87)
 
 ### Added
