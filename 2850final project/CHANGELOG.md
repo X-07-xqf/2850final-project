@@ -4,6 +4,16 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [v0.6.29] - 2026-05-03 — Dashboard "For tonight" cards now show real recipe images (closes #105)
+
+### Fixed
+- The 3 seed recipes (`Grilled Chicken Salad` / `Overnight Oats Bowl` / `Grilled Salmon with Veggies`) all have real Unsplash `imageUrl` values seeded by `SeedData.backfillImageUrls()`, but the dashboard's "For tonight" section was rendering the emoji fallback every time because `DashboardRoutes.kt`'s `featured` map projection silently dropped the `imageUrl` field.
+- Added `imageUrl` to the controller's projection (passed through as nullable so the template can fall through to the emoji when a recipe genuinely has no image).
+- Mirrored the `recipes.html` pattern in `subscriber/dashboard.html`: `<img th:if="${f.imageUrl != null}">` first, emoji span as the fallback. Cover gradient class only applied when there's no image (so the image isn't tinted by a sage/clay/berry overlay).
+- New `.dashboard-tonight__img` CSS rule: `object-fit: cover` + `width/height: 100%` + a subtle `scale(1.04)` zoom on card hover, matching the existing `.recipe-card__cover-img` behaviour on the recipes grid.
+
+---
+
 ## [v0.6.28] - 2026-05-03 — Liquid Glass pass — translucent cards + atmospheric backdrop (closes #103)
 
 CSS-only rendition of Apple's Tahoe / iOS 26 Liquid Glass material. Reference: [rdev/liquid-glass-react](https://github.com/rdev/liquid-glass-react) (which is React + WebGL — we hit ~95% of the visual via `backdrop-filter` + multi-layer shadows + an atmospheric backdrop layer).

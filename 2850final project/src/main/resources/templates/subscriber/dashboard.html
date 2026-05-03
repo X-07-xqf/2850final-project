@@ -156,9 +156,11 @@
                          th:if="${featured.size() > 0}" th:with="f=${featured[0]}"
                          style="--i: 0">
                     <a th:href="|/recipes/${f.id}|" class="dashboard-tonight__link">
-                        <div th:classappend="|recipe-card__cover--${f.coverTone}|"
+                        <div th:classappend="${f.imageUrl == null} ? |recipe-card__cover--${f.coverTone}| : ''"
                              class="dashboard-tonight__cover">
-                            <span class="dashboard-tonight__emoji" th:text="${f.coverEmoji}">🍲</span>
+                            <img th:if="${f.imageUrl != null}" th:src="${f.imageUrl}" th:alt="${f.title}"
+                                 class="dashboard-tonight__img" loading="lazy" width="800" height="500"/>
+                            <span th:if="${f.imageUrl == null}" class="dashboard-tonight__emoji" th:text="${f.coverEmoji}">🍲</span>
                             <span class="dashboard-tonight__rating" th:if="${f.reviewCount > 0}">★ <span th:text="${f.avgRating}">0</span></span>
                         </div>
                         <div class="dashboard-tonight__body">
@@ -175,9 +177,11 @@
                          th:each="f, iter : ${featured}" th:if="${iter.index > 0}"
                          th:style="|--i: ${iter.index}|">
                     <a th:href="|/recipes/${f.id}|" class="dashboard-tonight__link">
-                        <div th:classappend="|recipe-card__cover--${f.coverTone}|"
+                        <div th:classappend="${f.imageUrl == null} ? |recipe-card__cover--${f.coverTone}| : ''"
                              class="dashboard-tonight__cover dashboard-tonight__cover--small">
-                            <span class="dashboard-tonight__emoji" th:text="${f.coverEmoji}">🍲</span>
+                            <img th:if="${f.imageUrl != null}" th:src="${f.imageUrl}" th:alt="${f.title}"
+                                 class="dashboard-tonight__img" loading="lazy" width="800" height="500"/>
+                            <span th:if="${f.imageUrl == null}" class="dashboard-tonight__emoji" th:text="${f.coverEmoji}">🍲</span>
                         </div>
                         <div class="dashboard-tonight__body">
                             <h3 class="dashboard-tonight__title" th:text="${f.title}">Recipe</h3>
