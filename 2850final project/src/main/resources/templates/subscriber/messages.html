@@ -60,7 +60,27 @@
                         </a>
                     </li>
                 </ul>
-                <p class="empty-hint empty-hint--pad" th:if="${partners == null or partners.isEmpty()}">No conversations yet.</p>
+                <p class="empty-hint empty-hint--pad" th:if="${partners == null or partners.isEmpty()}">No conversations yet — start one below.</p>
+
+                <!-- Directory: every professional you haven't messaged yet -->
+                <div class="conv-list__divider" th:if="${directory != null and !directory.isEmpty()}">
+                    <span>All professionals</span>
+                </div>
+                <ul class="conv-list" th:if="${directory != null and !directory.isEmpty()}">
+                    <li th:each="p : ${directory}" class="conv-list__row" th:attr="data-name=${p.partnerName}">
+                        <a th:href="|/messages/${p.partnerId}|" class="conv-list__item conv-list__item--new"
+                           th:classappend="${activePartnerId != null and activePartnerId == p.partnerId} ? ' conv-list__item--active' : ''">
+                            <span class="conv-list__avatar">
+                                <span th:text="${p.partnerInitials}">AB</span>
+                            </span>
+                            <div class="conv-list__body">
+                                <span class="conv-list__name" th:text="${p.partnerName}">Name</span>
+                                <span class="conv-list__preview" th:text="${p.partnerRole}">role</span>
+                            </div>
+                            <span class="conv-list__new" aria-hidden="true">+</span>
+                        </a>
+                    </li>
+                </ul>
                 <p class="empty-hint empty-hint--pad chat-search__empty" hidden>No matches for that search.</p>
             </aside>
             <section class="chat-main">

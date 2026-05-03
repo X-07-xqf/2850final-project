@@ -88,4 +88,34 @@ object MessageService {
     fun getUnreadCount(userId: Int): Long = transaction {
         AdviceMessages.selectAll().where { (AdviceMessages.receiverId eq userId) and (AdviceMessages.isRead eq false) }.count()
     }
+
+    /**
+     * "Directory" — every user of the opposite role that [userId] has *not*
+     * yet exchanged messages with. Powers the new-conversation list at the
+     * bottom of `/messages`. Subscribers see professionals, professionals see
+     * subscribers; never returns the current user themselves.
+     */
+    fun getEligibleNewPartners(userId: Int, currentUserRole: String): List<Map<String, Any>> = transaction {
+        val targetRole = if (currentUserRole == "professional") "subscriber" else "professional"
+        val existing: Set<Int> = AdviceMessages.selectAll().where {
+            (AdviceMessages.senderId eq userId) or (AdviceMessages.receiverId eq userId)
+        }.map { row ->
+            if (row[AdviceMessages.senderId] == userId) row[AdviceMessages.receiverId] else row[AdviceMessages.senderId]
+        }.toSet()
+        Users.selectAll().where {
+            (Users.role eq targetRole) and (Users.id neq userId)
+        }.orderBy(Users.fullName)
+        .map { user ->
+            val name = user[Users.fullName]
+            val initials = name.split(" ").filter { it.isNotEmpty() }
+                .map { it.first().uppercase() }.joinToString("")
+            mapOf(
+                "partnerId" to user[Users.id],
+                "partnerName" to name,
+                "partnerInitials" to initials,
+                "partnerRole" to user[Users.role]
+            )
+        }
+        .filter { (it["partnerId"] as Int) !in existing }
+    }
 }
