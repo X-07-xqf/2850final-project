@@ -110,6 +110,114 @@
             </ul>
             <p class="empty-hint" th:if="${meal.entries == null or meal.entries.isEmpty()}">Nothing here yet.</p>
         </section>
+
+        <!-- ========== This week + Streak (asymmetric split) ========== -->
+        <section class="dashboard-row dashboard-row--weekstreak">
+            <article class="card dashboard-week">
+                <header class="dashboard-card__head">
+                    <h2 class="section-title">This week</h2>
+                    <a th:href="'/goals'" class="dashboard-card__link">Set goals →</a>
+                </header>
+                <div class="dashboard-week__chart">
+                    <div class="dashboard-week__row" th:each="w, iter : ${weekly}"
+                         th:classappend="${w.isToday} ? ' is-today' : (${w.isLogged} ? '' : ' is-empty')"
+                         th:style="|--pct: ${w.pct}%; --i: ${iter.index}|">
+                        <span class="dashboard-week__day" th:text="${w.dayName}">Mon</span>
+                        <div class="dashboard-week__bar"><span></span></div>
+                        <span class="dashboard-week__val" th:text="${w.calories}">0</span>
+                    </div>
+                </div>
+            </article>
+            <article class="card dashboard-streak">
+                <header class="dashboard-card__head">
+                    <h2 class="section-title">Streak</h2>
+                </header>
+                <p class="dashboard-streak__num">
+                    <strong th:text="${loggedDays}" data-count-up>0</strong>
+                    <span class="dashboard-streak__total">/ 7</span>
+                </p>
+                <p class="dashboard-streak__caption">days logged this week.</p>
+                <div class="dashboard-streak__dots">
+                    <span class="dashboard-streak__dot" th:each="d : ${weekly}"
+                          th:classappend="${d.isLogged} ? ' is-on' : ''"
+                          th:title="${d.dayName}"></span>
+                </div>
+            </article>
+        </section>
+
+        <!-- ========== For tonight (asymmetric recipe bento) ========== -->
+        <section class="dashboard-tonight" th:if="${featured != null and !featured.isEmpty()}">
+            <header class="dashboard-card__head dashboard-card__head--bare">
+                <h2 class="section-title">For tonight</h2>
+                <a th:href="'/recipes'" class="dashboard-card__link">Browse all →</a>
+            </header>
+            <div class="dashboard-tonight__grid">
+                <article class="dashboard-tonight__card dashboard-tonight__card--lead"
+                         th:if="${featured.size() > 0}" th:with="f=${featured[0]}"
+                         style="--i: 0">
+                    <a th:href="|/recipes/${f.id}|" class="dashboard-tonight__link">
+                        <div th:classappend="|recipe-card__cover--${f.coverTone}|"
+                             class="dashboard-tonight__cover">
+                            <span class="dashboard-tonight__emoji" th:text="${f.coverEmoji}">🍲</span>
+                            <span class="dashboard-tonight__rating" th:if="${f.reviewCount > 0}">★ <span th:text="${f.avgRating}">0</span></span>
+                        </div>
+                        <div class="dashboard-tonight__body">
+                            <h3 class="dashboard-tonight__title" th:text="${f.title}">Recipe</h3>
+                            <p class="dashboard-tonight__meta">
+                                <span th:text="${f.calPerServing}">320</span> kcal ·
+                                <span th:text="${f.totalTime}">30</span> min ·
+                                <span th:text="${f.difficulty}" class="dashboard-tonight__diff">easy</span>
+                            </p>
+                        </div>
+                    </a>
+                </article>
+                <article class="dashboard-tonight__card"
+                         th:each="f, iter : ${featured}" th:if="${iter.index > 0}"
+                         th:style="|--i: ${iter.index}|">
+                    <a th:href="|/recipes/${f.id}|" class="dashboard-tonight__link">
+                        <div th:classappend="|recipe-card__cover--${f.coverTone}|"
+                             class="dashboard-tonight__cover dashboard-tonight__cover--small">
+                            <span class="dashboard-tonight__emoji" th:text="${f.coverEmoji}">🍲</span>
+                        </div>
+                        <div class="dashboard-tonight__body">
+                            <h3 class="dashboard-tonight__title" th:text="${f.title}">Recipe</h3>
+                            <p class="dashboard-tonight__meta">
+                                <span th:text="${f.calPerServing}">320</span> kcal ·
+                                <span th:text="${f.totalTime}">30</span> min
+                            </p>
+                        </div>
+                    </a>
+                </article>
+            </div>
+        </section>
+
+        <!-- ========== Coach corner ========== -->
+        <section class="card dashboard-coach" th:if="${latestPartner != null}">
+            <header class="dashboard-card__head">
+                <h2 class="section-title">From your coach</h2>
+                <a th:href="'/messages'" class="dashboard-card__link">All messages →</a>
+            </header>
+            <div class="dashboard-coach__body">
+                <div class="dashboard-coach__avatar" th:text="${latestPartner.partnerInitials}">SW</div>
+                <div class="dashboard-coach__content">
+                    <p class="dashboard-coach__from">
+                        <strong th:text="${latestPartner.partnerName}">Dr. Sarah Williams</strong>
+                        <span class="dashboard-coach__role" th:text="${latestPartner.partnerRole}">nutritionist</span>
+                    </p>
+                    <p class="dashboard-coach__msg" th:text="${latestPartner.lastMessage}">…</p>
+                </div>
+                <a th:href="|/messages/${latestPartner.partnerId}|" class="btn btn--primary dashboard-coach__cta">Reply</a>
+            </div>
+        </section>
+        <section class="card dashboard-coach dashboard-coach--empty" th:if="${latestPartner == null}">
+            <header class="dashboard-card__head">
+                <h2 class="section-title">A coach on call</h2>
+            </header>
+            <p class="dashboard-coach__empty-text">
+                Direct-message a registered nutritionist about a goal, a binge, or what to eat tonight. They reply in their actual voice.
+            </p>
+            <a th:href="'/messages'" class="btn btn--primary">Open messages</a>
+        </section>
     </main>
 </div>
 <script th:src="'/static/js/app.js'" src="/static/js/app.js"></script>

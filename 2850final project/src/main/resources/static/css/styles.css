@@ -2956,6 +2956,293 @@ input::placeholder, textarea::placeholder {
 }
 
 /* ============================================================
+   Dashboard secondary modules — appended below the nutrition card.
+   This week + Streak (asymmetric split), For tonight (recipe bento),
+   Coach corner (latest message preview).
+   ============================================================ */
+.dashboard-row {
+    display: grid;
+    gap: 24px;
+    margin-bottom: 24px;
+}
+.dashboard-row--weekstreak { grid-template-columns: 2fr 1fr; }
+
+.dashboard-card__head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 16px;
+    margin-bottom: 20px;
+}
+.dashboard-card__head--bare {
+    margin-bottom: 24px;
+    padding: 0 4px;
+}
+.dashboard-card__link {
+    font-size: var(--text-sm);
+    color: var(--text-soft);
+    text-decoration: none;
+    font-weight: 500;
+    letter-spacing: var(--tracking-snug);
+}
+.dashboard-card__link:hover {
+    color: var(--color-primary);
+    text-decoration: none;
+}
+
+/* ---- This week mini chart ---- */
+.dashboard-week__chart {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+.dashboard-week__row {
+    display: grid;
+    grid-template-columns: 38px 1fr 70px;
+    align-items: center;
+    gap: 14px;
+    padding: 8px 12px;
+    margin: 0 -12px;
+    border-radius: var(--radius-sm);
+    transition: background var(--dur-fast) var(--ease);
+}
+.dashboard-week__row.is-today { background: var(--color-mint-bg); }
+.dashboard-week__day {
+    font-size: var(--text-xs);
+    color: var(--text-soft);
+    font-weight: 600;
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+}
+.dashboard-week__row.is-today .dashboard-week__day {
+    color: var(--color-sage-deep);
+    font-weight: 700;
+}
+.dashboard-week__bar {
+    height: 8px;
+    background: var(--color-progress-track);
+    border-radius: var(--radius-pill);
+    overflow: hidden;
+}
+.dashboard-week__row.is-empty .dashboard-week__bar {
+    background: transparent;
+    border: 1px dashed var(--color-border);
+    height: 6px;
+}
+.dashboard-week__bar > span {
+    display: block;
+    height: 100%;
+    width: var(--pct, 0%);
+    background: linear-gradient(90deg, var(--color-sage-deep), var(--color-sage));
+    border-radius: inherit;
+    transform-origin: left center;
+}
+.dashboard-week__val {
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--text-strong);
+    text-align: right;
+}
+.dashboard-week__row.is-empty .dashboard-week__val { color: var(--color-faint); font-weight: 500; }
+
+/* ---- Streak ---- */
+.dashboard-streak {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 100%;
+}
+.dashboard-streak__num {
+    margin: 8px 0 0;
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 600;
+    line-height: 0.95;
+    letter-spacing: -0.02em;
+    color: var(--text-soft);
+}
+.dashboard-streak__num strong {
+    color: var(--color-primary);
+    font-weight: 700;
+    font-size: clamp(72px, 8vw, 96px);
+    margin-right: 8px;
+}
+.dashboard-streak__total {
+    font-size: clamp(28px, 3vw, 36px);
+    color: var(--text-soft);
+}
+.dashboard-streak__caption {
+    margin: 14px 0 0;
+    font-size: var(--text-sm);
+    color: var(--text-soft);
+    line-height: 1.4;
+}
+.dashboard-streak__dots {
+    display: flex;
+    gap: 8px;
+    margin-top: auto;
+    padding-top: 24px;
+}
+.dashboard-streak__dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--color-progress-track);
+    transition: background var(--dur-fast) var(--ease);
+}
+.dashboard-streak__dot.is-on {
+    background: linear-gradient(135deg, var(--color-sage-deep), var(--color-sage));
+}
+
+/* ---- For tonight (asymmetric recipe bento) ---- */
+.dashboard-tonight { margin-bottom: 24px; }
+.dashboard-tonight__grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    gap: 16px;
+    align-items: stretch;
+}
+.dashboard-tonight__card {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border-soft);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+    transition: transform var(--dur-fast) var(--ease), box-shadow var(--dur-fast) var(--ease);
+    display: flex;
+    flex-direction: column;
+}
+.dashboard-tonight__card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow);
+}
+.dashboard-tonight__link {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    text-decoration: none;
+    color: inherit;
+}
+.dashboard-tonight__link:hover { text-decoration: none; }
+.dashboard-tonight__cover {
+    aspect-ratio: 16 / 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    background: linear-gradient(135deg, var(--color-sage-bg), var(--color-sage-soft));
+}
+.dashboard-tonight__cover--small { aspect-ratio: 16 / 9; }
+.dashboard-tonight__emoji {
+    font-size: 56px;
+    line-height: 1;
+    filter: var(--emoji-shadow);
+}
+.dashboard-tonight__card--lead .dashboard-tonight__emoji { font-size: 88px; }
+.dashboard-tonight__rating {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: var(--overlay-strong);
+    color: var(--color-cream);
+    padding: 4px 10px;
+    border-radius: var(--radius-pill);
+    font-size: var(--text-xs);
+    font-weight: 700;
+    letter-spacing: var(--tracking-snug);
+}
+.dashboard-tonight__body {
+    padding: 14px 18px 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+.dashboard-tonight__title {
+    margin: 0;
+    font-size: var(--text-base);
+    font-weight: 700;
+    color: var(--text-strong);
+    line-height: var(--leading-snug);
+}
+.dashboard-tonight__card--lead .dashboard-tonight__title {
+    font-size: var(--text-lg);
+}
+.dashboard-tonight__meta {
+    margin: 0;
+    font-size: var(--text-sm);
+    color: var(--text-soft);
+}
+.dashboard-tonight__diff { text-transform: capitalize; }
+
+/* ---- Coach corner ---- */
+.dashboard-coach { margin-bottom: 24px; }
+.dashboard-coach__body {
+    display: grid;
+    grid-template-columns: 60px 1fr auto;
+    gap: 18px;
+    align-items: center;
+}
+.dashboard-coach__avatar {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: var(--color-primary);
+    color: var(--color-primary-on);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: var(--text-lg);
+    letter-spacing: -0.02em;
+}
+.dashboard-coach__from {
+    margin: 0 0 6px;
+    font-size: var(--text-sm);
+    color: var(--text-soft);
+}
+.dashboard-coach__from strong {
+    color: var(--text-strong);
+    font-weight: 700;
+    margin-right: 8px;
+    font-size: var(--text-base);
+}
+.dashboard-coach__role {
+    font-size: var(--text-xs);
+    text-transform: capitalize;
+    color: var(--color-primary);
+    letter-spacing: var(--tracking-snug);
+    font-weight: 600;
+}
+.dashboard-coach__msg {
+    margin: 0;
+    color: var(--text-strong);
+    font-size: var(--text-base);
+    line-height: 1.45;
+}
+.dashboard-coach__cta { white-space: nowrap; }
+.dashboard-coach--empty .dashboard-coach__empty-text {
+    margin: 0 0 16px;
+    color: var(--text-soft);
+    line-height: 1.55;
+    max-width: 60ch;
+}
+
+/* ---- Dashboard module responsive ---- */
+@media (max-width: 960px) {
+    .dashboard-row--weekstreak { grid-template-columns: 1fr; }
+    .dashboard-tonight__grid { grid-template-columns: 1fr 1fr; }
+    .dashboard-tonight__card--lead { grid-column: span 2; }
+}
+@media (max-width: 600px) {
+    .dashboard-tonight__grid { grid-template-columns: 1fr; }
+    .dashboard-tonight__card--lead { grid-column: auto; }
+    .dashboard-coach__body { grid-template-columns: 60px 1fr; }
+    .dashboard-coach__cta { grid-column: 1 / -1; }
+}
+
+/* ============================================================
    Responsive
    ============================================================ */
 @media (max-width: 1024px) {

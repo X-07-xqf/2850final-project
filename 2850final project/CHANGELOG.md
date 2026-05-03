@@ -4,6 +4,24 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [v0.6.25] - 2026-05-03 — Dashboard: This week + Streak + For tonight + Coach corner (closes #97)
+
+### Added
+- **This week / Streak** asymmetric split row (`2fr / 1fr`) below the existing meals/empty-day section.
+  - This week: compact 7-row weekly chart with sage gradient bars, today's row highlighted in `--color-mint-bg`, empty days show a dashed transparent track. Uses the existing `DiaryService.getWeeklySummary` snapshot.
+  - Streak: italic Cormorant `<loggedDays> / 7` display number with a count-up animation, plus a row of 7 dots showing which days were logged. The italic display number ties back to the brand wordmark voice instead of yet another bold sans number.
+- **For tonight** asymmetric recipe bento (`grid-template-columns: 2fr 1fr 1fr`). Picks 3 recipes via `RecipeService.getFeatured(3)`. The lead card shows a larger emoji cover + difficulty meta; the two trailing cards are compact. Avoids the taste-skill "3 equal cards in a row" ban via the asymmetric grid. Cards reuse the existing `recipe-card__cover--*` tone gradients so dark mode flips automatically.
+- **Coach corner**: latest conversation partner via `MessageService.getConversationPartners(userId).firstOrNull()` — initials disc + name + role + truncated last message + Reply CTA. Empty-state variant when the user has no conversations yet, inviting them to open Messages.
+
+### Changed
+- `DashboardRoutes.kt` enriched: computes `weekly` (Mon–Sun calorie ladder with `pct`/`isToday`/`isLogged` flags), `loggedDays` count, `featured` (3 top recipes from `RecipeService`), and `latestPartner` (first conversation in the user's inbox).
+
+### Implementation notes
+- Mobile breakpoints: at `≤960px` the week/streak split collapses to a single column and the recipe bento goes to 2 columns with the lead card spanning both. At `≤600px` everything stacks to single column and the coach Reply button moves below the message.
+- All numbers use `var(--font-mono)` + `tabular-nums` (week chart values) or italic Cormorant (streak count) — no Plus Jakarta Sans bold for data.
+
+---
+
 ## [v0.6.24] - 2026-05-03 — Unify all logos to one oil-paint look, visible at small sizes too (closes #95)
 
 ### Changed

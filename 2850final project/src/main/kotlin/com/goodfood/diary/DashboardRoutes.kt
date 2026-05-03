@@ -4,6 +4,7 @@ import com.goodfood.config.UserSession
 import com.goodfood.config.model
 import com.goodfood.goals.GoalService
 import com.goodfood.messages.MessageService
+import com.goodfood.recipes.RecipeService
 import com.goodfood.util.fmt
 import io.ktor.server.application.*
 import io.ktor.server.response.*
@@ -51,6 +52,43 @@ fun Route.dashboardRoutes() {
         val goalCarb = goals?.get("carbs") ?: BigDecimal("250")
         val goalFat = goals?.get("fat") ?: BigDecimal("65")
         val isDayEmpty = entries.isEmpty()
+
+        // Below-the-fold dashboard modules (v0.6.25): weekly summary, streak,
+        // featured recipes, and the most recent coaching conversation.
+        val monday = today.minusDays(today.dayOfWeek.value.toLong() - 1)
+        val weeklyRaw = DiaryService.getWeeklySummary(session.userId, monday)
+        val goalCalDouble = goalCal.toDouble()
+        val weekly = weeklyRaw.map { w ->
+            val calsRaw = w["calories"] as BigDecimal
+            val cals = calsRaw.toDouble()
+            val rowDate = w["date"] as LocalDate
+            mapOf(
+                "dayName" to (w["dayName"] ?: ""),
+                "calories" to calsRaw.fmt(0),
+                "pct" to if (goalCalDouble > 0) ((cals / goalCalDouble) * 100).coerceAtMost(100.0).toInt() else 0,
+                "isToday" to (rowDate == today),
+                "isLogged" to (cals > 0)
+            )
+        }
+        val loggedDays = weekly.count { it["isLogged"] == true }
+
+        val featured = RecipeService.getFeatured(3).map { r ->
+            mapOf(
+                "id" to (r["id"] ?: 0),
+                "title" to (r["title"] ?: ""),
+                "coverEmoji" to (r["coverEmoji"] ?: "🍽️"),
+                "coverTone" to (r["coverTone"] ?: "sage"),
+                "avgRating" to (r["avgRating"] as BigDecimal).fmt(1),
+                "reviewCount" to (r["reviewCount"] as Int),
+                "calPerServing" to ((r["calPerServing"] as BigDecimal?) ?: BigDecimal.ZERO).fmt(0),
+                "totalTime" to (r["totalTime"] as Int),
+                "difficulty" to (r["difficulty"] ?: "easy")
+            )
+        }
+
+        val partners = MessageService.getConversationPartners(session.userId)
+        val latestPartner = partners.firstOrNull()
+
         call.respond(ThymeleafContent("subscriber/dashboard", model(
             "session" to session, "date" to today.format(DateTimeFormatter.ofPattern("EEEE, MMMM d, yyyy")), "meals" to meals,
             "isDayEmpty" to isDayEmpty,
@@ -66,6 +104,8 @@ fun Route.dashboardRoutes() {
             "pctProtein" to pct(summary["protein"]!!, goalProt),
             "pctCarbs" to pct(summary["carbs"]!!, goalCarb),
             "pctFat" to pct(summary["fat"]!!, goalFat),
+            "weekly" to weekly, "loggedDays" to loggedDays,
+            "featured" to featured, "latestPartner" to latestPartner,
             "unreadMessages" to unread, "activePage" to "dashboard")))
     }
 }
