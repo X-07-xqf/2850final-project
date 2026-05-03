@@ -4,6 +4,20 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [v0.6.23] - 2026-05-03 — Eyebrows: drop tracked-caps AI pattern, italic Cormorant editorial (closes #93)
+
+### Changed
+- `.landing-hero__eyebrow` and `.landing-section__eyebrow` no longer use the `text-transform: uppercase; letter-spacing: 0.32em; font-size: 12px` recipe — that all-caps + wide-tracking + brief-tagline-in-eyebrow pattern is the Lovable / Bolt / v0.dev default and reads as AI-template at a glance.
+- Both classes now use `var(--font-display)` (Cormorant Garamond) at `italic 500`, natural case, no extra letter-spacing, larger size (`clamp(17px, 1.5vw, 20px)` hero / `clamp(16px, 1.4vw, 19px)` section) — serifs need the size and don't survive tracked-out caps. Reads as British-editorial subhead instead of marketing eyebrow.
+- Hero eyebrow copy: `SAGE — HEALTHY EATING, TRACKED SIMPLY` → `Healthy eating, tracked simply.` Drops the redundant brand prefix (the wordmark is right there in the nav above).
+- Section eyebrows: `Track` / `Cook` / `Coach` → `Track.` / `Cook.` / `Coach.` Period gives single-word eyebrows editorial weight.
+
+### Not changed
+- No new font added. Cormorant Garamond is already imported (v0.6.22).
+- All other typography (UI body, dashboard, mono numbers, sidebar wordmark) untouched.
+
+---
+
 ## [v0.6.22] - 2026-05-03 — Logo oil-paint texture; "Sage" wordmark in Cormorant Garamond italic (closes #91)
 
 ### Changed
