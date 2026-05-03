@@ -1822,28 +1822,85 @@ input::placeholder, textarea::placeholder {
     color: var(--text-soft);
     margin: 0 0 14px;
 }
+/* Calorie weekly chart — substantive 12px-tall pill bars with gradient fill,
+   tabular-mono numbers, and four meaningful row states:
+   default (sage gradient) / --over (clay/warn) / --empty (dashed track) /
+   --today (mint pill bg). */
+.weekly-chart {
+    margin: 4px -8px 0;  /* row hover/today bg can bleed slightly past card padding */
+}
 .weekly-chart__row {
     display: grid;
-    grid-template-columns: 56px 1fr 56px;
+    grid-template-columns: 56px 1fr 96px;
     align-items: center;
-    gap: 12px;
-    margin-bottom: 8px;
+    gap: 16px;
+    padding: 10px 12px;
+    border-radius: var(--radius-sm);
+    transition: background var(--dur-fast) var(--ease);
 }
-.weekly-chart__label {
+.weekly-chart__row:hover { background: var(--color-surface-warm); }
+.weekly-chart__row--today,
+.weekly-chart__row--today:hover { background: var(--color-mint-bg); }
+
+.weekly-chart__day {
     font-size: var(--text-sm);
     font-weight: 600;
     color: var(--text-soft);
+    letter-spacing: var(--tracking-snug);
 }
-.weekly-chart__bar {
-    width: 100%;
-    height: 6px;
-    accent-color: var(--color-primary);
+.weekly-chart__row--today .weekly-chart__day {
+    color: var(--color-sage-deep);
+    font-weight: 700;
 }
+
+.weekly-chart__track {
+    position: relative;
+    height: 12px;
+    background: var(--color-progress-track);
+    border-radius: var(--radius-pill);
+    overflow: hidden;
+}
+.weekly-chart__row--empty .weekly-chart__track {
+    background: transparent;
+    border: 1px dashed var(--color-border);
+    height: 10px;
+}
+.weekly-chart__fill {
+    display: block;
+    height: 100%;
+    width: var(--pct, 0%);
+    background: linear-gradient(90deg, var(--color-sage-deep), var(--color-sage));
+    border-radius: inherit;
+    transform-origin: left center;
+}
+.weekly-chart__row--over .weekly-chart__fill {
+    background: linear-gradient(90deg, var(--color-clay), var(--color-warn));
+}
+
 .weekly-chart__val {
+    display: flex;
+    align-items: baseline;
+    justify-content: flex-end;
+    gap: 4px;
     font-size: var(--text-sm);
+    color: var(--text-strong);
+    font-weight: 600;
+}
+.weekly-chart__num {
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.01em;
+}
+.weekly-chart__unit {
+    font-size: 11px;
     color: var(--text-soft);
-    text-align: right;
     font-weight: 500;
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+}
+.weekly-chart__row--empty .weekly-chart__num,
+.weekly-chart__row--empty .weekly-chart__unit {
+    color: var(--color-faint);
 }
 
 /* ============================================================
@@ -2306,6 +2363,11 @@ input::placeholder, textarea::placeholder {
     100% { transform: translateX(220%); }
 }
 
+@keyframes bar-grow {
+    from { transform: scaleX(0); }
+    to   { transform: scaleX(1); }
+}
+
 /* @property lets the conic-gradient stop position animate as a real number,
    not as a string interpolation between gradient images. Without it,
    the ring would snap rather than fill smoothly. */
@@ -2326,6 +2388,12 @@ input::placeholder, textarea::placeholder {
         opacity: 0;
         animation: stagger-rise 0.42s var(--ease-out) both;
         animation-delay: calc(var(--i, 0) * 60ms);
+    }
+
+    .weekly-chart__fill {
+        animation: bar-grow 0.7s var(--ease-out) both;
+        animation-delay: calc(0.2s + var(--i, 0) * 70ms);
+        transform: scaleX(0);
     }
 
     .progress--lg {

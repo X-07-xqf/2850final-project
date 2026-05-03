@@ -4,6 +4,20 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [v0.6.16] - 2026-05-03 — Weekly calorie chart: substantive bars with empty / over / today states (closes #79)
+
+### Changed
+- The `<progress>`-based weekly chart on `/goals` was anemic 6px line art that didn't distinguish "logged nothing" from "logged a tiny meal" or flag over-goal days. Replaced with a div-based 12px pill bar (`.weekly-chart__track` + `.weekly-chart__fill`) carrying four meaningful row states.
+- `GoalRoutes.kt` now enriches each weekly row with `pct` (capped 0–100), `rowClass` (a space-prefixed string of `--empty` / `--over` / `--today` modifiers), and uses the calorie goal as the bar's natural max instead of a hardcoded 3000.
+- **Default**: sage-deep → sage gradient fill, scaled to `(calories / goalCalories) * 100` (capped at 100%).
+- **Empty** (`0 kcal`): track switches to a 1px dashed border so "no data" is visually distinct from "almost-empty"; calorie number softens to `--color-faint`.
+- **Over goal** (>110% of target — 10% buffer so right-around-goal stays sage): fill flips to a clay/warn gradient.
+- **Today**: row gets a soft mint pill background, day name promoted to sage-deep / weight 700 so users can see where they are in the week at a glance.
+- Calorie numbers now use `var(--font-mono)` + `font-variant-numeric: tabular-nums` so the column lines up vertically; small uppercase `kcal` unit label sits next to each value.
+- New `bar-grow` keyframe (`scaleX(0) → scaleX(1)`, `--ease-out`, 0.7s, staggered `70ms × var(--i)` with a 0.2s page settle) gated behind `prefers-reduced-motion: no-preference`.
+
+---
+
 ## [v0.6.15] - 2026-05-03 — Goals page stacks vertically: targets on top, weekly chart full-width below (closes #77)
 
 ### Changed

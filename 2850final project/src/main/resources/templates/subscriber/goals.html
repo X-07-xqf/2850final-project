@@ -82,10 +82,19 @@
                     </div>
                 </header>
                 <div class="weekly-chart" th:if="${weekly != null and !weekly.isEmpty()}">
-                    <div class="weekly-chart__row" th:each="w : ${weekly}">
-                        <span class="weekly-chart__label" th:text="${w.dayName}">Mon</span>
-                        <progress class="weekly-chart__bar" th:value="${w.calories}" max="3000"></progress>
-                        <span class="weekly-chart__val" th:text="${w.calories}">0</span>
+                    <div class="weekly-chart__row"
+                         th:each="w, iter : ${weekly}"
+                         th:classappend="${w.rowClass}"
+                         th:style="|--pct:${w.pct}%; --i:${iter.index}|">
+                        <span class="weekly-chart__day" th:text="${w.dayName}">Mon</span>
+                        <div class="weekly-chart__track" role="img"
+                             th:attr="aria-label=|${w.dayName}: ${w.calories} kcal|">
+                            <span class="weekly-chart__fill" aria-hidden="true"></span>
+                        </div>
+                        <span class="weekly-chart__val">
+                            <span class="weekly-chart__num" th:text="${w.calories}">0</span>
+                            <span class="weekly-chart__unit">kcal</span>
+                        </span>
                     </div>
                 </div>
                 <p class="empty-hint" th:if="${weekly == null or weekly.isEmpty()}">Quiet week so far — log a meal to see progress.</p>

@@ -30,11 +30,33 @@ fun Route.goalRoutes() {
         val weekly = DiaryService.getWeeklySummary(session.userId, monday)
         val unread = MessageService.getUnreadCount(session.userId)
         val displayGoals = goals?.mapValues { (_, v) -> v?.fmt(1) ?: "" } ?: emptyMap()
-        val displayWeekly = weekly.map { w -> mapOf(
-            "date" to w["date"],
-            "dayName" to w["dayName"],
-            "calories" to (w["calories"] as BigDecimal).fmt(0)
-        ) }
+        // Calorie goal drives the bar scale. If the user hasn't set one, every
+        // bar reads as "empty" — pct stays 0 and the dashed empty track shows.
+        val goalCals: Double = goals?.get("calories")?.toDouble() ?: 0.0
+        val displayWeekly = weekly.map { w ->
+            val calsRaw = w["calories"] as BigDecimal
+            val cals = calsRaw.toDouble()
+            val rowDate = w["date"] as LocalDate
+            val pct: Int = if (goalCals > 0) ((cals / goalCals) * 100).coerceAtMost(100.0).toInt() else 0
+            // 10% buffer so "right around goal" stays sage-green; only meaningfully-over days flip to clay.
+            val isOver = goalCals > 0 && cals > goalCals * 1.10
+            val isEmpty = cals == 0.0
+            val isToday = rowDate == today
+            val rowClass = buildString {
+                when {
+                    isEmpty -> append(" weekly-chart__row--empty")
+                    isOver  -> append(" weekly-chart__row--over")
+                }
+                if (isToday) append(" weekly-chart__row--today")
+            }
+            mapOf(
+                "date" to rowDate,
+                "dayName" to (w["dayName"] ?: ""),
+                "calories" to calsRaw.fmt(0),
+                "pct" to pct,
+                "rowClass" to rowClass
+            )
+        }
         val labelFmt = DateTimeFormatter.ofPattern("MMM d")
         val sunday = monday.plusDays(6)
         val weekLabel = "${monday.format(labelFmt)} – ${sunday.format(labelFmt)}, ${monday.year}"
