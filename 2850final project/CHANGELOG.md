@@ -4,6 +4,22 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [v0.6.20] - 2026-05-03 — Public landing page at / with scroll-reveal animations (closes #87)
+
+### Added
+- New `templates/landing.html` served at `/` for unauthenticated visitors. Authenticated users still go straight to their dashboard. Replaces the previous behavior of dumping new visitors on a bare login form.
+- **Asymmetric hero** (taste-skill rule: no centered hero when `DESIGN_VARIANCE > 4`): split-screen with `1.1fr 1fr` grid; left column carries the headline + sub + dual CTAs ("Start free" / "I have an account"); right column shows the brand disc with three floating metric chips (`1,842 kcal today` / `124 g protein` / `187 recipes saved`) — each chip drifts on a perpetual `hero-metric-float` keyframe with 6s alternating easing.
+- **Three zig-zag feature sections** (Track / Cook / Coach) — section 2 reverses via `.landing-section--reverse` so visuals alternate sides; type-driven CSS-only mocks instead of stock photography (a calorie ring with macro bars / a stacked recipe-card vignette / a mock chat thread with breathing typing-dots).
+- **Closing CTA band** in `--color-deep` (forest) with `Create your account` / `Sign in` buttons, then a minimal footer.
+- **IntersectionObserver scroll reveals**: every `[data-reveal]` element gets `opacity: 0; transform: translateY(28px)` until it crosses 15% of the viewport, then transitions in over 0.8s with `cubic-bezier(0.16, 1, 0.3, 1)` easing and an `--i`-driven 90ms stagger. Falls back to instant visibility when `prefers-reduced-motion: reduce` or `IntersectionObserver` is unsupported.
+
+### Changed
+- `Routing.kt`'s root `get("/")` now renders the landing template directly for unauthenticated users (instead of `respondRedirect("/login")`); authenticated branch unchanged.
+- `initCountUp()` in `app.js` now prefers a `data-count-up="..."` attribute value over text content, strips thousands-separator commas before parsing, and re-adds them via `toLocaleString("en-US")` if the source had them — backward compatible with the existing dashboard usage that sets the value via text content.
+- New `initScrollReveals()` function added to `app.js`'s init sequence.
+
+---
+
 ## [v0.6.19] - 2026-05-03 — Logo refinement: solid asymmetric leaf with negative-space midrib (closes #85)
 
 ### Changed

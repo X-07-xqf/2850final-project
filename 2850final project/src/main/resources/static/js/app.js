@@ -245,12 +245,17 @@
         if (!nodes.length) return;
         var DURATION = 700;
         Array.prototype.forEach.call(nodes, function (el) {
-            var raw = (el.textContent || "").trim();
-            var target = parseFloat(raw);
-            if (isNaN(target)) return;
+            var attrVal = el.getAttribute("data-count-up");
+            var raw = (attrVal && attrVal.length ? attrVal : (el.textContent || "")).trim();
+            var hadComma = raw.indexOf(",") !== -1;
             var hasDecimal = raw.indexOf(".") !== -1;
+            var target = parseFloat(raw.replace(/,/g, ""));
+            if (isNaN(target)) return;
             var fmt = function (v) {
-                return hasDecimal ? v.toFixed(1) : Math.round(v).toString();
+                if (hasDecimal) return v.toFixed(1);
+                var n = Math.round(v);
+                // Re-comma 4-digit+ numbers if the source had thousands separators.
+                return hadComma ? n.toLocaleString("en-US") : n.toString();
             };
             el.textContent = fmt(0);
             var startedAt = performance.now();
@@ -264,6 +269,29 @@
             }
             requestAnimationFrame(frame);
         });
+    }
+
+    /* ---- Scroll reveals: landing-page IntersectionObserver. Adds .is-revealed
+           when an element with [data-reveal] crosses ~15% of the viewport. ---- */
+    function initScrollReveals() {
+        var nodes = document.querySelectorAll("[data-reveal]");
+        if (!nodes.length) return;
+        // No-IO fallback or reduced-motion: just reveal everything immediately —
+        // the CSS rule for [data-reveal] is no-op outside prefers-reduced-motion: no-preference.
+        if (!("IntersectionObserver" in window) ||
+            (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches)) {
+            Array.prototype.forEach.call(nodes, function (el) { el.classList.add("is-revealed"); });
+            return;
+        }
+        var io = new IntersectionObserver(function (entries) {
+            entries.forEach(function (entry) {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add("is-revealed");
+                    io.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.15, rootMargin: "0px 0px -10% 0px" });
+        Array.prototype.forEach.call(nodes, function (el) { io.observe(el); });
     }
 
     /* Apply saved theme synchronously (before DOMContentLoaded) to avoid flash */
@@ -282,5 +310,6 @@
         initTheme();
         initSidebarDrawer();
         initCountUp();
+        initScrollReveals();
     });
 })();
