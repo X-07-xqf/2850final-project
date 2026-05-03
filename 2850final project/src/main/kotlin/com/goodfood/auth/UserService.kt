@@ -6,7 +6,7 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import java.time.LocalDateTime
 
 /**
- * Authentication and account-management for the Good Food app.
+ * Authentication and account-management for the Sage app.
  *
  * Owns the password lifecycle (BCrypt hash on write, verify on login) and the
  * uniqueness rule on `email`. Routes interact with this object only — they
