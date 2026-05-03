@@ -72,10 +72,14 @@ fun Route.dashboardRoutes() {
         }
         val loggedDays = weekly.count { it["isLogged"] == true }
 
-        val featured = RecipeService.getFeatured(3).map { r ->
+        val featured: List<Map<String, Any?>> = RecipeService.getFeatured(3).map { r ->
             mapOf(
                 "id" to (r["id"] ?: 0),
                 "title" to (r["title"] ?: ""),
+                // Pass null through when the recipe has no real image, so the
+                // template's `th:if="${f.imageUrl != null}"` falls through to
+                // the emoji fallback instead of rendering an <img src="">.
+                "imageUrl" to r["imageUrl"],
                 "coverEmoji" to (r["coverEmoji"] ?: "🍽️"),
                 "coverTone" to (r["coverTone"] ?: "sage"),
                 "avgRating" to (r["avgRating"] as BigDecimal).fmt(1),
