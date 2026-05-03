@@ -633,6 +633,14 @@ a:hover { text-decoration: underline; text-decoration-thickness: 1.5px; text-und
 .sidebar {
     width: var(--sidebar-w);
     flex-shrink: 0;
+    /* Pin the nav to the viewport so long pages (recipes, diary) only scroll
+       the main column. align-self overrides the flex parent's default stretch
+       so the sidebar honors its own height instead of matching .main. */
+    align-self: flex-start;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
     background: var(--sidebar-bg);
     color: var(--sidebar-text);
     display: flex;
