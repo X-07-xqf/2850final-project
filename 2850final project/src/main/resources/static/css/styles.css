@@ -2512,13 +2512,18 @@ input::placeholder, textarea::placeholder {
     align-items: center;
     gap: 80px;
 }
+/* Eyebrow — italic Cormorant editorial line. Replaces the all-caps + wide
+   letter-spacing pattern that reads as AI-template default. Natural case,
+   no tracking, slightly bigger because serifs need it. */
 .landing-hero__eyebrow {
-    margin: 0 0 32px;
-    font-size: var(--text-xs);
-    font-weight: 600;
-    letter-spacing: 0.32em;
+    margin: 0 0 28px;
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 500;
+    font-size: clamp(17px, 1.5vw, 20px);
+    letter-spacing: 0;
     color: var(--color-primary);
-    text-transform: uppercase;
+    text-transform: none;
 }
 .landing-hero__title {
     margin: 0 0 28px;
@@ -2618,12 +2623,14 @@ input::placeholder, textarea::placeholder {
 .landing-section--reverse .landing-section__visual { order: -1; }
 
 .landing-section__eyebrow {
-    margin: 0 0 24px;
-    font-size: var(--text-xs);
-    font-weight: 600;
-    letter-spacing: 0.32em;
+    margin: 0 0 20px;
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 500;
+    font-size: clamp(16px, 1.4vw, 19px);
+    letter-spacing: 0;
     color: var(--color-primary);
-    text-transform: uppercase;
+    text-transform: none;
 }
 .landing-section__title {
     margin: 0 0 24px;
