@@ -4,6 +4,16 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [v0.6.19] - 2026-05-03 — Logo refinement: solid asymmetric leaf with negative-space midrib (closes #85)
+
+### Changed
+- Replaced the v0.6.18 hollow-outline + centered-midrib leaf (the LLM-default "minimal leaf" archetype, fragile at 18px) with a solid asymmetric silhouette + a negative-space cut for the midrib. Two-path SVG, single asset, used at all 12 logo placements (8 subscriber sidebars + 3 professional sidebars + 1 auth disc).
+- **Body** is filled with `currentColor` so it inherits the disc's foreground (cream in light, dark forest in dark) — substantial at 18px instead of wispy.
+- **Midrib** is a stroke painted with `var(--color-primary)` — i.e. the disc's own background color — so the cut visually punches through the leaf and reveals the disc behind. Same SVG, no extra assets, but a FedEx-arrow-tier negative-space wit moment.
+- The leaf silhouette is intentionally asymmetric: denser curvature on the bottom-left, sharper terminus on the upper-right. Reads as a sage leaf with organic visual weight rather than a generic teardrop.
+
+---
+
 ## [v0.6.18] - 2026-05-03 — Rebrand: Good Food → Sage, salad emoji → SVG sage-leaf mark (closes #83)
 
 ### Changed
