@@ -15,6 +15,7 @@ import io.ktor.server.plugins.statuspages.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.server.sessions.*
+import io.ktor.server.thymeleaf.*
 
 fun Application.configureRouting() {
     install(StatusPages) {
@@ -35,13 +36,16 @@ fun Application.configureRouting() {
         profileRoutes()
         professionalRoutes()
 
+        // Authenticated users go straight to their dashboard. Unauthenticated visitors
+        // see the marketing landing page instead of being dumped on the bare login form
+        // — gives them a chance to understand what Sage is before signing up.
         get("/") {
             val session = call.sessions.get<UserSession>()
             if (session != null) {
                 if (session.role == "professional") call.respondRedirect("/pro/dashboard")
                 else call.respondRedirect("/dashboard")
             } else {
-                call.respondRedirect("/login")
+                call.respond(ThymeleafContent("landing", emptyMap()))
             }
         }
     }

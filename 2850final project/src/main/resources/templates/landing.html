@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>Sage — Eat with intention</title>
+    <link rel="stylesheet" th:href="'/static/css/styles.css'" href="/static/css/styles.css"/>
+</head>
+<body class="landing-body">
+<a href="#main" class="skip-link">Skip to main content</a>
+
+<header class="landing-nav">
+    <a href="/" class="landing-nav__brand" aria-label="Sage home">
+        <span class="landing-nav__mark" aria-hidden="true">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M20 4 C 13 3, 4 9, 4 16 C 4 20, 7 20, 11 19 C 19 17, 21 11, 20 4 Z"/>
+                <path d="M8 16 C 11 12, 15 8, 18 5" fill="none" stroke="var(--color-primary)" stroke-width="2.2" stroke-linecap="round"/>
+            </svg>
+        </span>
+        <span class="landing-nav__wordmark">Sage</span>
+    </a>
+    <div class="landing-nav__links">
+        <button type="button" class="landing-nav__theme js-theme-toggle" aria-label="Toggle theme">Toggle theme</button>
+        <a href="/login" class="btn btn--ghost btn--small">Sign in</a>
+        <a href="/login?tab=register" class="btn btn--primary btn--small">Start free</a>
+    </div>
+</header>
+
+<main id="main" class="landing-main">
+
+    <!-- ========== HERO ========== -->
+    <section class="landing-hero">
+        <div class="landing-hero__copy">
+            <p class="landing-hero__eyebrow" data-reveal style="--i:0">SAGE — HEALTHY EATING, TRACKED SIMPLY</p>
+            <h1 class="landing-hero__title" data-reveal style="--i:1">
+                Eat with<br/>
+                <span class="landing-hero__title-accent">intention.</span>
+            </h1>
+            <p class="landing-hero__sub" data-reveal style="--i:2">
+                Track what you eat, plan what you cook, and stay close to a registered nutritionist when you want one. Built for people who'd rather know than guess.
+            </p>
+            <div class="landing-hero__ctas" data-reveal style="--i:3">
+                <a href="/login?tab=register" class="btn btn--primary btn--block landing-hero__cta">Start free</a>
+                <a href="/login" class="btn btn--ghost landing-hero__cta">I have an account</a>
+            </div>
+        </div>
+        <div class="landing-hero__visual" aria-hidden="true">
+            <div class="landing-hero__disc">
+                <svg viewBox="0 0 24 24" fill="currentColor" class="landing-hero__leaf">
+                    <path d="M20 4 C 13 3, 4 9, 4 16 C 4 20, 7 20, 11 19 C 19 17, 21 11, 20 4 Z"/>
+                    <path d="M8 16 C 11 12, 15 8, 18 5" fill="none" stroke="var(--color-primary)" stroke-width="2.2" stroke-linecap="round"/>
+                </svg>
+            </div>
+            <div class="landing-hero__metric landing-hero__metric--cal">
+                <span class="landing-hero__metric-num" data-count-up="1842">1,842</span>
+                <span class="landing-hero__metric-label">kcal today</span>
+            </div>
+            <div class="landing-hero__metric landing-hero__metric--prot">
+                <span class="landing-hero__metric-num" data-count-up="124">124</span>
+                <span class="landing-hero__metric-label">g protein</span>
+            </div>
+            <div class="landing-hero__metric landing-hero__metric--rec">
+                <span class="landing-hero__metric-num" data-count-up="187">187</span>
+                <span class="landing-hero__metric-label">recipes saved</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== SECTION 1: TRACK ========== -->
+    <section class="landing-section" data-reveal>
+        <div class="landing-section__copy">
+            <p class="landing-section__eyebrow">Track</p>
+            <h2 class="landing-section__title">Every bite,<br/>in 6 seconds.</h2>
+            <p class="landing-section__sub">
+                Search 200+ verified foods, log breakfast on the bus, and watch your macros land on a single calorie ring. No streaks, no shaming — just the number, when you want it.
+            </p>
+        </div>
+        <div class="landing-section__visual" aria-hidden="true">
+            <div class="landing-mock landing-mock--ring">
+                <div class="landing-mock__ring">
+                    <span class="landing-mock__ring-num">73<span class="landing-mock__ring-pct">%</span></span>
+                    <span class="landing-mock__ring-label">of goal</span>
+                </div>
+                <div class="landing-mock__bars">
+                    <div class="landing-mock__bar"><span style="--w:62%"></span><em>Protein</em></div>
+                    <div class="landing-mock__bar"><span style="--w:48%"></span><em>Carbs</em></div>
+                    <div class="landing-mock__bar"><span style="--w:81%"></span><em>Fat</em></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== SECTION 2: COOK (zig-zag, visual on left) ========== -->
+    <section class="landing-section landing-section--reverse" data-reveal>
+        <div class="landing-section__copy">
+            <p class="landing-section__eyebrow">Cook</p>
+            <h2 class="landing-section__title">Recipes that travel<br/>with you.</h2>
+            <p class="landing-section__sub">
+                180+ home-cooking recipes with macros pre-calculated. Save the ones that fit your week. Rate them after dinner — the ones you keep cooking float to the top.
+            </p>
+        </div>
+        <div class="landing-section__visual" aria-hidden="true">
+            <div class="landing-mock landing-mock--cards">
+                <article class="landing-mock__card landing-mock__card--a">
+                    <div class="landing-mock__card-cover landing-mock__card-cover--sage"></div>
+                    <strong>Sesame soba bowl</strong>
+                    <span>520 kcal · 22g protein</span>
+                    <span class="landing-mock__rating">★ 4.6</span>
+                </article>
+                <article class="landing-mock__card landing-mock__card--b">
+                    <div class="landing-mock__card-cover landing-mock__card-cover--clay"></div>
+                    <strong>Harissa salmon traybake</strong>
+                    <span>610 kcal · 41g protein</span>
+                    <span class="landing-mock__rating">★ 4.8</span>
+                </article>
+                <article class="landing-mock__card landing-mock__card--c">
+                    <div class="landing-mock__card-cover landing-mock__card-cover--berry"></div>
+                    <strong>Yogurt &amp; stone-fruit bowl</strong>
+                    <span>320 kcal · 18g protein</span>
+                    <span class="landing-mock__rating">★ 4.4</span>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== SECTION 3: COACH ========== -->
+    <section class="landing-section" data-reveal>
+        <div class="landing-section__copy">
+            <p class="landing-section__eyebrow">Coach</p>
+            <h2 class="landing-section__title">A nutritionist<br/>on call.</h2>
+            <p class="landing-section__sub">
+                Direct-message a registered practitioner about a goal, a binge, or a Friday night. They reply in their actual voice — not a chatbot, not a canned reply, not a 24-hour wait.
+            </p>
+        </div>
+        <div class="landing-section__visual" aria-hidden="true">
+            <div class="landing-mock landing-mock--chat">
+                <div class="landing-mock__bubble landing-mock__bubble--them">
+                    <strong>Dr. Sarah Williams</strong>
+                    <p>Hey — saw your week. Friday's protein is light, want me to send 3 quick fixes you can grab from Tesco on the way home?</p>
+                    <time>Today · 16:42</time>
+                </div>
+                <div class="landing-mock__bubble landing-mock__bubble--me">
+                    <p>Yes please, and skip anything with feta this time</p>
+                    <time>Today · 16:43</time>
+                </div>
+                <div class="landing-mock__bubble landing-mock__bubble--them landing-mock__bubble--typing">
+                    <span class="landing-mock__dot"></span>
+                    <span class="landing-mock__dot"></span>
+                    <span class="landing-mock__dot"></span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== CLOSING CTA ========== -->
+    <section class="landing-cta" data-reveal>
+        <div class="landing-cta__inner">
+            <h2 class="landing-cta__title">Start cooking<br/>with intention.</h2>
+            <p class="landing-cta__sub">Free to start. No credit card. Bring your appetite.</p>
+            <div class="landing-cta__buttons">
+                <a href="/login?tab=register" class="btn btn--primary landing-cta__btn">Create your account</a>
+                <a href="/login" class="btn btn--ghost landing-cta__btn">Sign in</a>
+            </div>
+        </div>
+    </section>
+
+    <footer class="landing-footer">
+        <p>Sage · COMP2850 group project · 2026</p>
+    </footer>
+
+</main>
+
+<script th:src="'/static/js/app.js'" src="/static/js/app.js"></script>
+</body>
+</html>
