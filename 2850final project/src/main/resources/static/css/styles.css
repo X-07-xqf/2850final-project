@@ -1551,13 +1551,29 @@ input::placeholder, textarea::placeholder {
     gap: 24px;
     margin-bottom: 24px;
 }
+/* Goals page stacks vertically: daily targets card on top, weekly chart card below.
+   The 5 macro inputs lay out horizontally inside the form (.goals-form__fields)
+   so the top card stays short and the chart below has full width to breathe. */
 .two-col--goals {
-    align-items: start;
-    grid-template-columns: 2fr 3fr;
+    grid-template-columns: 1fr;
 }
-@media (max-width: 720px) {
-    .two-col--goals { grid-template-columns: 1fr; }
-    .two-col--goals > section:nth-child(2) { order: -1; }
+
+.goals-form__fields {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 16px;
+}
+@media (max-width: 960px) {
+    .goals-form__fields { grid-template-columns: repeat(3, 1fr); }
+}
+@media (max-width: 640px) {
+    .goals-form__fields { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 420px) {
+    .goals-form__fields { grid-template-columns: 1fr; }
+}
+.goals-form__submit {
+    align-self: start;
 }
 
 .weekly-head {

@@ -4,6 +4,16 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [v0.6.15] - 2026-05-03 — Goals page stacks vertically: targets on top, weekly chart full-width below (closes #77)
+
+### Changed
+- `.two-col--goals` is now a single full-width column at all breakpoints. The previous `2fr 3fr` split left a tall narrow form on the left with dead space below and squeezed the weekly bars into 60% of the row.
+- Inside the Daily targets card, the 5 macro inputs (calories / protein / carbs / fat / fiber) now lay out as a horizontal grid (`.goals-form__fields`): 5-col on desktop, 3-col `<960px`, 2-col `<640px`, 1-col `<420px`. Form card stays short instead of stretching down by 5 stacked fields.
+- Save button (`.goals-form__submit`) aligns to start so it doesn't stretch full-width across the now-wide form card.
+- Dropped the obsolete `order: -1` mobile swap — natural document order (form first, chart below) is now what we want at every viewport.
+
+---
+
 ## [v0.6.14] - 2026-05-02 — Dark-mode pass: brand tones flip, scrim + emoji halo tokenized (closes #70)
 
 ### Fixed
