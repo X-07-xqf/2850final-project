@@ -4,6 +4,20 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [v0.6.22] - 2026-05-03 — Logo oil-paint texture; "Sage" wordmark in Cormorant Garamond italic (closes #91)
+
+### Changed
+- **Logo painterly pass.** All 13 logo instances now wrap their leaf paths in a `<filter>` chain — `feTurbulence` (fractal noise, `baseFrequency: 0.85`, 2 octaves, `seed: 5`) feeding `feDisplacementMap` (`scale: 0.7`) — so path edges read as brush-flicked rather than CAD-clean. The leaf body fill switches from flat `currentColor` to a 3-stop `linearGradient` (`stop-opacity: 0.92 / 1 / 0.82`) so the pigment looks layered. The `var(--color-primary)` negative-space midrib survives the texture pass — brand wit intact.
+- The landing hero leaf gets its own `id="paintLg"` / `id="gradLg"` defs (slightly tighter `baseFrequency: 1.1`, `numOctaves: 3`, smaller `scale: 0.5`) because at large display sizes the same noise-frequency would over-distort. No ID collision with the smaller nav SVG above it.
+- **Wordmark typography flip.** Added Cormorant Garamond (Google Fonts) — a Garamond-tradition revival with the British book-typography lineage (Caslon → Baskerville → Penguin Classics → Vogue / Tatler mastheads). New `--font-display` token applied to:
+  - `.sidebar__title` — `italic 600` at 22px in every sidebar
+  - `.auth-title` — `italic 600` at 44px on the login disc
+  - `.landing-nav__wordmark` — `italic 600` at 26px in the top nav
+  - `.landing-hero__title-accent` — the "intention." accent word in the hero headline (the rest of "Eat with" stays in Plus Jakarta Sans), creating the classic British-editorial sans-with-one-italic-serif-word treatment
+- Body and dashboard typography unchanged — Plus Jakarta Sans still drives all UI text. Serif is brand-only, per taste-skill's "NEVER serif on dashboards" rule (which targets body/UI text, not wordmarks).
+
+---
+
 ## [v0.6.21] - 2026-05-03 — Landing at / for ALL users with session-aware CTAs (closes #89)
 
 ### Changed
