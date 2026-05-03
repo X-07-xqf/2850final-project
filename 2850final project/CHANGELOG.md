@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [v0.6.17] - 2026-05-03 — Sidebar sticks to the viewport on long pages (closes #81)
+
+### Changed
+- `.sidebar` is now `position: sticky; top: 0; height: 100vh` on desktop so long pages (recipes, diary) only scroll the main column — the nav stays pinned. `align-self: flex-start` keeps the flex parent from stretching the sidebar to match `.main`'s height, and `overflow-y: auto` lets unusually short viewports scroll within the sidebar instead of clipping the logout button.
+- The `≤840px` mobile drawer continues to use `position: fixed` (its own media-query rule wins), so no regression for the slide-in mobile menu.
+
+---
+
 ## [v0.6.16] - 2026-05-03 — Weekly calorie chart: substantive bars with empty / over / today states (closes #79)
 
 ### Changed
