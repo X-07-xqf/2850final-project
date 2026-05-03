@@ -4,6 +4,40 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [v0.6.26] - 2026-05-03 — Messages: Telegram-style polish + smooth interactions (closes #99)
+
+### Added (visual)
+- **Sticky chat header** with partner avatar + name + role + "Active recently" status line. Replaces the bare strip that just showed a name.
+- **Search input** at the top of the conversation list — JS-side `data-name` substring filter on `[.conv-list__row]`, with an empty-state hint when no rows match.
+- **Bubble tails** — small CSS pseudo-element triangles pointing to the sender's bottom corner (Telegram signature). No extra SVG; pure `clip-path: polygon(...)`.
+- **Date separators** — sticky `Today / Yesterday / Monday / MMM d, yyyy` pills between message clusters. `MessageRoutes` groups the conversation list by `sentDate`; the template renders `[.chat-day][.chat-day__sep]` blocks. Pills sit on `var(--overlay-strong)` and stick at `top: 8px` while scrolling.
+- **Online dots** on every avatar — small mint disc with a 2px disc-coloured border so it reads cleanly on hover/active states. (Visual cue only — no presence tracking.)
+- **Dotted wallpaper** in the chat-scroll background: `radial-gradient(circle at 1px 1px, ...) 22px 22px` over the existing chat gradient, like Telegram's wallpaper layer.
+- **Round pill composer input** + **circular filled send button** with paper-plane SVG. Replaces the rectangular textarea + button combo.
+- **Active conversation** in the list now flips to the sage-primary background with cream text and an inverted avatar; the unread pill flips colors too. More legible than the previous subtle tint.
+
+### Added (smooth interactions, all in `initChatPage()` in `app.js`)
+- **Auto-scroll to bottom** on page load (no smooth, instant — avoids the visible top-then-jump).
+- **Auto-resize composer textarea** as the user types (1 row → up to 140px, capped).
+- **Send on Enter** (`Shift+Enter` newline). Send button disabled when input is empty.
+- **Optimistic AJAX submit** — `fetch(POST, FormData)` instead of native form submit. The bubble appends locally with a `bubble--pending` class showing "sending…" until the server response lands; on failure it flips to `bubble--failed`. Page no longer reloads on send. The optimistic bubble lives inside the latest `.chat-day` group, or creates a fresh "Today" group if the thread was empty.
+- **Composer auto-focus** on page load so a returning user can just start typing.
+
+### Changed
+- `MessageService.getConversation` now returns `sentDate` (`LocalDate`) and `sentTime` (`HH:mm`) per message in addition to the existing `sentAt` formatted string. Used by the date-grouper and the new bubble timestamps.
+- `MessageRoutes` exposes `conversationGroups` (date-grouped) + `activePartnerRole` to both subscriber and professional templates.
+
+### Implementation notes
+- All polish reuses existing tokens: `--color-primary`, `--bubble-them-bg`, `--overlay-strong`, `--color-mint`, `--color-cream`. Dark mode flips automatically — no separate dark CSS.
+- Date-group separator pill takes `--overlay-strong` (forest in light, near-black in dark) which already adapts.
+- `requestSubmit()` triggers the form's submit handler so all the AJAX logic stays on `submit`, not an explicit button click — keyboard users (Enter) and mouse users hit the same code path.
+- Sticky header uses `position: sticky; top: 0` inside the chat-main flex column. Chat-day separators stick within the scroll container.
+
+### Subscriber + Professional both updated
+- `subscriber/messages.html` and `professional/messages.html` both refactored to the same new structure. Two slightly different copy strings ("Search…" vs "Search clients…", empty-state copy) preserved.
+
+---
+
 ## [v0.6.25] - 2026-05-03 — Dashboard: This week + Streak + For tonight + Coach corner (closes #97)
 
 ### Added

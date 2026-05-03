@@ -5,6 +5,7 @@ import com.goodfood.util.fmtChatTime
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 /**
  * 1-on-1 messaging between subscribers and their professionals.
@@ -60,9 +61,12 @@ object MessageService {
             ((AdviceMessages.senderId eq userId) and (AdviceMessages.receiverId eq partnerId)) or
             ((AdviceMessages.senderId eq partnerId) and (AdviceMessages.receiverId eq userId))
         }.orderBy(AdviceMessages.sentAt).map { row ->
+            val ts = row[AdviceMessages.sentAt]
             mapOf("id" to row[AdviceMessages.id], "senderId" to row[AdviceMessages.senderId],
                 "message" to row[AdviceMessages.message],
-                "sentAt" to row[AdviceMessages.sentAt].fmtChatTime(),
+                "sentAt" to ts.fmtChatTime(),
+                "sentDate" to ts.toLocalDate(),
+                "sentTime" to ts.format(DateTimeFormatter.ofPattern("HH:mm")),
                 "isMine" to (row[AdviceMessages.senderId] == userId))
         }
     }
