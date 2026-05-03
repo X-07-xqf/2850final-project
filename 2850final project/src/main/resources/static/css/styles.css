@@ -120,7 +120,7 @@
     --color-deep:         #1f2a23;   /* darkest text — forest-tinted */
     --color-strong:       #2a3830;
     --color-text:         #3d4a40;
-    --color-soft:         #6b7066;
+    --color-soft:         #5e665b; /* improved contrast for WCAG AA */
     --color-muted:        #95a092;
     --color-faint:        #b8c0b3;
 
