@@ -4,6 +4,15 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [v0.6.24] - 2026-05-03 — Unify all logos to one oil-paint look, visible at small sizes too (closes #95)
+
+### Changed
+- Every logo placement now uses the **same** filter chain — `feTurbulence(baseFrequency: 0.85, numOctaves: 3, seed: 7)` → `feDisplacementMap(scale: 0.7)`. Previously the small variant ran `octaves: 2` / `seed: 5` and the hero ran `baseFrequency: 1.1, scale: 0.5`; the painterly effect read inconsistently, so we collapsed to one set.
+- **Small-size SVGs bumped up** so the brushstroke noise actually has pixels to render: sidebar logo `18px → 22px` inside its 32px disc, auth login logo `26px → 32px` inside its 48px disc. (Landing nav stays at 22px.) feDisplacementMap of `scale: 0.7` viewBox units = ~0.5px on screen at 18px (sub-pixel, invisible) but ~0.65px at 22px and ~0.93px at 32px (visible brushy edges).
+- Filter IDs cleaned up: small logos use `paint` / `grad`; landing hero uses `paintHero` / `gradHero` — only because both live in the same DOM, the params themselves are identical so the leaves render with the same texture density at their respective sizes.
+
+---
+
 ## [v0.6.23] - 2026-05-03 — Eyebrows: drop tracked-caps AI pattern, italic Cormorant editorial (closes #93)
 
 ### Changed
