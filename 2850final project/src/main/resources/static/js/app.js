@@ -271,6 +271,132 @@
         });
     }
 
+    /* ---- Chat: scroll-to-bottom on load, auto-resize composer, send-on-Enter,
+           optimistic AJAX submit, conversation list filter. Telegram-style. ---- */
+    function initChatPage() {
+        var scrollEl = document.querySelector(".js-chat-scroll");
+        var compose  = document.querySelector(".js-chat-compose");
+        var input    = document.querySelector(".js-chat-input");
+        var sendBtn  = document.querySelector(".js-chat-send");
+        var filterEl = document.querySelector(".js-conv-filter");
+
+        // 1. Scroll the message log to the bottom on first paint so the latest
+        //    message is visible without manual scrolling. Use scrollTop directly
+        //    (instant) instead of smooth — smooth scroll runs after paint and
+        //    flickers from top.
+        if (scrollEl) {
+            scrollEl.scrollTop = scrollEl.scrollHeight;
+        }
+
+        // 2. Composer: auto-grow textarea + enable send button when there's
+        //    content + send-on-Enter (Shift+Enter newline).
+        if (input && compose) {
+            function syncSendDisabled() {
+                if (sendBtn) sendBtn.disabled = input.value.trim().length === 0;
+            }
+            function autosize() {
+                input.style.height = "auto";
+                input.style.height = Math.min(input.scrollHeight, 140) + "px";
+            }
+            input.addEventListener("input", function () { autosize(); syncSendDisabled(); });
+            input.addEventListener("keydown", function (e) {
+                if (e.key === "Enter" && !e.shiftKey && !e.isComposing) {
+                    e.preventDefault();
+                    if (!sendBtn.disabled) compose.requestSubmit();
+                }
+            });
+            // Focus when the page lands so a returning user can just type.
+            input.focus();
+            syncSendDisabled();
+
+            // 3. Optimistic AJAX submit: append the bubble locally, fire-and-forget
+            //    the POST. The route still 302-redirects; we ignore the body and
+            //    rely on the next navigation (or a manual refresh) to reconcile
+            //    server state. Keeps the UI feeling instant.
+            compose.addEventListener("submit", function (e) {
+                if (sendBtn.disabled) { e.preventDefault(); return; }
+                var text = input.value.trim();
+                if (!text) { e.preventDefault(); return; }
+                e.preventDefault();
+                appendOptimisticBubble(scrollEl, text);
+                input.value = "";
+                autosize();
+                syncSendDisabled();
+
+                var fd = new FormData(compose);
+                fetch(compose.action, { method: "POST", body: fd, redirect: "manual" })
+                    .then(function () {
+                        // Mark the optimistic bubble as confirmed (drops the
+                        // "sending…" annotation); leave it in place.
+                        var pending = scrollEl.querySelector(".bubble--pending");
+                        if (pending) pending.classList.remove("bubble--pending");
+                    })
+                    .catch(function () {
+                        var pending = scrollEl.querySelector(".bubble--pending");
+                        if (pending) {
+                            pending.classList.remove("bubble--pending");
+                            pending.classList.add("bubble--failed");
+                        }
+                    });
+            });
+        }
+
+        // 4. Conversation filter: case-insensitive substring match on
+        //    [data-name]; toggles .is-hidden on each row, shows an empty hint.
+        if (filterEl) {
+            var rows = document.querySelectorAll(".conv-list__row");
+            var emptyHint = document.querySelector(".chat-search__empty");
+            filterEl.addEventListener("input", function () {
+                var q = filterEl.value.trim().toLowerCase();
+                var anyVisible = false;
+                rows.forEach(function (row) {
+                    var name = (row.getAttribute("data-name") || "").toLowerCase();
+                    var hit = q === "" || name.indexOf(q) !== -1;
+                    row.classList.toggle("is-hidden", !hit);
+                    if (hit) anyVisible = true;
+                });
+                if (emptyHint) emptyHint.hidden = anyVisible || rows.length === 0;
+            });
+        }
+    }
+
+    function appendOptimisticBubble(scrollEl, text) {
+        if (!scrollEl) return;
+        // Build inside the latest .chat-day so the bubble lives under the right
+        // date pill. If no group exists yet (first message of an empty thread),
+        // create a "Today" group on the fly.
+        var lastGroup = scrollEl.querySelector(".chat-day:last-of-type");
+        if (!lastGroup) {
+            // Remove any "No messages yet" empty hint
+            var hint = scrollEl.querySelector(".empty-hint");
+            if (hint) hint.remove();
+            lastGroup = document.createElement("div");
+            lastGroup.className = "chat-day";
+            var sep = document.createElement("div");
+            sep.className = "chat-day__sep";
+            var sepInner = document.createElement("span");
+            sepInner.textContent = "Today";
+            sep.appendChild(sepInner);
+            lastGroup.appendChild(sep);
+            scrollEl.appendChild(lastGroup);
+        }
+        var bubble = document.createElement("div");
+        bubble.className = "bubble bubble--mine bubble--pending";
+        var p = document.createElement("p");
+        p.className = "bubble__text";
+        p.textContent = text;
+        bubble.appendChild(p);
+        var time = document.createElement("time");
+        time.className = "bubble__time";
+        var now = new Date();
+        var hh = String(now.getHours()).padStart(2, "0");
+        var mm = String(now.getMinutes()).padStart(2, "0");
+        time.textContent = hh + ":" + mm;
+        bubble.appendChild(time);
+        lastGroup.appendChild(bubble);
+        scrollEl.scrollTop = scrollEl.scrollHeight;
+    }
+
     /* ---- Scroll reveals: landing-page IntersectionObserver. Adds .is-revealed
            when an element with [data-reveal] crosses ~15% of the viewport. ---- */
     function initScrollReveals() {
@@ -311,5 +437,6 @@
         initSidebarDrawer();
         initCountUp();
         initScrollReveals();
+        initChatPage();
     });
 })();

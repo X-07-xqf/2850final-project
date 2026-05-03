@@ -35,42 +35,73 @@
 
         <div class="chat-layout card card--flush">
             <aside class="chat-sidebar">
-                <h2 class="chat-sidebar__title">Conversations</h2>
+                <div class="chat-sidebar__head">
+                    <h2 class="chat-sidebar__title">Conversations</h2>
+                    <input type="search" class="chat-search js-conv-filter"
+                           placeholder="Search clients…" aria-label="Search conversations"/>
+                </div>
                 <ul class="conv-list" th:if="${partners != null and !partners.isEmpty()}">
-                    <li th:each="p : ${partners}">
+                    <li th:each="p : ${partners}" class="conv-list__row" th:attr="data-name=${p.partnerName}">
                         <a th:href="|/messages/${p.partnerId}|" class="conv-list__item"
                            th:classappend="${activePartnerId != null and activePartnerId == p.partnerId} ? ' conv-list__item--active' : ''">
-                            <span class="conv-list__avatar" th:text="${p.partnerInitials}">AB</span>
+                            <span class="conv-list__avatar">
+                                <span th:text="${p.partnerInitials}">AB</span>
+                                <span class="conv-list__online" aria-hidden="true"></span>
+                            </span>
                             <div class="conv-list__body">
                                 <span class="conv-list__name" th:text="${p.partnerName}">Name</span>
                                 <span class="conv-list__preview" th:text="${p.lastMessage}">…</span>
                             </div>
-                            <span th:if="${p.unreadCount != null and p.unreadCount > 0}" class="badge badge--sm" th:text="${p.unreadCount}">1</span>
+                            <span th:if="${p.unreadCount != null and p.unreadCount > 0}" class="conv-list__unread" th:text="${p.unreadCount}">1</span>
                         </a>
                     </li>
                 </ul>
                 <p class="empty-hint empty-hint--pad" th:if="${partners == null or partners.isEmpty()}">No conversations yet.</p>
+                <p class="empty-hint empty-hint--pad chat-search__empty" hidden>No matches for that search.</p>
             </aside>
             <section class="chat-main">
                 <header class="chat-main__head" th:if="${activePartnerId != null}">
-                    <span class="conv-list__avatar" th:text="${activePartnerInitials}">AB</span>
-                    <h2 class="chat-main__title" th:text="${activePartnerName}">Partner</h2>
+                    <span class="conv-list__avatar conv-list__avatar--lg">
+                        <span th:text="${activePartnerInitials}">AB</span>
+                        <span class="conv-list__online" aria-hidden="true"></span>
+                    </span>
+                    <div class="chat-main__head-body">
+                        <h2 class="chat-main__title" th:text="${activePartnerName}">Partner</h2>
+                        <p class="chat-main__subtitle">
+                            <span class="chat-main__role" th:if="${activePartnerRole}" th:text="${activePartnerRole}">role</span>
+                            <span class="chat-main__sep" th:if="${activePartnerRole}">·</span>
+                            <span class="chat-main__status">Active recently</span>
+                        </p>
+                    </div>
                 </header>
                 <div class="chat-main__head chat-main__head--empty" th:if="${activePartnerId == null}">
                     <p class="empty-hint">Select a client conversation.</p>
                 </div>
-                <div class="chat-scroll" role="log" aria-live="polite" th:if="${activePartnerId != null}">
-                    <div th:each="m : ${conversation}"
-                         th:class="${m.isMine} ? 'bubble bubble--mine' : 'bubble bubble--theirs'">
-                        <p class="bubble__text" th:text="${m.message}">Text</p>
-                        <time class="bubble__time" th:text="${m.sentAt}">Time</time>
+                <div class="chat-scroll js-chat-scroll" role="log" aria-live="polite" th:if="${activePartnerId != null}">
+                    <p class="empty-hint" th:if="${conversationGroups == null or conversationGroups.isEmpty()}">
+                        No messages yet.
+                    </p>
+                    <div th:each="day : ${conversationGroups}" class="chat-day">
+                        <div class="chat-day__sep"><span th:text="${day.label}">Today</span></div>
+                        <div th:each="m : ${day.messages}"
+                             th:class="${m.isMine} ? 'bubble bubble--mine' : 'bubble bubble--theirs'">
+                            <p class="bubble__text" th:text="${m.message}">Text</p>
+                            <time class="bubble__time" th:text="${m.sentTime}">14:32</time>
+                        </div>
                     </div>
-                    <p class="empty-hint" th:if="${conversation == null or conversation.isEmpty()}">No messages yet.</p>
                 </div>
-                <form th:if="${activePartnerId != null}" class="chat-compose" th:action="|/messages/${activePartnerId}|" method="post">
+                <form th:if="${activePartnerId != null}" class="chat-compose js-chat-compose"
+                      th:action="|/messages/${activePartnerId}|" method="post"
+                      th:attr="data-partner-id=${activePartnerId}">
                     <label class="sr-only" for="pro-msg-input">Message</label>
-                    <textarea id="pro-msg-input" name="message" rows="2" required placeholder="Write a message…"></textarea>
-                    <button type="submit" class="btn btn--primary">Send</button>
+                    <textarea id="pro-msg-input" name="message" rows="1" required placeholder="Message…"
+                              class="chat-compose__input js-chat-input"></textarea>
+                    <button type="submit" class="chat-compose__send js-chat-send" aria-label="Send message" disabled>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                             stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M5 12 L 19 5 L 14 19 L 12 13 Z"/>
+                        </svg>
+                    </button>
                 </form>
             </section>
         </div>
