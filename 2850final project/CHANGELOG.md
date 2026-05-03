@@ -4,6 +4,19 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [v0.6.27] - 2026-05-03 — Fluid main width — pages no longer cap at 1200px on wide displays (closes #101)
+
+### Changed
+- `.main` `max-width: 1200px` → `1680px`. Every authenticated page used to stop ~30-40% short of the viewport on a 1440 / 1920 / 2560+ display. Now scales out 40% wider while still capping for readability on 4K monitors.
+- `.main` padding moved from a static `32px 36px` to `clamp(28px, 3vh, 40px) clamp(28px, 4vw, 72px)` so the breathing room scales with the viewport — tighter on tablets, more generous on widescreens, capped both ways.
+- `.main--chat` matches the same `1680px` cap (was `1280px`). The chat self-constrains via its conversation-rail width + bubble `max-width: 72%`, so it can ride the wider container without bubbles spanning awkwardly far.
+
+### Not changed
+- All sub-layouts inside `.main` already use `width: 100%` cards, `auto-fill` grids, or `fr` units — they grow naturally with the wider container without any additional changes. Nothing visually breaks; pages just use the screen they're given.
+- Mobile / tablet overrides (`@media (max-width: 1024px)`, `840px`, `600px`) untouched. They still pin to tighter padding for those viewports.
+
+---
+
 ## [v0.6.26] - 2026-05-03 — Messages: Telegram-style polish + smooth interactions (closes #99)
 
 ### Added (visual)

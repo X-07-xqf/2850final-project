@@ -781,12 +781,18 @@ a:hover { text-decoration: underline; text-decoration-thickness: 1.5px; text-und
 
 .main {
     flex: 1;
-    padding: 32px 36px;
-    max-width: 1200px;
+    /* Fluid padding: tightens on small screens, breathes on wide ones,
+       capped so it doesn't grow infinitely on 4K displays. */
+    padding: clamp(28px, 3vh, 40px) clamp(28px, 4vw, 72px);
+    /* Was 1200px — content stopped 30%+ short of any widescreen display.
+       Bump to 1680px so 1440 / 1920 monitors actually use their viewport. */
+    max-width: 1680px;
     width: 100%;
     animation: fade-up var(--dur-slow) var(--ease-out) both;
 }
-.main--chat { max-width: 1280px; }
+/* Chat self-constrains via the conversation rail + bubble max-widths,
+   so it can ride the same 1680px cap as the rest of the app. */
+.main--chat { max-width: 1680px; }
 
 .page-header { margin-bottom: 28px; }
 .page-header--row {
