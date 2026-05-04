@@ -4,6 +4,30 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [v0.6.35] - 2026-05-04 — Recipes: calories / protein / cooking-time filters (closes #117)
+
+### Added
+- Three new dropdowns on `/recipes` alongside the existing search + difficulty:
+
+| Filter | Bucket | Threshold |
+|---|---|---|
+| **Calories** (per serving) | Light / Standard / Hearty | ≤ 400 / 401–650 / > 650 kcal |
+| **Protein** (per serving) | Low / Moderate / High | < 15g / 15–25g / > 25g |
+| **Time** (prep + cook) | Quick / Standard / Slow | ≤ 20 / 21–45 / > 45 min |
+
+- Thresholds picked from common nutrition / fitness app standards: **25g** is the canonical "high protein" line (≈ 100g chicken breast), **400 kcal** is the breakfast / light-meal ceiling, **20 min** is the recognized weeknight-quick threshold.
+
+### Changed
+- `RecipeService.searchRecipes` takes three new optional `String?` params (`calories` / `protein` / `time`). Macros and total time are already computed in `summariseRow` (per-serving + prep+cook), so filtering happens in Kotlin after the row pass — no SQL changes.
+- `RecipeRoutes` reads the three new query params, passes them through to the service, and reflects them back to the template so the dropdowns retain selected state across submissions.
+- Featured-strip suppression logic widened: any active filter (search OR any of the four dropdowns) hides the strip so the page renders just the user's results. Clearing all filters brings it back.
+
+### Implementation notes
+- Three small private helpers in `RecipeService` — `matchesCalorieBucket` / `matchesProteinBucket` / `matchesTimeBucket` — each early-returns `true` when the bucket is `"all"` or blank, so unfiltered queries are zero-cost.
+- Reuses the existing `.input-select` and `.filter-bar--inline` CSS classes — no new styles needed; the filter bar wraps gracefully when the four dropdowns + search + button exceed one row.
+
+---
+
 ## [v0.6.34] - 2026-05-04 — Pro Clients: tighter compliance band, over-eating surfaces honestly (closes #115)
 
 ### Changed

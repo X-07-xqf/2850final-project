@@ -84,7 +84,13 @@ object RecipeService {
      *  servings, difficulty, average rating, review count, cover image / fallback
      *  emoji + tone, and per-serving calories / protein.
      */
-    fun searchRecipes(query: String?, difficulty: String?): List<Map<String, Any?>> = transaction {
+    fun searchRecipes(
+        query: String?,
+        difficulty: String?,
+        calories: String? = null,
+        protein: String? = null,
+        time: String? = null
+    ): List<Map<String, Any?>> = transaction {
         val baseQuery = Recipes.selectAll()
         val filtered = baseQuery.let { q ->
             if (!query.isNullOrBlank()) {
@@ -94,7 +100,49 @@ object RecipeService {
             if (!difficulty.isNullOrBlank() && difficulty != "all") q.andWhere { Recipes.difficulty eq difficulty }
             q
         }
+        // Macros (calPerServing / protPerServing) and totalTime are computed in
+        // summariseRow, not stored as columns, so the calories/protein/time
+        // buckets are evaluated in Kotlin after the row pass.
         filtered.map { summariseRow(it) }
+            .filter { row -> matchesCalorieBucket(row, calories) }
+            .filter { row -> matchesProteinBucket(row, protein) }
+            .filter { row -> matchesTimeBucket(row, time) }
+    }
+
+    /** ≤ 400 / 401–650 / > 650 kcal per serving. */
+    private fun matchesCalorieBucket(row: Map<String, Any?>, bucket: String?): Boolean {
+        if (bucket.isNullOrBlank() || bucket == "all") return true
+        val cal = (row["calPerServing"] as? BigDecimal)?.toInt() ?: return true
+        return when (bucket) {
+            "light"    -> cal <= 400
+            "standard" -> cal in 401..650
+            "hearty"   -> cal > 650
+            else       -> true
+        }
+    }
+
+    /** < 15g / 15–25g / > 25g protein per serving. */
+    private fun matchesProteinBucket(row: Map<String, Any?>, bucket: String?): Boolean {
+        if (bucket.isNullOrBlank() || bucket == "all") return true
+        val prot = (row["protPerServing"] as? BigDecimal)?.toDouble() ?: return true
+        return when (bucket) {
+            "low"      -> prot < 15.0
+            "moderate" -> prot in 15.0..25.0
+            "high"     -> prot > 25.0
+            else       -> true
+        }
+    }
+
+    /** ≤ 20 / 21–45 / > 45 min total prep + cook. */
+    private fun matchesTimeBucket(row: Map<String, Any?>, bucket: String?): Boolean {
+        if (bucket.isNullOrBlank() || bucket == "all") return true
+        val total = (row["totalTime"] as? Int) ?: return true
+        return when (bucket) {
+            "quick"    -> total <= 20
+            "standard" -> total in 21..45
+            "slow"     -> total > 45
+            else       -> true
+        }
     }
 
     /**
