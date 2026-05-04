@@ -21,10 +21,13 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 /**
- * Returns true when [professionalId] currently supervises [subscriberId] via an
- * active row in [ClientRelationships]. Used to gate the `/pro/client/{id}` routes
- * so a professional can only access their assigned clients (issues #16, #17).
+ * Was the gate for `/pro/client/{id}` (issues #16/#17 — IDOR protection so a
+ * professional could only access their assigned clients). v0.6.31 dropped the
+ * gate per product request: every professional now sees every subscriber.
+ * Function kept in code so it can be re-wired if a stricter access model is
+ * reinstated later.
  */
+@Suppress("unused")
 private fun hasActiveRelationship(professionalId: Int, subscriberId: Int): Boolean = transaction {
     ClientRelationships.selectAll().where {
         (ClientRelationships.professionalId eq professionalId) and
@@ -38,11 +41,12 @@ fun Route.professionalRoutes() {
         val session = call.sessions.get<UserSession>() ?: return@get call.respondRedirect("/login")
         if (session.role != "professional") return@get call.respondRedirect("/dashboard")
         val unread = MessageService.getUnreadCount(session.userId)
+        // v0.6.31: query every subscriber, not just supervised ones — pros can
+        // see the full client base by design.
         val clients = transaction {
-            ClientRelationships.join(Users, JoinType.INNER, ClientRelationships.subscriberId, Users.id)
-                .select(Users.columns + ClientRelationships.columns).where {
-                    (ClientRelationships.professionalId eq session.userId) and (ClientRelationships.status eq "active")
-                }.map { row ->
+            Users.selectAll().where { Users.role eq "subscriber" }
+                .orderBy(Users.fullName)
+                .map { row ->
                     val clientId = row[Users.id]; val today = LocalDate.now()
                     val summary = DiaryService.getDailySummary(clientId, today); val goals = GoalService.getGoals(clientId)
                     val goalCal = goals?.get("calories") ?: BigDecimal("2000")
@@ -62,13 +66,13 @@ fun Route.professionalRoutes() {
         val session = call.sessions.get<UserSession>() ?: return@get call.respondRedirect("/login")
         if (session.role != "professional") return@get call.respondRedirect("/dashboard")
         val clientId = call.parameters["id"]?.toIntOrNull() ?: return@get call.respondRedirect("/pro/dashboard")
-        // Authorisation gate: only show this client's data if the professional currently
-        // supervises them. Closes #16 (IDOR — any client visible to any professional).
-        if (!hasActiveRelationship(session.userId, clientId)) return@get call.respondRedirect("/pro/dashboard")
         val dateStr = call.request.queryParameters["date"]
         val date = if (dateStr != null) LocalDate.parse(dateStr) else LocalDate.now()
         val unread = MessageService.getUnreadCount(session.userId)
         val client = transaction { Users.selectAll().where { Users.id eq clientId }.singleOrNull() } ?: return@get call.respondRedirect("/pro/dashboard")
+        // Defence-in-depth: still require the URL parameter to point at a subscriber
+        // (so pros can't scrape pro-on-pro detail pages via this endpoint).
+        if (client[Users.role] != "subscriber") return@get call.respondRedirect("/pro/dashboard")
         val entries = DiaryService.getEntriesForDate(clientId, date); val summary = DiaryService.getDailySummary(clientId, date)
         val goals = GoalService.getGoals(clientId)
         val meals = listOf("breakfast", "lunch", "snack", "dinner").map { meal ->
@@ -97,13 +101,38 @@ fun Route.professionalRoutes() {
             "fat" to (summary["fat"] ?: BigDecimal.ZERO).fmt(1)
         )
         val displayGoals = goals?.mapValues { (_, v) -> v?.fmt(1) ?: "" } ?: emptyMap()
+
+        // 7-day weekly ladder so the detail page can show recent calorie pattern.
+        val today = LocalDate.now()
+        val monday = today.minusDays(today.dayOfWeek.value.toLong() - 1)
+        val weeklyRaw = DiaryService.getWeeklySummary(clientId, monday)
+        val goalCalDouble = (goals?.get("calories"))?.toDouble() ?: 2000.0
+        val weekly = weeklyRaw.map { w ->
+            val cals = (w["calories"] as BigDecimal).toDouble()
+            val rowDate = w["date"] as LocalDate
+            mapOf(
+                "dayName" to (w["dayName"] ?: ""),
+                "calories" to (w["calories"] as BigDecimal).fmt(0),
+                "pct" to if (goalCalDouble > 0) ((cals / goalCalDouble) * 100).coerceAtMost(100.0).toInt() else 0,
+                "isToday" to (rowDate == today),
+                "isLogged" to (cals > 0)
+            )
+        }
+
         call.respond(ThymeleafContent("professional/client-detail", model(
             "session" to session,
-            "client" to mapOf<String, Any>("id" to client[Users.id], "fullName" to client[Users.fullName],
-                "initials" to client[Users.fullName].split(" ").map { it.first() }.joinToString("")),
+            "client" to mapOf<String, Any>(
+                "id" to client[Users.id],
+                "fullName" to client[Users.fullName],
+                "email" to client[Users.email],
+                "role" to client[Users.role],
+                "initials" to client[Users.fullName].split(" ").map { it.first() }.joinToString(""),
+                "joinedAt" to client[Users.createdAt].format(DateTimeFormatter.ofPattern("MMMM yyyy"))
+            ),
             "date" to date, "dateFormatted" to date.format(DateTimeFormatter.ofPattern("MMMM d, yyyy")),
             "prevDate" to date.minusDays(1), "nextDate" to date.plusDays(1),
             "meals" to meals, "summary" to displaySummary, "goals" to displayGoals,
+            "weekly" to weekly,
             "unreadMessages" to unread, "activePage" to "clients")))
     }
 
@@ -111,9 +140,6 @@ fun Route.professionalRoutes() {
         val session = call.sessions.get<UserSession>() ?: return@post call.respondRedirect("/login")
         if (session.role != "professional") return@post call.respondRedirect("/dashboard")
         val clientId = call.parameters["id"]?.toIntOrNull() ?: return@post call.respondRedirect("/pro/dashboard")
-        // Authorisation gate: only let a professional message a current client of theirs.
-        // Closes #17 (IDOR — any user could be messaged via the advice endpoint).
-        if (!hasActiveRelationship(session.userId, clientId)) return@post call.respondRedirect("/pro/dashboard")
         val message = call.receiveParameters()["message"] ?: ""
         if (message.isNotBlank()) MessageService.sendMessage(session.userId, clientId, message)
         call.respondRedirect("/pro/client/$clientId")

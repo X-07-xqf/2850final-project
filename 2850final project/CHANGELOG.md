@@ -4,6 +4,28 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [v0.6.31] - 2026-05-04 — Pro Clients: show ALL subscribers + enrich detail page (closes #109)
+
+### Changed
+- `/pro/dashboard` (the Clients overview) — was joining `ClientRelationships` and only showing supervised subscribers. Now queries `Users.role = 'subscriber'` directly and lists every registered subscriber, ordered by full name. Today's calories / goal / compliance / status are computed per row exactly as before, so the existing table markup stays unchanged.
+- `/pro/client/{id}` — dropped the `hasActiveRelationship` gate. A defence-in-depth check is kept (the URL must point at a row whose `role = 'subscriber'`), so pros can't scrape pro-on-pro detail pages by guessing IDs.
+- `POST /pro/client/{id}/advice` — gate also dropped.
+- `hasActiveRelationship` function kept in code (annotated `@Suppress("unused")`) so the stricter access model can be re-wired later without re-implementing the relationship lookup.
+
+### Added (client detail page)
+- **Profile sub-line** under the page title showing the client's email + capitalised role + month they joined ("alice@…  · subscriber · Joined March 2026").
+- **"Open chat →"** button alongside the date nav, linking to `/messages/{id}` so the pro can pop straight into the conversation thread instead of using the inline advice form.
+- **"This week" card** — 7-day calorie ladder for the client using the same `.dashboard-week__chart` markup the subscriber dashboard uses. Today's row gets the mint pill, days with no entries show a dashed track. Reuses existing CSS — zero new styling for the chart itself.
+
+### Implementation notes
+- Two new CSS rules (`.client-detail__meta` + `.client-detail__actions`) for the profile sub-line and action-button row layout. Everything else is reused.
+- Date nav buttons in the header switched to `btn--small` so the "Open chat →" button fits next to them without wrapping at typical desktop widths.
+
+### Security trade-off (deliberate)
+- Earlier issues #16 and #17 added the `hasActiveRelationship` gate against IDOR — any pro reading any client's data. Per the v0.6.31 product request, that gate is removed: any registered professional can read any subscriber's diary and message them. The reduced-friction model fits the small-team / classroom context this project targets; if the threat model changes the gate can be re-enabled by uncommenting the call sites.
+
+---
+
 ## [v0.6.30] - 2026-05-03 — Messages: anyone can DM anyone — full directory of opposite-role users (closes #107)
 
 ### Added

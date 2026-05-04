@@ -3360,6 +3360,31 @@ input::placeholder, textarea::placeholder {
 }
 
 /* ============================================================
+   Pro client detail — profile meta line + actions bar.
+   ============================================================ */
+.client-detail__meta {
+    margin: 6px 0 4px;
+    font-size: var(--text-sm);
+    color: var(--text-soft);
+    display: inline-flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+}
+.client-detail__role {
+    text-transform: capitalize;
+    color: var(--color-primary);
+    font-weight: 600;
+}
+.client-detail__sep { opacity: 0.4; }
+.client-detail__actions {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+/* ============================================================
    Dashboard secondary modules — appended below the nutrition card.
    This week + Streak (asymmetric split), For tonight (recipe bento),
    Coach corner (latest message preview).

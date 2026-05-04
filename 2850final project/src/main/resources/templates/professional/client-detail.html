@@ -36,12 +36,22 @@
                     <span class="table-avatar table-avatar--lg" th:text="${client.initials}">AB</span>
                     <span th:text="${client.fullName}">Client</span>
                 </h1>
+                <p class="client-detail__meta">
+                    <span th:text="${client.email}">email</span>
+                    <span class="client-detail__sep">·</span>
+                    <span class="client-detail__role" th:text="${client.role}">subscriber</span>
+                    <span class="client-detail__sep">·</span>
+                    <span>Joined <span th:text="${client.joinedAt}">May 2026</span></span>
+                </p>
                 <p class="page-meta" th:text="${dateFormatted}">Date</p>
             </div>
-            <div class="date-nav">
-                <a class="btn btn--ghost" th:href="|/pro/client/${client.id}?date=${prevDate}|">← Previous</a>
-                <a class="btn btn--ghost" th:href="|/pro/client/${client.id}|">Today</a>
-                <a class="btn btn--ghost" th:href="|/pro/client/${client.id}?date=${nextDate}|">Next →</a>
+            <div class="client-detail__actions">
+                <a class="btn btn--ghost btn--small" th:href="|/messages/${client.id}|">Open chat →</a>
+                <div class="date-nav">
+                    <a class="btn btn--ghost btn--small" th:href="|/pro/client/${client.id}?date=${prevDate}|">← Prev</a>
+                    <a class="btn btn--ghost btn--small" th:href="|/pro/client/${client.id}|">Today</a>
+                    <a class="btn btn--ghost btn--small" th:href="|/pro/client/${client.id}?date=${nextDate}|">Next →</a>
+                </div>
             </div>
         </header>
 
@@ -52,6 +62,26 @@
             <div class="summary-strip__item">F <span th:text="${summary.fat}">0</span> g</div>
             <div class="summary-strip__item summary-strip__item--goals" th:if="${goals != null}">
                 Goals: <span th:text="${goals['calories']}">—</span> kcal
+            </div>
+        </section>
+
+        <!-- This week — 7-day calorie ladder for the client, reuses the
+             dashboard week-chart styling so dark mode + responsive are free. -->
+        <section class="card" th:if="${weekly != null and !weekly.isEmpty()}">
+            <header class="dashboard-card__head">
+                <h2 class="section-title">This week</h2>
+                <span class="dashboard-card__link" th:if="${goals != null and goals['calories'] != null}">
+                    Goal <span th:text="${goals['calories']}">2000</span> kcal
+                </span>
+            </header>
+            <div class="dashboard-week__chart">
+                <div class="dashboard-week__row" th:each="w : ${weekly}"
+                     th:classappend="${w.isToday} ? ' is-today' : (${w.isLogged} ? '' : ' is-empty')"
+                     th:style="|--pct: ${w.pct}%|">
+                    <span class="dashboard-week__day" th:text="${w.dayName}">Mon</span>
+                    <div class="dashboard-week__bar"><span></span></div>
+                    <span class="dashboard-week__val" th:text="${w.calories}">0</span>
+                </div>
             </div>
         </section>
 
