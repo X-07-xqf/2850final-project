@@ -54,7 +54,11 @@
                 </label>
                 <label class="field">
                     <span class="field__label">Password</span>
-                    <input type="password" name="password" required minlength="6" autocomplete="new-password"/>
+                    <input type="password" name="password" required minlength="6" autocomplete="new-password"
+                           aria-describedby="register-password-hint"/>
+                    <p id="register-password-hint" class="field-hint">
+                        Must include an uppercase letter, a lowercase letter, and a number. Minimum 6 characters.
+                    </p>
                 </label>
                 <label class="field">
                     <span class="field__label">Confirm password</span>
