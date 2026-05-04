@@ -13,16 +13,30 @@ import io.ktor.server.thymeleaf.*
 fun Route.recipeRoutes() {
     get("/recipes") {
         val session = call.sessions.get<UserSession>() ?: return@get call.respondRedirect("/login")
-        val query = call.request.queryParameters["q"]; val difficulty = call.request.queryParameters["difficulty"]
-        val recipes = RecipeService.searchRecipes(query, difficulty)
-        // Only show the Featured strip on the unfiltered landing — when the user
-        // is searching, hide it so the page is just their results.
-        val featured = if (query.isNullOrBlank() && (difficulty.isNullOrBlank() || difficulty == "all"))
-            RecipeService.getFeatured(3) else emptyList()
+        val query = call.request.queryParameters["q"]
+        val difficulty = call.request.queryParameters["difficulty"]
+        val calories = call.request.queryParameters["calories"]
+        val protein = call.request.queryParameters["protein"]
+        val time = call.request.queryParameters["time"]
+        val recipes = RecipeService.searchRecipes(query, difficulty, calories, protein, time)
+        // Featured strip only shows on the truly unfiltered landing — any active
+        // filter (search or any of the four dropdowns) hides it so the page is
+        // just the user's results.
+        val anyFilterActive =
+            !query.isNullOrBlank() ||
+            (!difficulty.isNullOrBlank() && difficulty != "all") ||
+            (!calories.isNullOrBlank() && calories != "all") ||
+            (!protein.isNullOrBlank() && protein != "all") ||
+            (!time.isNullOrBlank() && time != "all")
+        val featured = if (!anyFilterActive) RecipeService.getFeatured(3) else emptyList()
         val unread = MessageService.getUnreadCount(session.userId)
         call.respond(ThymeleafContent("subscriber/recipes", model(
             "session" to session, "recipes" to recipes, "featured" to featured,
-            "query" to (query ?: ""), "difficulty" to (difficulty ?: "all"),
+            "query" to (query ?: ""),
+            "difficulty" to (difficulty ?: "all"),
+            "calories" to (calories ?: "all"),
+            "protein" to (protein ?: "all"),
+            "time" to (time ?: "all"),
             "unreadMessages" to unread, "activePage" to "recipes")))
     }
 
