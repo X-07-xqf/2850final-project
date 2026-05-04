@@ -4,6 +4,22 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [v0.6.34] - 2026-05-04 — Pro Clients: tighter compliance band, over-eating surfaces honestly (closes #115)
+
+### Changed
+- The Clients overview was capping compliance at 100 and using a single threshold (`pct >= 60`) for the Status pill. A client at 150% of goal therefore showed `100%` Compliance and `On Track` Status — pros lost all visibility into over-eating clients. The threshold of 60% was also too lenient on the under-eating side.
+- Replaced with a band rule:
+  - `compliance < 80%` → **Needs Attention** (under-eating)
+  - `80% ≤ compliance ≤ 100%` → **On Track**
+  - `compliance > 100%` → **Needs Attention** (over-eating)
+- Compliance percentage is no longer capped — the table now shows the real value (e.g. `150%`) so a pro can see how far past goal a client is at a glance.
+- Added `complianceVisual` (capped at 100) on the model so the inline progress-bar's `width` doesn't overflow the track even when the actual percentage is over 100%.
+
+### Not changed
+- Same `status-pill--warn` style for both under-eating and over-eating cases — per request, both surface as just "Needs Attention". The unbalanced percentage in the adjacent cell carries the under/over signal.
+
+---
+
 ## [v0.6.33] - 2026-05-04 — Diary "Add food" visual picker + 37 more foods (closes #113)
 
 ### Added
