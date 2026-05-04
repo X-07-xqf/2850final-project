@@ -61,8 +61,10 @@
                     <td th:text="${c.goalCalories}">2000</td>
                     <td>
                         <div class="progress progress--compact" role="progressbar" aria-label="Client compliance progress" th:attr="aria-valuenow=${c.compliance}" aria-valuemin="0" aria-valuemax="100">
-                            <div class="progress__fill progress__fill--cal" th:style="|width: ${c.compliance}%;|"></div>
+                            <!-- bar width uses the visual cap so a 150% client doesn't overflow the track -->
+                            <div class="progress__fill progress__fill--cal" th:style="|width: ${c.complianceVisual}%;|"></div>
                         </div>
+                        <!-- text shows the real percentage so over-eating reads as e.g. "150%" -->
                         <span class="table-pct" th:text="${c.compliance} + '%'">0%</span>
                     </td>
                     <td>
