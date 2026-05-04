@@ -36,14 +36,24 @@ fun Route.authRoutes() {
         val fullName = params["fullName"] ?: ""; val email = params["email"] ?: ""
         val password = params["password"] ?: ""; val confirmPassword = params["confirmPassword"] ?: ""
         val role = params["role"] ?: "subscriber"
-        if (password != confirmPassword) { call.respond(ThymeleafContent("auth/login", model("error" to "Passwords do not match", "tab" to "register"))); return@post }
-        if (fullName.isBlank() || email.isBlank() || password.length < 6) { call.respond(ThymeleafContent("auth/login", model("error" to "Please fill all fields (password min 6 chars)", "tab" to "register"))); return@post }
+        if (fullName.isBlank() || email.isBlank()) {
+            call.respond(ThymeleafContent("auth/login", model("error" to "Please fill all fields.", "tab" to "register"))); return@post
+        }
+        if (password != confirmPassword) {
+            call.respond(ThymeleafContent("auth/login", model("error" to "Passwords do not match.", "tab" to "register"))); return@post
+        }
+        // Password complexity gate (v0.6.36). Returns the specific reason so the
+        // user knows which rule to satisfy.
+        val passwordError = UserService.validatePassword(password)
+        if (passwordError != null) {
+            call.respond(ThymeleafContent("auth/login", model("error" to passwordError, "tab" to "register"))); return@post
+        }
         val userId = UserService.register(fullName, email, password, role)
         if (userId != null) {
             call.sessions.set(UserSession(userId, fullName, email, role))
             if (role == "professional") call.respondRedirect("/pro/dashboard") else call.respondRedirect("/dashboard")
         } else {
-            call.respond(ThymeleafContent("auth/login", model("error" to "Email already registered", "tab" to "register")))
+            call.respond(ThymeleafContent("auth/login", model("error" to "Email already registered.", "tab" to "register")))
         }
     }
 

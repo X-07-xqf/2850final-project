@@ -4,6 +4,26 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [v0.6.36] - 2026-05-04 — Registration password complexity (upper + lower + digit) (closes #119)
+
+### Added
+- New `UserService.validatePassword(password)` returns the specific reason a password is rejected — `null` on valid, otherwise one of:
+  - `Password must be at least 6 characters.`
+  - `Password must include an uppercase letter (A–Z).`
+  - `Password must include a lowercase letter (a–z).`
+  - `Password must include a number (0–9).`
+
+  Order is most-actionable-first (length before character classes) so the user fixes the simplest issue first.
+- Register tab now shows the rule inline as a `field-hint` under the password input, so users see the requirement before submission, not just after a failed attempt.
+
+### Changed
+- `POST /register` calls `validatePassword` before `UserService.register` and surfaces the specific failure reason in the existing red-banner error region. Replaces the previous generic `"Please fill all fields (password min 6 chars)"` message with three split, targeted messages (empty fields → `Please fill all fields.`, password mismatch → `Passwords do not match.`, complexity failure → specific reason).
+
+### Existing accounts (unchanged)
+- `UserService.authenticate` still verifies the BCrypt hash without re-checking strength. Users who registered before this rule can keep logging in with their original (potentially weaker) passwords. Only the registration code path enforces the new requirement.
+
+---
+
 ## [v0.6.35] - 2026-05-04 — Recipes: calories / protein / cooking-time filters (closes #117)
 
 ### Added

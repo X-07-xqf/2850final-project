@@ -40,6 +40,24 @@ object UserService {
      *  and which routes the user can reach.
      * @return the new user's auto-generated `id`, or `null` when the email already exists.
      */
+    /**
+     * v0.6.36 — password-complexity gate for new registrations. Returns the
+     * specific reason a password is rejected, or `null` when it passes. Order
+     * matters: surface the most-actionable failure first (length before
+     * character classes).
+     *
+     * Existing accounts whose hashes pre-date this rule are unaffected —
+     * [authenticate] only verifies the BCrypt hash, not strength, so old
+     * passwords still log in.
+     */
+    fun validatePassword(password: String): String? = when {
+        password.length < 6 -> "Password must be at least 6 characters."
+        !password.any { it.isUpperCase() } -> "Password must include an uppercase letter (A–Z)."
+        !password.any { it.isLowerCase() } -> "Password must include a lowercase letter (a–z)."
+        !password.any { it.isDigit() } -> "Password must include a number (0–9)."
+        else -> null
+    }
+
     fun register(fullName: String, email: String, password: String, role: String): Int? = transaction {
         if (Users.selectAll().where { Users.email eq email }.count() > 0) return@transaction null
         val hash = BCrypt.withDefaults().hashToString(12, password.toCharArray())
