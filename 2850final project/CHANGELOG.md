@@ -4,6 +4,17 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [v0.6.32] - 2026-05-04 — Login page scrolls on short viewports — register form no longer cut off (closes #111)
+
+### Fixed
+- `.auth-body` was `display: flex; align-items: center; justify-content: center; overflow: hidden`. On a viewport shorter than the register form (~800px tall — small laptops or partial-height browser windows), the form overflowed equally off the top and bottom and `overflow: hidden` blocked page scroll, so users physically couldn't reach the "Create account" button.
+- Switched to a column flex with `align-items: center` (horizontal centering) and `overflow-x: hidden` only. Vertical centering moves to `.auth-shell { margin: auto 0 }` — a flexbox idiom that centers when there's slack but top-anchors when content exceeds the container. Tall viewports still see the card centered; short viewports now top-anchor it and the page scrolls naturally to the submit button.
+
+### Why not just `overflow-y: auto`
+That creates an internal scroll container inside the body, which makes the animated blob pseudo-elements scroll with the form (they're absolutely positioned to the body). The `overflow-x: hidden + page-level scroll + margin: auto 0` recipe keeps the blobs static while the form scrolls.
+
+---
+
 ## [v0.6.31] - 2026-05-04 — Pro Clients: show ALL subscribers + enrich detail page (closes #109)
 
 ### Changed

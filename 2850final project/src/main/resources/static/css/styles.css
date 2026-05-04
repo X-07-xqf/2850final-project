@@ -500,14 +500,20 @@ a:hover { text-decoration: underline; text-decoration-thickness: 1.5px; text-und
    Auth — login page hero + animated mesh background
    ============================================================ */
 .auth-body {
+    /* Column flex + horizontal centering. Vertical centering happens via
+       auth-shell's `margin: auto 0` — that pattern centers when there's
+       extra space and top-anchors when content exceeds the viewport, so
+       short browser windows still let the user scroll to "Create account".
+       overflow-x: hidden clips the animated blob pseudo-elements without
+       breaking page scroll. */
     display: flex;
+    flex-direction: column;
     align-items: center;
-    justify-content: center;
     min-height: 100vh;
     padding: 32px;
     background: var(--color-bg);
     position: relative;
-    overflow: hidden;
+    overflow-x: hidden;
     isolation: isolate;
 }
 
@@ -589,6 +595,10 @@ a:hover { text-decoration: underline; text-decoration-thickness: 1.5px; text-und
 .auth-shell {
     width: 100%;
     max-width: 440px;
+    /* `margin: auto 0` in a flex column = vertical centering when there's
+       slack, top-anchored when content overflows. Lets short viewports
+       scroll to reach the "Create account" button. */
+    margin: auto 0;
     animation: fade-up var(--dur-slow) var(--ease-out) both;
     position: relative;
     z-index: 1;
