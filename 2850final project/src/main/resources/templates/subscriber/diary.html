@@ -93,14 +93,15 @@
             <input type="hidden" name="mealType" id="modal-meal-type" value="breakfast"/>
             <input type="hidden" name="foodItemId" id="modal-food-item-id" value=""/>
 
-            <label class="field">
-                <span class="field__label">Search foods</span>
-                <input type="search" id="food-search-input" class="js-food-search"
-                       placeholder="Type at least 3 letters…" autocomplete="off"
-                       aria-describedby="food-search-hint"/>
-                <p id="food-search-hint" class="field-hint">Type at least 3 letters to search. Try <em>ban</em>, <em>chi</em>, or <em>oat</em>.</p>
-            </label>
-            <div id="food-search-results" class="food-search-results" role="listbox"></div>
+            <div class="food-picker">
+                <label class="sr-only" for="food-search-input">Search foods</label>
+                <input type="search" id="food-search-input" class="food-picker__search js-food-picker"
+                       placeholder="Search foods…" autocomplete="off"/>
+                <div id="food-search-results" class="food-picker__grid" role="listbox" aria-label="Foods">
+                    <!-- Cards rendered by initFoodPicker() in app.js -->
+                </div>
+                <p class="food-picker__empty" hidden>No foods match that search.</p>
+            </div>
 
             <label class="field">
                 <span class="field__label">Amount (grams)</span>

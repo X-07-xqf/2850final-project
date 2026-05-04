@@ -4,6 +4,35 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [v0.6.33] - 2026-05-04 — Diary "Add food" visual picker + 37 more foods (closes #113)
+
+### Added
+- **37 commonly-eaten foods** seeded via a new `SeedData.backfillExtraFoods()` runner so live DBs (Render) get them on next boot without a re-seed. Same idempotent pattern as `backfillExtraRecipes`. Coverage:
+  - Fruits: Apple, Orange, Strawberries, Blueberries, Mango, Pineapple, Grapes, Watermelon, Lemon
+  - Vegetables: Carrot, Spinach, Bell Pepper, Onion, Mushroom, Cauliflower, Corn
+  - Grains: White Rice, Quinoa, Pasta, Bagel
+  - Proteins: Beef (lean ground), Pork (lean), Turkey Breast, Tuna (canned), Shrimp, Black Beans, Chickpeas
+  - Dairy: Milk (2%), Cheddar Cheese, Cottage Cheese
+  - Snacks: Peanut Butter, Hummus, Dark Chocolate, Popcorn
+  - Beverages: Coffee (black), Orange Juice, Smoothie (fruit)
+- `foodEmoji(name)` and `foodTone(category)` helpers in `Format.kt` — same shape as the existing `recipeCoverEmoji` / `recipeCoverTone`. Maps 50+ keywords to glyphs (apple → 🍎, broccoli → 🥦, salmon → 🐟, ...) and four categories to brand cover tones (Fruits → berry, Vegetables → sage, Grains → oat, Proteins → clay).
+
+### Changed
+- **`/api/food-search?q=`** — when `q` is blank, returns the full library (capped at 60 rows) ordered by name. Used by the new picker grid that opens fully populated. Each row also returns `emoji` and `tone` so the front-end renders branded cards in one round-trip.
+- **Diary "Add food" modal** rewritten:
+  - Old: `Search foods` label + `Type at least 3 letters…` hint + a hidden text-button list. Users had to know what to type before anything appeared.
+  - New: a `food-picker__search` pill input + a `food-picker__grid` of visual food cards, each with the food emoji on a category-tinted gradient cover + name + kcal/100g. Click any card to select it (sage focus ring + filled border) and unlock the Add-to-diary submit button.
+  - Filtering is client-side once the initial fetch lands — no server round-trip per keystroke. Empty input shows everything; empty result shows a centered "No foods match" hint.
+  - Cards use Liquid Glass surface (`var(--glass-bg-warm)` + `backdrop-filter: var(--glass-blur)`) so they read as thick translucent tiles over the modal's glass panel.
+- `initFoodSearch()` → `initFoodPicker()` in `app.js`. Lazy-loads the food list on first modal open via a `MutationObserver` watching `.is-open` on the modal element — `/diary` page renders don't pay for the list until the user actually clicks Add food.
+
+### Implementation notes
+- Old CSS class `.food-search-results` removed; replaced by `.food-picker / .food-picker__search / .food-picker__grid / .food-picker__empty / .food-card / .food-card__cover / .food-card__cover--<tone> / .food-card__emoji / .food-card__name / .food-card__cal`.
+- Cover tones are `recipe-card__cover--*` cousins — same gradient recipe (`linear-gradient(135deg, <color-bg>, <color-soft>)`) so dark mode flips automatically via the v0.6.14 token work.
+- `foodEmoji` falls back to a generic 🍽️ plate when no keyword matches, so future foods added without explicit emoji handling still render cleanly.
+
+---
+
 ## [v0.6.32] - 2026-05-04 — Login page scrolls on short viewports — register form no longer cut off (closes #111)
 
 ### Fixed
