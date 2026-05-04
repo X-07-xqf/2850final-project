@@ -82,62 +82,87 @@
         });
     }
 
-    /* ---- Food search (/api/food-search?q=) ---- */
-    function initFoodSearch() {
+    /* ---- Food picker (visual grid) ----
+       Replaces the old type-3-letters search. Modal opens → grid loads with
+       every food (server caps at 60). Search input filters live. Click a
+       card → marks it selected, sets the hidden foodItemId, enables submit. */
+    function initFoodPicker() {
         var input = document.getElementById("food-search-input");
-        var results = document.getElementById("food-search-results");
+        var grid = document.getElementById("food-search-results");
+        var emptyEl = document.querySelector(".food-picker__empty");
         var foodIdInput = document.getElementById("modal-food-item-id");
         var submitBtn = document.getElementById("modal-submit");
-        if (!input || !results) return;
+        var modal = document.getElementById("add-food-modal");
+        if (!input || !grid) return;
 
-        // Minimum query length: 3 — matches the inline hint shown next to the
-        // search input in subscriber/diary.html. Bumping this here without also
-        // updating that hint would re-introduce the original UX problem
-        // (testers typing 1-2 chars and seeing nothing happen — issue #38).
-        var MIN_QUERY_LEN = 3;
-        var t = null;
-        input.addEventListener("input", function () {
-            clearTimeout(t);
-            var q = input.value.trim();
-            if (q.length < MIN_QUERY_LEN) {
-                results.innerHTML = "";
-                results.classList.remove("is-visible");
+        var allFoods = [];
+        var loaded = false;
+
+        function renderGrid(items) {
+            grid.innerHTML = "";
+            if (!items || !items.length) {
+                if (emptyEl) emptyEl.hidden = false;
                 return;
             }
-            t = setTimeout(function () {
-                fetch("/api/food-search?q=" + encodeURIComponent(q))
-                    .then(function (r) {
-                        if (!r.ok) throw new Error("search failed");
-                        return r.json();
-                    })
-                    .then(function (items) {
-                        results.innerHTML = "";
-                        if (!items || !items.length) {
-                            results.classList.remove("is-visible");
-                            return;
-                        }
-                        items.forEach(function (item) {
-                            var b = document.createElement("button");
-                            b.type = "button";
-                            b.setAttribute("role", "option");
-                            b.textContent = item.name + " — " + item.calories + " kcal/100g";
-                            b.addEventListener("click", function () {
-                                if (foodIdInput) foodIdInput.value = String(item.id);
-                                if (submitBtn) submitBtn.disabled = false;
-                                input.value = item.name;
-                                results.innerHTML = "";
-                                results.classList.remove("is-visible");
-                            });
-                            results.appendChild(b);
-                        });
-                        results.classList.add("is-visible");
-                    })
-                    .catch(function () {
-                        results.innerHTML = "";
-                        results.classList.remove("is-visible");
-                    });
-            }, 250);
+            if (emptyEl) emptyEl.hidden = true;
+            items.forEach(function (item) {
+                var card = document.createElement("button");
+                card.type = "button";
+                card.className = "food-card";
+                card.setAttribute("role", "option");
+                card.setAttribute("data-food-id", String(item.id));
+                card.setAttribute("data-food-name", item.name.toLowerCase());
+                card.innerHTML =
+                    '<span class="food-card__cover food-card__cover--' + item.tone + '">' +
+                        '<span class="food-card__emoji" aria-hidden="true">' + item.emoji + '</span>' +
+                    '</span>' +
+                    '<span class="food-card__name"></span>' +
+                    '<span class="food-card__cal"></span>';
+                card.querySelector(".food-card__name").textContent = item.name;
+                card.querySelector(".food-card__cal").textContent =
+                    Math.round(parseFloat(item.calories)) + " kcal/100g";
+                card.addEventListener("click", function () {
+                    grid.querySelectorAll(".food-card.is-selected")
+                        .forEach(function (c) { c.classList.remove("is-selected"); });
+                    card.classList.add("is-selected");
+                    if (foodIdInput) foodIdInput.value = String(item.id);
+                    if (submitBtn) submitBtn.disabled = false;
+                });
+                grid.appendChild(card);
+            });
+        }
+
+        function loadAll() {
+            if (loaded) return Promise.resolve();
+            return fetch("/api/food-search?q=")
+                .then(function (r) { return r.ok ? r.json() : []; })
+                .then(function (items) {
+                    allFoods = items || [];
+                    loaded = true;
+                    renderGrid(allFoods);
+                })
+                .catch(function () { allFoods = []; loaded = true; renderGrid([]); });
+        }
+
+        // Live filter — substring match on food name. No min query length;
+        // empty input shows everything. Filtering is client-side once the
+        // initial fetch lands.
+        input.addEventListener("input", function () {
+            var q = input.value.trim().toLowerCase();
+            if (!q) { renderGrid(allFoods); return; }
+            renderGrid(allFoods.filter(function (item) {
+                return item.name.toLowerCase().indexOf(q) !== -1;
+            }));
         });
+
+        // Lazy-load on first modal open (so /diary doesn't pay for the food
+        // list on every page render). Watch for the .is-open class flip.
+        if (modal) {
+            var observer = new MutationObserver(function () {
+                if (modal.classList.contains("is-open") && !loaded) loadAll();
+            });
+            observer.observe(modal, { attributes: true, attributeFilter: ["class"] });
+        }
     }
 
     /* ---- Star rating ---- */
@@ -431,7 +456,7 @@
     document.addEventListener("DOMContentLoaded", function () {
         initAuthTabs();
         initFoodModal();
-        initFoodSearch();
+        initFoodPicker();
         initStarRating();
         initTheme();
         initSidebarDrawer();

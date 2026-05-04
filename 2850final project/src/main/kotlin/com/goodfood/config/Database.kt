@@ -75,6 +75,9 @@ fun Application.configureDatabase() {
     // Idempotent — inserts the v0.6.8 recipe pack (titles checked first), so
     // the live Render PostgreSQL gets six new recipes without a fresh seed.
     SeedData.backfillExtraRecipes()
+    // Idempotent — inserts the v0.6.33 food pack (~37 commonly-eaten foods) so
+    // the diary picker has variety on existing live DBs without a re-seed.
+    SeedData.backfillExtraFoods()
     // Idempotent — keeps the demo account (alice@email.com) populated for
     // *today* so the dashboard never opens to a hostile zero state.
     SeedData.ensureAliceHasTodayEntries()

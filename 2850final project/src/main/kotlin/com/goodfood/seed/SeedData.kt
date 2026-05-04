@@ -212,6 +212,82 @@ object SeedData {
         }
     }
 
+    /**
+     * v0.6.33 — extra commonly-eaten foods so the diary "Add food" picker has
+     * meaningful variety (apple, orange, beef, milk, peanut butter, ...). Same
+     * shape as the original [FoodSeed] inserts but applied as a backfill: only
+     * inserts foods whose `name` doesn't already exist, so repeated boots are
+     * idempotent.
+     */
+    private data class ExtraFood(val name: String, val cat: String, val cal: String, val prot: String, val carb: String, val fat: String, val fiber: String? = null, val sugar: String? = null)
+    private val extraFoods: List<ExtraFood> = listOf(
+        // Fruits
+        ExtraFood("Apple", "Fruits", "52", "0.3", "14", "0.2", "2.4", "10.4"),
+        ExtraFood("Orange", "Fruits", "47", "0.9", "12", "0.1", "2.4", "9.4"),
+        ExtraFood("Strawberries", "Fruits", "32", "0.7", "8", "0.3", "2", "4.9"),
+        ExtraFood("Blueberries", "Fruits", "57", "0.7", "14", "0.3", "2.4", "10"),
+        ExtraFood("Mango", "Fruits", "60", "0.8", "15", "0.4", "1.6", "13.7"),
+        ExtraFood("Pineapple", "Fruits", "50", "0.5", "13", "0.1", "1.4", "9.9"),
+        ExtraFood("Grapes", "Fruits", "67", "0.6", "17", "0.4", "0.9", "16.3"),
+        ExtraFood("Watermelon", "Fruits", "30", "0.6", "8", "0.2", "0.4", "6.2"),
+        ExtraFood("Lemon", "Fruits", "29", "1.1", "9", "0.3", "2.8", "2.5"),
+        // Vegetables
+        ExtraFood("Carrot", "Vegetables", "41", "0.9", "10", "0.2", "2.8", "4.7"),
+        ExtraFood("Spinach", "Vegetables", "23", "2.9", "3.6", "0.4", "2.2", "0.4"),
+        ExtraFood("Bell Pepper", "Vegetables", "31", "1", "6", "0.3", "2.1", "4.2"),
+        ExtraFood("Onion", "Vegetables", "40", "1.1", "9", "0.1", "1.7", "4.2"),
+        ExtraFood("Mushroom", "Vegetables", "22", "3.1", "3.3", "0.3", "1", "2"),
+        ExtraFood("Cauliflower", "Vegetables", "25", "1.9", "5", "0.3", "2", "1.9"),
+        ExtraFood("Corn", "Vegetables", "86", "3.2", "19", "1.4", "2.7", "6.3"),
+        // Grains
+        ExtraFood("White Rice", "Grains", "130", "2.7", "28", "0.3", "0.4", "0.1"),
+        ExtraFood("Quinoa", "Grains", "120", "4.4", "21", "1.9", "2.8", "0.9"),
+        ExtraFood("Pasta", "Grains", "131", "5", "25", "1.1", "1.8", "0.6"),
+        ExtraFood("Bagel", "Grains", "245", "10", "48", "1.5", "2", "5"),
+        // Meat / fish
+        ExtraFood("Beef (lean ground)", "Meat", "250", "26", "0", "15", "0", "0"),
+        ExtraFood("Pork (lean)", "Meat", "143", "21", "0", "6", "0", "0"),
+        ExtraFood("Turkey Breast", "Meat", "135", "30", "0", "1", "0", "0"),
+        ExtraFood("Tuna (canned)", "Fish", "132", "28", "0", "1", "0", "0"),
+        ExtraFood("Shrimp", "Fish", "99", "24", "0.2", "0.3", "0", "0"),
+        // Legumes
+        ExtraFood("Black Beans", "Legumes", "132", "8.9", "23.7", "0.5", "8.7", "0.3"),
+        ExtraFood("Chickpeas", "Legumes", "164", "8.9", "27", "2.6", "7.6", "4.8"),
+        // Dairy
+        ExtraFood("Milk (2%)", "Dairy", "50", "3.3", "5", "2", "0", "5"),
+        ExtraFood("Cheddar Cheese", "Dairy", "402", "25", "1.3", "33", "0", "0.5"),
+        ExtraFood("Cottage Cheese", "Dairy", "98", "11", "3.4", "4.3", "0", "2.7"),
+        // Snacks
+        ExtraFood("Peanut Butter", "Snacks", "588", "25", "20", "50", "6", "9"),
+        ExtraFood("Hummus", "Snacks", "166", "8", "14", "10", "6", "0.3"),
+        ExtraFood("Dark Chocolate", "Snacks", "598", "7.8", "46", "43", "11", "24"),
+        ExtraFood("Popcorn", "Snacks", "387", "12", "78", "4.5", "14.5", "0.9"),
+        // Beverages
+        ExtraFood("Coffee (black)", "Beverages", "1", "0.1", "0", "0", "0", "0"),
+        ExtraFood("Orange Juice", "Beverages", "45", "0.7", "10", "0.2", "0.2", "8.4"),
+        ExtraFood("Smoothie (fruit)", "Beverages", "82", "1.5", "19", "0.5", "1.8", "14")
+    )
+
+    fun backfillExtraFoods() {
+        transaction {
+            val now = LocalDateTime.now()
+            for (f in extraFoods) {
+                val exists = FoodItems.selectAll().where { FoodItems.name eq f.name }.count() > 0L
+                if (exists) continue
+                FoodItems.insert {
+                    it[name] = f.name; it[category] = f.cat
+                    it[caloriesPer100g] = BigDecimal(f.cal)
+                    it[proteinPer100g] = BigDecimal(f.prot)
+                    it[carbsPer100g] = BigDecimal(f.carb)
+                    it[fatPer100g] = BigDecimal(f.fat)
+                    it[fiberPer100g] = f.fiber?.let { v -> BigDecimal(v) }
+                    it[sugarPer100g] = f.sugar?.let { v -> BigDecimal(v) }
+                    it[createdAt] = now
+                }
+            }
+        }
+    }
+
     fun backfillExtraRecipes() {
         transaction {
             val sarah = Users.selectAll().where { Users.email eq "sarah@clinic.com" }.singleOrNull() ?: return@transaction

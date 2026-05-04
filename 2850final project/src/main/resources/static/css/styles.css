@@ -2654,37 +2654,106 @@ input::placeholder, textarea::placeholder {
 }
 .modal__close:hover { background: var(--color-surface-alt); color: var(--text-strong); }
 
-.food-search-results {
-    max-height: 240px;
-    overflow-y: auto;
-    border: 1px solid var(--color-border-soft);
-    border-radius: var(--radius-sm);
-    margin-top: -8px;
-    margin-bottom: 8px;
-    display: none;
-    background: var(--color-surface);
-    box-shadow: var(--shadow-xs);
+/* ============================================================
+   Food picker — visual grid inside the diary "Add food" modal.
+   Each card is an emoji on a category-tinted gradient + name + kcal/100g.
+   Reuses the recipe-card cover tones so dark mode flips for free.
+   ============================================================ */
+.food-picker {
+    margin-bottom: 4px;
 }
-.food-search-results.is-visible {
-    display: block;
-    animation: fade-in var(--dur-fast) var(--ease) both;
-}
-.food-search-results button {
-    display: block;
+.food-picker__search {
     width: 100%;
-    text-align: left;
-    padding: 12px 14px;
-    border: none;
-    border-bottom: 1px solid var(--color-border-soft);
+    padding: 10px 14px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-pill);
     background: var(--color-surface);
-    color: var(--text);
+    color: var(--text-strong);
     font: inherit;
     font-size: var(--text-body);
-    cursor: pointer;
-    transition: background var(--dur-fast) var(--ease);
+    margin-bottom: 12px;
+    transition: border-color var(--dur-fast) var(--ease);
 }
-.food-search-results button:hover { background: var(--color-primary-soft); }
-.food-search-results button:last-child { border-bottom: none; }
+.food-picker__search:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: var(--ring);
+}
+.food-picker__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 10px;
+    max-height: 340px;
+    overflow-y: auto;
+    padding: 4px;
+    margin: 0 -4px;
+}
+.food-picker__empty {
+    margin: 12px 4px 0;
+    color: var(--text-soft);
+    font-size: var(--text-sm);
+    text-align: center;
+}
+
+.food-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 12px 8px 14px;
+    background: var(--glass-bg-warm);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--color-border-soft);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    text-align: center;
+    font: inherit;
+    color: inherit;
+    transition: border-color var(--dur-fast) var(--ease),
+                box-shadow var(--dur-fast) var(--ease),
+                transform var(--dur-fast) var(--ease);
+}
+.food-card:hover {
+    border-color: var(--color-border-strong);
+    box-shadow: var(--shadow-sm);
+    transform: translateY(-1px);
+}
+.food-card.is-selected {
+    border-color: var(--color-primary);
+    box-shadow: var(--ring);
+}
+.food-card__cover {
+    width: 56px;
+    height: 56px;
+    border-radius: var(--radius-pill);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+.food-card__cover--sage  { background: linear-gradient(135deg, var(--color-sage-bg), var(--color-sage-soft)); }
+.food-card__cover--clay  { background: linear-gradient(135deg, var(--color-clay-bg), var(--color-clay-soft)); }
+.food-card__cover--oat   { background: linear-gradient(135deg, var(--color-cream-warm), var(--color-oat)); }
+.food-card__cover--berry { background: linear-gradient(135deg, var(--color-berry-soft), var(--color-berry-tint)); }
+
+.food-card__emoji {
+    font-size: 30px;
+    line-height: 1;
+    filter: var(--emoji-shadow);
+}
+.food-card__name {
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--text-strong);
+    line-height: 1.2;
+    word-break: break-word;
+}
+.food-card__cal {
+    font-size: 11px;
+    color: var(--text-soft);
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+}
 
 /* ============================================================
    Toast

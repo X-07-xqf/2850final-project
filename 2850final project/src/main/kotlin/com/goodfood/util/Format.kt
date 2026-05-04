@@ -84,3 +84,89 @@ fun recipeCoverTone(title: String): String {
     val idx = ((title.hashCode().toLong() and 0xFFFF) % tones.size).toInt()
     return tones[idx]
 }
+
+/**
+ * Pick a food emoji for a food-item card from a keyword scan over its name.
+ * Used by the diary "Add food" picker so each card has a recognisable
+ * visual without needing real photographs. Falls through to a generic
+ * plate when nothing matches.
+ */
+fun foodEmoji(name: String): String {
+    val n = name.lowercase()
+    return when {
+        "apple" in n -> "🍎"
+        "banana" in n -> "🍌"
+        "orange" in n -> "🍊"
+        "grape" in n -> "🍇"
+        "strawberr" in n -> "🍓"
+        "blueberr" in n -> "🫐"
+        "watermelon" in n -> "🍉"
+        "pineapple" in n -> "🍍"
+        "mango" in n -> "🥭"
+        "lemon" in n -> "🍋"
+        "avocado" in n -> "🥑"
+        "tomato" in n -> "🍅"
+        "carrot" in n -> "🥕"
+        "broccoli" in n -> "🥦"
+        "cauliflower" in n -> "🥦"
+        "cucumber" in n -> "🥒"
+        "spinach" in n || "salad green" in n || "lettuce" in n -> "🥬"
+        "sweet potato" in n -> "🍠"
+        "potato" in n -> "🥔"
+        "onion" in n -> "🧅"
+        "garlic" in n -> "🧄"
+        "pepper" in n -> "🫑"
+        "corn" in n -> "🌽"
+        "mushroom" in n -> "🍄"
+        "rice" in n -> "🍚"
+        "bagel" in n -> "🥯"
+        "bread" in n || "toast" in n -> "🍞"
+        "pasta" in n || "noodle" in n || "spaghetti" in n -> "🍝"
+        "oat" in n || "oatmeal" in n -> "🥣"
+        "quinoa" in n -> "🌾"
+        "egg" in n -> "🥚"
+        "milk" in n -> "🥛"
+        "cheese" in n || "cheddar" in n || "cottage" in n -> "🧀"
+        "butter" in n && "peanut" !in n -> "🧈"
+        "yogurt" in n -> "🍦"
+        "chicken" in n || "turkey" in n -> "🍗"
+        "beef" in n || "steak" in n || "burger" in n -> "🥩"
+        "pork" in n || "bacon" in n || "ham" in n -> "🥓"
+        "salmon" in n || "tuna" in n || "fish" in n -> "🐟"
+        "shrimp" in n || "prawn" in n -> "🦐"
+        "tofu" in n || "tempeh" in n -> "🍢"
+        "lentil" in n || "chickpea" in n || "bean" in n -> "🫘"
+        "almond" in n || "nut" in n || "peanut" in n -> "🥜"
+        "chia" in n || "seed" in n -> "🌱"
+        "olive" in n || "oil" in n -> "🫒"
+        "honey" in n -> "🍯"
+        "chocolate" in n -> "🍫"
+        "popcorn" in n -> "🍿"
+        "hummus" in n -> "🥣"
+        "tea" in n -> "🍵"
+        "coffee" in n -> "☕"
+        "smoothie" in n || "juice" in n -> "🧃"
+        "water" in n -> "💧"
+        else -> "🍽️"
+    }
+}
+
+/**
+ * Map a food category to one of the four brand cover tones used by recipe
+ * cards (sage / oat / clay / berry). Tones live in CSS as
+ * `.recipe-card__cover--<tone>` with light/dark gradients via existing
+ * brand tokens, so the food picker reuses them for free.
+ */
+fun foodTone(category: String): String = when (category.lowercase()) {
+    "fruits" -> "berry"
+    "vegetables" -> "sage"
+    "grains" -> "oat"
+    "meat", "fish" -> "clay"
+    "legumes" -> "sage"
+    "dairy" -> "oat"
+    "nuts", "seeds" -> "clay"
+    "oils" -> "sage"
+    "snacks" -> "berry"
+    "beverages" -> "sage"
+    else -> "sage"
+}
