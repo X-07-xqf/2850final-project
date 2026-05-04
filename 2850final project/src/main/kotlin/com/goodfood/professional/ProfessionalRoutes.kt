@@ -50,11 +50,18 @@ fun Route.professionalRoutes() {
                     val clientId = row[Users.id]; val today = LocalDate.now()
                     val summary = DiaryService.getDailySummary(clientId, today); val goals = GoalService.getGoals(clientId)
                     val goalCal = goals?.get("calories") ?: BigDecimal("2000")
+                    // v0.6.34 — NOT capped at 100, so over-eating clients (e.g. 150%)
+                    // surface as such instead of being silently clamped to 100% / On Track.
                     val pct = if (goalCal > BigDecimal.ZERO) summary["calories"]!!.multiply(BigDecimal(100)).divide(goalCal, 0, RoundingMode.HALF_UP).toInt() else 0
+                    // Status band: under 80% = under-eating, over 100% = over-eating —
+                    // both flag "Needs Attention". 80–100% is the On-Track sweet spot.
+                    val status = if (pct in 80..100) "On Track" else "Needs Attention"
                     mapOf<String, Any>("id" to clientId, "fullName" to row[Users.fullName],
                         "initials" to row[Users.fullName].split(" ").map { it.first() }.joinToString(""),
                         "calories" to (summary["calories"] ?: BigDecimal.ZERO).fmt(0), "goalCalories" to goalCal.fmt(0),
-                        "compliance" to pct.coerceAtMost(100), "status" to if (pct >= 60) "On Track" else "Needs Attention")
+                        "compliance" to pct,
+                        "complianceVisual" to pct.coerceAtMost(100),  // for the inline progress bar width
+                        "status" to status)
                 }
         }
         call.respond(ThymeleafContent("professional/dashboard", model(

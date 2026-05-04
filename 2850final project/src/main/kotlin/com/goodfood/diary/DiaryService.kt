@@ -113,17 +113,32 @@ object DiaryService {
         input.replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_")
 
     /**
-     * Case-insensitive substring search over `food_items.name`. Limits to 20
-     * rows for the autocomplete dropdown. The user-supplied [query] is
-     * wildcard-escaped via [escapeLikePattern] so `%` cannot match the entire
-     * table (issue #19).
-     *
-     * @return one map per match, keyed by `id`, `name`, `category`, `calories`.
+     * Case-insensitive substring search over `food_items.name`. When [query] is
+     * blank, returns the full library (capped at 60) — powers the visual food
+     * picker grid that opens with everything visible instead of waiting for
+     * the user to type. Returns `id` / `name` / `category` / `calories` plus
+     * `emoji` + `tone` so the front-end can render brand-tinted cards without
+     * a second round-trip.
      */
     fun searchFood(query: String): List<Map<String, Any>> = transaction {
-        val safe = escapeLikePattern(query.lowercase())
-        FoodItems.selectAll().where { FoodItems.name.lowerCase() like "%$safe%" }.limit(20).map { row ->
-            mapOf("id" to row[FoodItems.id], "name" to row[FoodItems.name], "category" to row[FoodItems.category], "calories" to row[FoodItems.caloriesPer100g])
+        val rows = if (query.isBlank()) {
+            FoodItems.selectAll().orderBy(FoodItems.name).limit(60)
+        } else {
+            val safe = escapeLikePattern(query.lowercase())
+            FoodItems.selectAll().where { FoodItems.name.lowerCase() like "%$safe%" }
+                .orderBy(FoodItems.name).limit(20)
+        }
+        rows.map { row ->
+            val name = row[FoodItems.name]
+            val category = row[FoodItems.category]
+            mapOf(
+                "id" to row[FoodItems.id],
+                "name" to name,
+                "category" to category,
+                "calories" to row[FoodItems.caloriesPer100g],
+                "emoji" to com.goodfood.util.foodEmoji(name),
+                "tone" to com.goodfood.util.foodTone(category)
+            )
         }
     }
 }

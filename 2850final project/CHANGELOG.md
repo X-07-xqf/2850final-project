@@ -4,6 +4,86 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [v0.6.35] - 2026-05-04 — Recipes: calories / protein / cooking-time filters (closes #117)
+
+### Added
+- Three new dropdowns on `/recipes` alongside the existing search + difficulty:
+
+| Filter | Bucket | Threshold |
+|---|---|---|
+| **Calories** (per serving) | Light / Standard / Hearty | ≤ 400 / 401–650 / > 650 kcal |
+| **Protein** (per serving) | Low / Moderate / High | < 15g / 15–25g / > 25g |
+| **Time** (prep + cook) | Quick / Standard / Slow | ≤ 20 / 21–45 / > 45 min |
+
+- Thresholds picked from common nutrition / fitness app standards: **25g** is the canonical "high protein" line (≈ 100g chicken breast), **400 kcal** is the breakfast / light-meal ceiling, **20 min** is the recognized weeknight-quick threshold.
+
+### Changed
+- `RecipeService.searchRecipes` takes three new optional `String?` params (`calories` / `protein` / `time`). Macros and total time are already computed in `summariseRow` (per-serving + prep+cook), so filtering happens in Kotlin after the row pass — no SQL changes.
+- `RecipeRoutes` reads the three new query params, passes them through to the service, and reflects them back to the template so the dropdowns retain selected state across submissions.
+- Featured-strip suppression logic widened: any active filter (search OR any of the four dropdowns) hides the strip so the page renders just the user's results. Clearing all filters brings it back.
+
+### Implementation notes
+- Three small private helpers in `RecipeService` — `matchesCalorieBucket` / `matchesProteinBucket` / `matchesTimeBucket` — each early-returns `true` when the bucket is `"all"` or blank, so unfiltered queries are zero-cost.
+- Reuses the existing `.input-select` and `.filter-bar--inline` CSS classes — no new styles needed; the filter bar wraps gracefully when the four dropdowns + search + button exceed one row.
+
+---
+
+## [v0.6.34] - 2026-05-04 — Pro Clients: tighter compliance band, over-eating surfaces honestly (closes #115)
+
+### Changed
+- The Clients overview was capping compliance at 100 and using a single threshold (`pct >= 60`) for the Status pill. A client at 150% of goal therefore showed `100%` Compliance and `On Track` Status — pros lost all visibility into over-eating clients. The threshold of 60% was also too lenient on the under-eating side.
+- Replaced with a band rule:
+  - `compliance < 80%` → **Needs Attention** (under-eating)
+  - `80% ≤ compliance ≤ 100%` → **On Track**
+  - `compliance > 100%` → **Needs Attention** (over-eating)
+- Compliance percentage is no longer capped — the table now shows the real value (e.g. `150%`) so a pro can see how far past goal a client is at a glance.
+- Added `complianceVisual` (capped at 100) on the model so the inline progress-bar's `width` doesn't overflow the track even when the actual percentage is over 100%.
+
+### Not changed
+- Same `status-pill--warn` style for both under-eating and over-eating cases — per request, both surface as just "Needs Attention". The unbalanced percentage in the adjacent cell carries the under/over signal.
+
+---
+
+## [v0.6.33] - 2026-05-04 — Diary "Add food" visual picker + 37 more foods (closes #113)
+
+### Added
+- **37 commonly-eaten foods** seeded via a new `SeedData.backfillExtraFoods()` runner so live DBs (Render) get them on next boot without a re-seed. Same idempotent pattern as `backfillExtraRecipes`. Coverage:
+  - Fruits: Apple, Orange, Strawberries, Blueberries, Mango, Pineapple, Grapes, Watermelon, Lemon
+  - Vegetables: Carrot, Spinach, Bell Pepper, Onion, Mushroom, Cauliflower, Corn
+  - Grains: White Rice, Quinoa, Pasta, Bagel
+  - Proteins: Beef (lean ground), Pork (lean), Turkey Breast, Tuna (canned), Shrimp, Black Beans, Chickpeas
+  - Dairy: Milk (2%), Cheddar Cheese, Cottage Cheese
+  - Snacks: Peanut Butter, Hummus, Dark Chocolate, Popcorn
+  - Beverages: Coffee (black), Orange Juice, Smoothie (fruit)
+- `foodEmoji(name)` and `foodTone(category)` helpers in `Format.kt` — same shape as the existing `recipeCoverEmoji` / `recipeCoverTone`. Maps 50+ keywords to glyphs (apple → 🍎, broccoli → 🥦, salmon → 🐟, ...) and four categories to brand cover tones (Fruits → berry, Vegetables → sage, Grains → oat, Proteins → clay).
+
+### Changed
+- **`/api/food-search?q=`** — when `q` is blank, returns the full library (capped at 60 rows) ordered by name. Used by the new picker grid that opens fully populated. Each row also returns `emoji` and `tone` so the front-end renders branded cards in one round-trip.
+- **Diary "Add food" modal** rewritten:
+  - Old: `Search foods` label + `Type at least 3 letters…` hint + a hidden text-button list. Users had to know what to type before anything appeared.
+  - New: a `food-picker__search` pill input + a `food-picker__grid` of visual food cards, each with the food emoji on a category-tinted gradient cover + name + kcal/100g. Click any card to select it (sage focus ring + filled border) and unlock the Add-to-diary submit button.
+  - Filtering is client-side once the initial fetch lands — no server round-trip per keystroke. Empty input shows everything; empty result shows a centered "No foods match" hint.
+  - Cards use Liquid Glass surface (`var(--glass-bg-warm)` + `backdrop-filter: var(--glass-blur)`) so they read as thick translucent tiles over the modal's glass panel.
+- `initFoodSearch()` → `initFoodPicker()` in `app.js`. Lazy-loads the food list on first modal open via a `MutationObserver` watching `.is-open` on the modal element — `/diary` page renders don't pay for the list until the user actually clicks Add food.
+
+### Implementation notes
+- Old CSS class `.food-search-results` removed; replaced by `.food-picker / .food-picker__search / .food-picker__grid / .food-picker__empty / .food-card / .food-card__cover / .food-card__cover--<tone> / .food-card__emoji / .food-card__name / .food-card__cal`.
+- Cover tones are `recipe-card__cover--*` cousins — same gradient recipe (`linear-gradient(135deg, <color-bg>, <color-soft>)`) so dark mode flips automatically via the v0.6.14 token work.
+- `foodEmoji` falls back to a generic 🍽️ plate when no keyword matches, so future foods added without explicit emoji handling still render cleanly.
+
+---
+
+## [v0.6.32] - 2026-05-04 — Login page scrolls on short viewports — register form no longer cut off (closes #111)
+
+### Fixed
+- `.auth-body` was `display: flex; align-items: center; justify-content: center; overflow: hidden`. On a viewport shorter than the register form (~800px tall — small laptops or partial-height browser windows), the form overflowed equally off the top and bottom and `overflow: hidden` blocked page scroll, so users physically couldn't reach the "Create account" button.
+- Switched to a column flex with `align-items: center` (horizontal centering) and `overflow-x: hidden` only. Vertical centering moves to `.auth-shell { margin: auto 0 }` — a flexbox idiom that centers when there's slack but top-anchors when content exceeds the container. Tall viewports still see the card centered; short viewports now top-anchor it and the page scrolls naturally to the submit button.
+
+### Why not just `overflow-y: auto`
+That creates an internal scroll container inside the body, which makes the animated blob pseudo-elements scroll with the form (they're absolutely positioned to the body). The `overflow-x: hidden + page-level scroll + margin: auto 0` recipe keeps the blobs static while the form scrolls.
+
+---
+
 ## [v0.6.31] - 2026-05-04 — Pro Clients: show ALL subscribers + enrich detail page (closes #109)
 
 ### Changed

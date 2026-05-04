@@ -68,10 +68,28 @@
             <input type="search" name="q" placeholder="Search recipes by title…"
                    th:value="${query}" aria-label="Search recipes" class="filter-bar__search"/>
             <select name="difficulty" class="input-select filter-bar__select" aria-label="Filter by difficulty">
-                <option value="all" th:selected="${difficulty == 'all'}">All difficulties</option>
-                <option value="easy" th:selected="${difficulty == 'easy'}">Easy</option>
+                <option value="all"    th:selected="${difficulty == 'all'}">All difficulties</option>
+                <option value="easy"   th:selected="${difficulty == 'easy'}">Easy</option>
                 <option value="medium" th:selected="${difficulty == 'medium'}">Medium</option>
-                <option value="hard" th:selected="${difficulty == 'hard'}">Hard</option>
+                <option value="hard"   th:selected="${difficulty == 'hard'}">Hard</option>
+            </select>
+            <select name="calories" class="input-select filter-bar__select" aria-label="Filter by calories">
+                <option value="all"      th:selected="${calories == 'all'}">All calories</option>
+                <option value="light"    th:selected="${calories == 'light'}">Light · ≤ 400 kcal</option>
+                <option value="standard" th:selected="${calories == 'standard'}">Standard · 401–650 kcal</option>
+                <option value="hearty"   th:selected="${calories == 'hearty'}">Hearty · &gt; 650 kcal</option>
+            </select>
+            <select name="protein" class="input-select filter-bar__select" aria-label="Filter by protein">
+                <option value="all"      th:selected="${protein == 'all'}">All protein</option>
+                <option value="low"      th:selected="${protein == 'low'}">Low · &lt; 15 g</option>
+                <option value="moderate" th:selected="${protein == 'moderate'}">Moderate · 15–25 g</option>
+                <option value="high"     th:selected="${protein == 'high'}">High · &gt; 25 g</option>
+            </select>
+            <select name="time" class="input-select filter-bar__select" aria-label="Filter by cooking time">
+                <option value="all"      th:selected="${time == 'all'}">Any time</option>
+                <option value="quick"    th:selected="${time == 'quick'}">Quick · ≤ 20 min</option>
+                <option value="standard" th:selected="${time == 'standard'}">Standard · 21–45 min</option>
+                <option value="slow"     th:selected="${time == 'slow'}">Slow · &gt; 45 min</option>
             </select>
             <button type="submit" class="btn btn--primary">Apply</button>
         </form>
