@@ -1,8 +1,6 @@
 # Sage — Healthy Eating
 
-COMP2850 Software Engineering — Group Project
-
-A full-stack web application that supports diet monitoring, nutritional advice, and home cooking.
+COMP2850 Software Engineering — Group Project (Food and Healthy Eating)
 
 ## Tech Stack
 
