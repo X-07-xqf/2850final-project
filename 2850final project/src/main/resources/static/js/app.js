@@ -347,20 +347,47 @@
                 autosize();
                 syncSendDisabled();
 
-                var body = new URLSearchParams(new FormData(compose));
+                // v0.6.39 — bulletproof AJAX send.
+                //  • body: explicit URLSearchParams string (works around any
+                //    browser quirks with FormData → urlencoded conversion).
+                //  • Accept: application/json so the server returns
+                //    {ok: true|false} instead of an opaque 302 redirect.
+                //  • credentials: "same-origin" makes the session cookie
+                //    explicit (defaults are usually fine; this is belt+braces).
+                //  • response.ok check + console logging so failures are
+                //    visible in DevTools instead of silently flipping the
+                //    bubble to failed.
+                var msgValue = (compose.querySelector("[name=message]") || {}).value || text;
+                var bodyStr = "message=" + encodeURIComponent(msgValue);
+                console.info("[chat] sending to", compose.action, "len=", msgValue.length);
                 fetch(compose.action, {
                     method: "POST",
-                    body: body,
-                    headers: { "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8" },
-                    redirect: "manual"
+                    body: bodyStr,
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
+                        "Accept": "application/json"
+                    },
+                    credentials: "same-origin"
                 })
-                    .then(function () {
-                        // Drop the "sending…" annotation. The next poll will
-                        // attach the real data-message-id.
-                        var pending = scrollEl.querySelector(".bubble--pending");
-                        if (pending) pending.classList.remove("bubble--pending");
+                    .then(function (r) {
+                        if (!r.ok) throw new Error("HTTP " + r.status);
+                        return r.json().catch(function () { return { ok: true }; });
                     })
-                    .catch(function () {
+                    .then(function (result) {
+                        var pending = scrollEl.querySelector(".bubble--pending");
+                        if (result && result.ok === false) {
+                            console.warn("[chat] server rejected message (empty/blocked)");
+                            if (pending) {
+                                pending.classList.remove("bubble--pending");
+                                pending.classList.add("bubble--failed");
+                            }
+                        } else {
+                            console.info("[chat] sent ok");
+                            if (pending) pending.classList.remove("bubble--pending");
+                        }
+                    })
+                    .catch(function (err) {
+                        console.error("[chat] send failed:", err);
                         var pending = scrollEl.querySelector(".bubble--pending");
                         if (pending) {
                             pending.classList.remove("bubble--pending");

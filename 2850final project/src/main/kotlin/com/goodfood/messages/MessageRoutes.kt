@@ -80,8 +80,17 @@ fun Route.messageRoutes() {
         val session = call.sessions.get<UserSession>() ?: return@post call.respondRedirect("/login")
         val partnerId = call.parameters["partnerId"]?.toIntOrNull() ?: return@post call.respondRedirect("/messages")
         val message = call.receiveParameters()["message"] ?: ""
-        if (message.isNotBlank()) MessageService.sendMessage(session.userId, partnerId, message)
-        call.respondRedirect("/messages/$partnerId")
+        // v0.6.39 — AJAX clients send `Accept: application/json` so we can
+        // signal success/failure cleanly instead of relying on opaque 302s.
+        // Native form submit (no JS) still falls back to the redirect path.
+        val wantsJson = call.request.headers["Accept"]?.contains("application/json", ignoreCase = true) == true
+        val ok = message.isNotBlank()
+        if (ok) MessageService.sendMessage(session.userId, partnerId, message)
+        if (wantsJson) {
+            call.respond(mapOf("ok" to ok))
+        } else {
+            call.respondRedirect("/messages/$partnerId")
+        }
     }
 
     /**
