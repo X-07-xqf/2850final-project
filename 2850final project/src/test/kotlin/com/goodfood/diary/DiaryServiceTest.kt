@@ -49,4 +49,35 @@ class DiaryServiceTest {
         assertTrue(results.isNotEmpty())
         assertEquals("Banana", results.first()["name"])
     }
+    
+   @Test
+    fun diaryEntryCaloriesScaleCorrectly() {
+    TestDatabase.setup()
+
+    val userId = TestDatabase.insertUser()
+    val foodId = TestDatabase.insertFood(
+        name = "Chicken",
+        calories = BigDecimal("200.00")
+    )
+
+    DiaryService.addEntry(
+        userId,
+        foodId,
+        "Lunch",
+        BigDecimal("50.00"),
+        LocalDate.now(),
+        null
+    )
+
+    val entries = DiaryService.getEntriesForDate(userId, LocalDate.now())
+    val entry = entries.first()
+
+    val actualCalories = entry["calories"].toString().toBigDecimal()
+
+    assertEquals(
+        0,
+        BigDecimal("100.00").compareTo(actualCalories)
+    )
+    }
 }
+      
