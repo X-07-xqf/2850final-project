@@ -3,6 +3,10 @@
 Format tightened on 2026-05-05 to short Keep-a-Changelog style. Earlier
 verbose entries are in git history (`git log -p CHANGELOG.md`).
 
+## [0.6.42] - 2026-05-05
+### Fixed
+- Mobile polish: stack header rows, full-width filter selects, tighter paddings, larger tap targets. (#134)
+
 ## [0.6.41] - 2026-05-05
 ### Added
 - 14 more recipes; total now 23. (#130)
