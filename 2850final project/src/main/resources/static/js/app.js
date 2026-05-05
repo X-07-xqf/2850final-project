@@ -297,7 +297,8 @@
     }
 
     /* ---- Chat: scroll-to-bottom on load, auto-resize composer, send-on-Enter,
-           optimistic AJAX submit, conversation list filter. Telegram-style. ---- */
+           optimistic AJAX submit, polling for cross-device live updates,
+           conversation list filter. Telegram-style. ---- */
     function initChatPage() {
         var scrollEl = document.querySelector(".js-chat-scroll");
         var compose  = document.querySelector(".js-chat-compose");
@@ -306,9 +307,7 @@
         var filterEl = document.querySelector(".js-conv-filter");
 
         // 1. Scroll the message log to the bottom on first paint so the latest
-        //    message is visible without manual scrolling. Use scrollTop directly
-        //    (instant) instead of smooth — smooth scroll runs after paint and
-        //    flickers from top.
+        //    message is visible without manual scrolling.
         if (scrollEl) {
             scrollEl.scrollTop = scrollEl.scrollHeight;
         }
@@ -330,14 +329,14 @@
                     if (!sendBtn.disabled) compose.requestSubmit();
                 }
             });
-            // Focus when the page lands so a returning user can just type.
             input.focus();
             syncSendDisabled();
 
-            // 3. Optimistic AJAX submit: append the bubble locally, fire-and-forget
-            //    the POST. The route still 302-redirects; we ignore the body and
-            //    rely on the next navigation (or a manual refresh) to reconcile
-            //    server state. Keeps the UI feeling instant.
+            // 3. Optimistic AJAX submit. v0.6.37 fix: Ktor's
+            //    call.receiveParameters() only parses application/x-www-form-urlencoded.
+            //    Sending FormData here would default to multipart/form-data and the
+            //    server would silently see message="" — messages dropped, never saved.
+            //    URLSearchParams(FormData) gives us urlencoded explicitly.
             compose.addEventListener("submit", function (e) {
                 if (sendBtn.disabled) { e.preventDefault(); return; }
                 var text = input.value.trim();
@@ -348,11 +347,16 @@
                 autosize();
                 syncSendDisabled();
 
-                var fd = new FormData(compose);
-                fetch(compose.action, { method: "POST", body: fd, redirect: "manual" })
+                var body = new URLSearchParams(new FormData(compose));
+                fetch(compose.action, {
+                    method: "POST",
+                    body: body,
+                    headers: { "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8" },
+                    redirect: "manual"
+                })
                     .then(function () {
-                        // Mark the optimistic bubble as confirmed (drops the
-                        // "sending…" annotation); leave it in place.
+                        // Drop the "sending…" annotation. The next poll will
+                        // attach the real data-message-id.
                         var pending = scrollEl.querySelector(".bubble--pending");
                         if (pending) pending.classList.remove("bubble--pending");
                     })
@@ -366,8 +370,16 @@
             });
         }
 
-        // 4. Conversation filter: case-insensitive substring match on
-        //    [data-name]; toggles .is-hidden on each row, shows an empty hint.
+        // 4. Polling — cross-device live updates. Every 4s, ask the server for
+        //    every message in this thread newer than the highest id we've
+        //    rendered. Append new bubbles. Reconcile pending bubbles whose
+        //    server-side counterpart has just landed.
+        if (scrollEl && scrollEl.dataset.partnerId) {
+            startChatPolling(scrollEl);
+        }
+
+        // 5. Conversation filter (substring match on data-name across both the
+        //    existing-conversations list and the directory list).
         if (filterEl) {
             var rows = document.querySelectorAll(".conv-list__row");
             var emptyHint = document.querySelector(".chat-search__empty");
@@ -383,6 +395,103 @@
                 if (emptyHint) emptyHint.hidden = anyVisible || rows.length === 0;
             });
         }
+    }
+
+    /* Polling loop. ~4s interval. Stops when the tab is hidden, resumes on
+       focus to avoid burning battery in background tabs. */
+    function startChatPolling(scrollEl) {
+        var partnerId = scrollEl.dataset.partnerId;
+        if (!partnerId) return;
+
+        function highestRenderedId() {
+            var ids = Array.prototype.map.call(
+                scrollEl.querySelectorAll(".bubble[data-message-id]"),
+                function (b) { return parseInt(b.getAttribute("data-message-id"), 10) || 0; }
+            );
+            return ids.length ? Math.max.apply(null, ids) : 0;
+        }
+
+        function isAtBottom() {
+            // Within 60px of the bottom = "user is reading the latest", auto-scroll on append.
+            return (scrollEl.scrollHeight - scrollEl.scrollTop - scrollEl.clientHeight) < 60;
+        }
+
+        function poll() {
+            if (document.hidden) return;
+            var lastId = highestRenderedId();
+            fetch("/api/messages/" + partnerId + "/since/" + lastId, { credentials: "same-origin" })
+                .then(function (r) { return r.ok ? r.json() : []; })
+                .then(function (messages) {
+                    if (!Array.isArray(messages) || !messages.length) return;
+                    var stickToBottom = isAtBottom();
+                    messages.forEach(function (m) { reconcileOrAppend(scrollEl, m); });
+                    if (stickToBottom) scrollEl.scrollTop = scrollEl.scrollHeight;
+                })
+                .catch(function () { /* swallow — next tick will retry */ });
+        }
+
+        var POLL_MS = 4000;
+        var timer = setInterval(poll, POLL_MS);
+        // First poll fires soon after page load so messages sent on the OTHER
+        // device just before this one rendered get caught quickly.
+        setTimeout(poll, 1500);
+
+        // Pause polling while the tab is hidden; one immediate poll on focus.
+        document.addEventListener("visibilitychange", function () {
+            if (!document.hidden) poll();
+        });
+
+        // No explicit cleanup — page navigation discards the timer.
+        return timer;
+    }
+
+    /* Either reconcile a pending optimistic bubble (mine, same text, no id yet)
+       with the freshly-arrived server record, or append a new bubble. */
+    function reconcileOrAppend(scrollEl, m) {
+        // Already rendered — skip
+        if (scrollEl.querySelector('[data-message-id="' + m.id + '"]')) return;
+
+        if (m.isMine) {
+            var pendingMatch = null;
+            var candidates = scrollEl.querySelectorAll(".bubble--mine:not([data-message-id])");
+            for (var i = 0; i < candidates.length; i++) {
+                var t = candidates[i].querySelector(".bubble__text");
+                if (t && t.textContent === m.message) { pendingMatch = candidates[i]; break; }
+            }
+            if (pendingMatch) {
+                pendingMatch.setAttribute("data-message-id", String(m.id));
+                pendingMatch.classList.remove("bubble--pending");
+                return;
+            }
+        }
+
+        // Fresh bubble — create + append
+        var lastGroup = scrollEl.querySelector(".chat-day:last-of-type");
+        if (!lastGroup) {
+            var hint = scrollEl.querySelector(".empty-hint");
+            if (hint) hint.remove();
+            lastGroup = document.createElement("div");
+            lastGroup.className = "chat-day";
+            var sep = document.createElement("div");
+            sep.className = "chat-day__sep";
+            var sepInner = document.createElement("span");
+            sepInner.textContent = "Today";
+            sep.appendChild(sepInner);
+            lastGroup.appendChild(sep);
+            scrollEl.appendChild(lastGroup);
+        }
+        var bubble = document.createElement("div");
+        bubble.className = m.isMine ? "bubble bubble--mine" : "bubble bubble--theirs";
+        bubble.setAttribute("data-message-id", String(m.id));
+        var p = document.createElement("p");
+        p.className = "bubble__text";
+        p.textContent = m.message;
+        bubble.appendChild(p);
+        var time = document.createElement("time");
+        time.className = "bubble__time";
+        time.textContent = m.sentTime || "";
+        bubble.appendChild(time);
+        lastGroup.appendChild(bubble);
     }
 
     function appendOptimisticBubble(scrollEl, text) {

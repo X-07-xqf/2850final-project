@@ -4,6 +4,31 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [v0.6.37] - 2026-05-05 — Messages: fix dropped sends (multipart bug) + cross-device live polling (closes #121)
+
+### Fixed
+- **Messages were silently disappearing**. v0.6.26 introduced an AJAX submit that built its body via `new FormData(compose)` and let `fetch` default to `multipart/form-data`. The server route does `call.receiveParameters()`, which in Ktor only parses `application/x-www-form-urlencoded` — multipart bodies came back as empty `Parameters`, so `params["message"]` was `null`, the `isNotBlank()` guard skipped the insert, and **the message never reached the database**. Sender saw their optimistic bubble; on refresh it vanished, and no other device ever saw it.
+  - Fix: switch the AJAX body to `URLSearchParams(new FormData(compose))` and set `Content-Type: application/x-www-form-urlencoded; charset=UTF-8` explicitly. Server route stays unchanged.
+
+### Added — cross-device real-time
+- **Polling endpoint** `GET /api/messages/{partnerId}/since/{lastId}` returns every message in the thread newer than `lastId` (chronological), and as a side-effect marks any newly-arrived message FROM the partner as read — same behaviour as the full-page `getConversation`.
+- **`MessageService.getConversationSince(userId, partnerId, lastId)`** powers the new endpoint.
+- **Front-end polling loop** in `initChatPage` — every 4 seconds while a chat is open:
+  - Reads the highest `data-message-id` currently rendered.
+  - Fetches `/api/messages/{partnerId}/since/{lastId}`.
+  - For each returned message: if a `data-message-id` already exists, skip (dedup). If it's a `mine` message and a `.bubble--mine:not([data-message-id])` with matching text exists, reconcile (set the id, drop `.bubble--pending`). Otherwise append a fresh bubble to the last `.chat-day` group.
+  - If the user was within 60px of the bottom before the append, auto-scroll to follow new messages. If they were scrolled up reading older messages, leave them in place.
+- **Battery-friendly**: polling pauses while the tab is hidden (`visibilitychange`), and fires one immediate poll on tab focus so a user returning from a background tab sees fresh messages right away.
+
+### Schema-side bits
+- Each `.bubble` carries `data-message-id="N"` (template change, both subscriber + professional templates) so polling dedup works.
+- `.chat-scroll` carries `data-partner-id` so JS knows which conversation to poll.
+
+### Result
+Two devices logged in as different users (or even the same user on two browsers) on `/messages/{partnerId}` now see each other's messages within 4 seconds of send, no manual refresh, no Telegram-style WebSocket complexity.
+
+---
+
 ## [v0.6.36] - 2026-05-04 — Registration password complexity (upper + lower + digit) (closes #119)
 
 ### Added

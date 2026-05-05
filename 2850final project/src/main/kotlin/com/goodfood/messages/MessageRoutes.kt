@@ -83,4 +83,19 @@ fun Route.messageRoutes() {
         if (message.isNotBlank()) MessageService.sendMessage(session.userId, partnerId, message)
         call.respondRedirect("/messages/$partnerId")
     }
+
+    /**
+     * Polling endpoint backbone for cross-device real-time updates (v0.6.37).
+     * Front-end calls this every few seconds while a chat is open; returns
+     * every message in the thread whose id is greater than [lastId] in
+     * chronological order. Side-effect: marks newly-arrived messages from the
+     * partner as read.
+     */
+    get("/api/messages/{partnerId}/since/{lastId}") {
+        val session = call.sessions.get<UserSession>() ?: return@get call.respond(io.ktor.http.HttpStatusCode.Unauthorized)
+        val partnerId = call.parameters["partnerId"]?.toIntOrNull()
+            ?: return@get call.respond(io.ktor.http.HttpStatusCode.BadRequest)
+        val lastId = call.parameters["lastId"]?.toIntOrNull() ?: 0
+        call.respond(MessageService.getConversationSince(session.userId, partnerId, lastId))
+    }
 }

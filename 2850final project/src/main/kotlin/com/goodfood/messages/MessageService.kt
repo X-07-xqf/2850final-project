@@ -90,6 +90,37 @@ object MessageService {
     }
 
     /**
+     * Polling endpoint backbone (v0.6.37). Returns every message in the
+     * [userId]↔[partnerId] thread whose `id` is greater than [lastId], in
+     * chronological order. Caller (JS) tracks the highest id it has rendered
+     * and asks for newer ones every few seconds.
+     *
+     * Marks any newly-arrived message FROM the partner as read, same as
+     * [getConversation] does on full page load.
+     */
+    fun getConversationSince(userId: Int, partnerId: Int, lastId: Int): List<Map<String, Any>> = transaction {
+        AdviceMessages.update({
+            (AdviceMessages.senderId eq partnerId) and (AdviceMessages.receiverId eq userId) and (AdviceMessages.isRead eq false)
+        }) { it[isRead] = true }
+        AdviceMessages.selectAll().where {
+            (
+                ((AdviceMessages.senderId eq userId) and (AdviceMessages.receiverId eq partnerId)) or
+                ((AdviceMessages.senderId eq partnerId) and (AdviceMessages.receiverId eq userId))
+            ) and (AdviceMessages.id greater lastId)
+        }.orderBy(AdviceMessages.sentAt).map { row ->
+            val ts = row[AdviceMessages.sentAt]
+            mapOf(
+                "id" to row[AdviceMessages.id],
+                "senderId" to row[AdviceMessages.senderId],
+                "message" to row[AdviceMessages.message],
+                "sentAt" to ts.fmtChatTime(),
+                "sentTime" to ts.format(DateTimeFormatter.ofPattern("HH:mm")),
+                "isMine" to (row[AdviceMessages.senderId] == userId)
+            )
+        }
+    }
+
+    /**
      * "Directory" — every user of the opposite role that [userId] has *not*
      * yet exchanged messages with. Powers the new-conversation list at the
      * bottom of `/messages`. Subscribers see professionals, professionals see
