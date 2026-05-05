@@ -4,6 +4,23 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [v0.6.41] - 2026-05-05 — Recipes: 14 more, total now 23 (closes #129)
+
+### Added
+- 14 new recipes appended to `extraRecipes` in `SeedData.kt`, all picked up on next boot via the existing idempotent `backfillExtraRecipes()` runner. Total recipe count: **3 original + 20 extras = 23**.
+- Coverage by daypart:
+  - **Breakfast** (4 added): Berry Smoothie Bowl · Spinach Mushroom Omelette · Apple Cinnamon Oatmeal · Cottage Cheese & Berry Bowl
+  - **Lunch** (4 added): Chicken & Quinoa Power Bowl · Shrimp & Avocado Salad · Tuna & Bean Salad · Turkey & Hummus Wrap
+  - **Dinner** (6 added): Beef & Pepper Stir-Fry · Pasta Primavera · Sweet Potato & Black Bean Bowl · Pineapple Shrimp Skewers · Chickpea Curry · Salmon Quinoa Bowl
+
+### Constraints met
+- Every ingredient maps to a row in the existing 57-food library — no new food rows needed.
+- Every recipe carries a real Unsplash `imageUrl` (each URL `curl`-verified 200 before adding) so the recipe grid and dashboard "For tonight" cards render real photos, not the emoji fallback.
+- Difficulty mix: 9 easy + 5 medium of the 14 new ones. Time mix: 5 quick (≤20 min total) + 9 standard.
+- Ingredient quantities sized for the declared serving count, so per-serving macros land in realistic ranges.
+
+---
+
 ## [v0.6.40] - 2026-05-05 — Updated README
 
 Rewrote the README in a more human voice.
