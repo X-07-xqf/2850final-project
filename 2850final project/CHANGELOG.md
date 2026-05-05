@@ -4,6 +4,17 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [v0.6.38] - 2026-05-05 — Landing page: tighten the four subtitle blocks (closes #123)
+
+### Changed
+- `landing.html` — four subtitle paragraphs replaced per copy direction:
+  - **Hero**: `Track what you eat, plan what you cook, and stay close to a registered nutritionist when you want one.` *(dropped: "Built for people who'd rather know than guess.")*
+  - **Track**: `Search verified foods, log breakfast on the bus, and watch your macros land on a single calorie ring.` *(dropped: leading "200+", trailing "No streaks, no shaming…" sentence)*
+  - **Cook**: `Home-cooking recipes with macros pre-calculated. Save the ones that fit your week.` *(dropped: leading "180+", trailing "Rate them after dinner…" sentence)*
+  - **Coach**: `Direct-message a registered practitioner about a goal, a binge, or a Friday night. Tailored advice whenever you need it.` *(replaced second sentence)*
+
+---
+
 ## [v0.6.37] - 2026-05-05 — Messages: fix dropped sends (multipart bug) + cross-device live polling (closes #121)
 
 ### Fixed
