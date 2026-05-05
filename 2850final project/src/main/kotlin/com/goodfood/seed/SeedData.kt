@@ -169,6 +169,285 @@ object SeedData {
                 "Add the broccoli florets and cook for a final 5-7 minutes.",
                 "Season generously and serve with rice or flatbread."
             )
+        ),
+
+        // v0.6.41 — 14 more recipes to bring the total to 23. All ingredients
+        // map to rows in the existing 57-food library; all imageUrls are
+        // Unsplash photo URLs verified 200 before adding.
+
+        ExtraRecipe(
+            "Chicken & Quinoa Power Bowl",
+            "High-protein lunch bowl — grilled chicken on fluffy quinoa with greens, peppers, and lemon.",
+            10, 15, 2, "easy",
+            "https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?w=800&auto=format&fit=crop&q=80",
+            listOf(
+                IngredientSpec("Chicken Breast (grilled)", "240"),
+                IngredientSpec("Quinoa", "200"),
+                IngredientSpec("Spinach", "80"),
+                IngredientSpec("Bell Pepper", "100"),
+                IngredientSpec("Olive Oil", "10", "tsp"),
+                IngredientSpec("Lemon", "20")
+            ),
+            listOf(
+                "Cook the quinoa in salted water for 12 minutes; fluff with a fork.",
+                "Slice the bell pepper and toss with a teaspoon of olive oil.",
+                "Divide quinoa between two bowls, add spinach and peppers.",
+                "Slice the grilled chicken on top and finish with a squeeze of lemon."
+            )
+        ),
+        ExtraRecipe(
+            "Berry Smoothie Bowl",
+            "Frozen berries and banana blitzed thick with yogurt — topped with chia and almonds.",
+            5, 0, 1, "easy",
+            "https://images.unsplash.com/photo-1490474418585-ba9bad8fd0ea?w=800&auto=format&fit=crop&q=80",
+            listOf(
+                IngredientSpec("Greek Yogurt", "200"),
+                IngredientSpec("Blueberries", "80"),
+                IngredientSpec("Strawberries", "80"),
+                IngredientSpec("Banana", "100"),
+                IngredientSpec("Almonds", "15"),
+                IngredientSpec("Chia Seeds", "10")
+            ),
+            listOf(
+                "Blend the yogurt, half the banana, and the frozen berries until thick.",
+                "Pour into a wide bowl.",
+                "Slice the rest of the banana and arrange on top.",
+                "Scatter almonds and chia over the surface."
+            )
+        ),
+        ExtraRecipe(
+            "Shrimp & Avocado Salad",
+            "Quick sautéed shrimp on a bed of greens with avocado, tomatoes, and a lemon-olive dressing.",
+            10, 5, 1, "easy",
+            "https://images.unsplash.com/photo-1505253758473-96b7015fcd40?w=800&auto=format&fit=crop&q=80",
+            listOf(
+                IngredientSpec("Shrimp", "150"),
+                IngredientSpec("Avocado", "100"),
+                IngredientSpec("Mixed Salad Greens", "80"),
+                IngredientSpec("Cherry Tomatoes", "80"),
+                IngredientSpec("Lemon", "15"),
+                IngredientSpec("Olive Oil", "8", "tsp")
+            ),
+            listOf(
+                "Sauté the shrimp in half the olive oil for 2-3 minutes until pink.",
+                "Whisk the rest of the olive oil with lemon juice and a pinch of salt.",
+                "Pile greens on a plate, add halved tomatoes and sliced avocado.",
+                "Top with the warm shrimp and drizzle with the dressing."
+            )
+        ),
+        ExtraRecipe(
+            "Beef & Pepper Stir-Fry",
+            "Lean ground beef with peppers, onion, and mushroom over white rice — fast weeknight dinner.",
+            10, 15, 2, "medium",
+            "https://images.unsplash.com/photo-1574484284002-952d92456975?w=800&auto=format&fit=crop&q=80",
+            listOf(
+                IngredientSpec("Beef (lean ground)", "300"),
+                IngredientSpec("Bell Pepper", "150"),
+                IngredientSpec("Onion", "80"),
+                IngredientSpec("Mushroom", "100"),
+                IngredientSpec("White Rice", "300"),
+                IngredientSpec("Olive Oil", "10", "tsp")
+            ),
+            listOf(
+                "Cook the white rice while you prep the rest.",
+                "Heat the olive oil and sear the ground beef until browned.",
+                "Add the sliced onion, peppers, and mushroom; stir-fry for 5-6 minutes.",
+                "Season with soy sauce and serve over the rice."
+            )
+        ),
+        ExtraRecipe(
+            "Spinach Mushroom Omelette",
+            "Three-egg omelette folded over wilted spinach, mushrooms, and a sprinkle of cheddar.",
+            5, 8, 1, "easy",
+            "https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=800&auto=format&fit=crop&q=80",
+            listOf(
+                IngredientSpec("Egg (boiled)", "150"),
+                IngredientSpec("Spinach", "60"),
+                IngredientSpec("Mushroom", "60"),
+                IngredientSpec("Cheddar Cheese", "20"),
+                IngredientSpec("Olive Oil", "5", "tsp")
+            ),
+            listOf(
+                "Sauté the sliced mushrooms in olive oil for 3 minutes; add spinach and let it wilt.",
+                "Beat the eggs, season, pour into the pan over the vegetables.",
+                "Cook on medium-low until the surface just sets.",
+                "Sprinkle cheddar across one half, fold the other half over, and slide onto a plate."
+            )
+        ),
+        ExtraRecipe(
+            "Pasta Primavera",
+            "Spring vegetable pasta — broccoli, cherry tomatoes, and peppers tossed with olive oil.",
+            10, 12, 2, "easy",
+            "https://images.unsplash.com/photo-1551183053-bf91a1d81141?w=800&auto=format&fit=crop&q=80",
+            listOf(
+                IngredientSpec("Pasta", "200"),
+                IngredientSpec("Broccoli", "150"),
+                IngredientSpec("Cherry Tomatoes", "120"),
+                IngredientSpec("Bell Pepper", "100"),
+                IngredientSpec("Olive Oil", "15", "tsp")
+            ),
+            listOf(
+                "Cook the pasta in salted water until al dente; reserve a cup of cooking water.",
+                "In the last 4 minutes of cooking, drop the broccoli florets in with the pasta.",
+                "Sauté peppers and tomatoes in olive oil until the tomatoes start to burst.",
+                "Toss the drained pasta and broccoli through the pan with a splash of pasta water."
+            )
+        ),
+        ExtraRecipe(
+            "Tuna & Bean Salad",
+            "Pantry-friendly cold salad — canned tuna, black beans, cucumber, and greens with a lemon-olive dressing.",
+            10, 0, 1, "easy",
+            "https://images.unsplash.com/photo-1502741224143-90386d7f8c82?w=800&auto=format&fit=crop&q=80",
+            listOf(
+                IngredientSpec("Tuna (canned)", "120"),
+                IngredientSpec("Black Beans", "150"),
+                IngredientSpec("Mixed Salad Greens", "80"),
+                IngredientSpec("Cucumber", "100"),
+                IngredientSpec("Lemon", "15"),
+                IngredientSpec("Olive Oil", "8", "tsp")
+            ),
+            listOf(
+                "Drain the tuna and the black beans; rinse the beans.",
+                "Whisk lemon juice with olive oil and a pinch of salt.",
+                "Toss greens, beans, and diced cucumber with most of the dressing.",
+                "Top with the tuna; spoon over the rest of the dressing."
+            )
+        ),
+        ExtraRecipe(
+            "Sweet Potato & Black Bean Bowl",
+            "Roasted sweet potato over rice with black beans, avocado, and spinach — vegetarian filling lunch.",
+            15, 25, 2, "medium",
+            "https://images.unsplash.com/photo-1473093295043-cdd812d0e601?w=800&auto=format&fit=crop&q=80",
+            listOf(
+                IngredientSpec("Sweet Potato", "300"),
+                IngredientSpec("Black Beans", "200"),
+                IngredientSpec("Avocado", "100"),
+                IngredientSpec("Spinach", "80"),
+                IngredientSpec("Brown Rice", "250"),
+                IngredientSpec("Olive Oil", "15", "tsp")
+            ),
+            listOf(
+                "Heat the oven to 200°C. Cube the sweet potato, toss with olive oil and a pinch of cumin and chilli.",
+                "Roast for 22-25 minutes until the edges caramelise.",
+                "Cook the brown rice while the potatoes are in the oven; warm the black beans through.",
+                "Build bowls: rice, then beans, sweet potato, sliced avocado, and a handful of fresh spinach."
+            )
+        ),
+        ExtraRecipe(
+            "Pineapple Shrimp Skewers",
+            "Sweet-and-savoury shrimp and pineapple skewers with peppers and onion — grill or oven.",
+            15, 8, 2, "medium",
+            "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=800&auto=format&fit=crop&q=80",
+            listOf(
+                IngredientSpec("Shrimp", "300"),
+                IngredientSpec("Pineapple", "200"),
+                IngredientSpec("Bell Pepper", "150"),
+                IngredientSpec("Onion", "80"),
+                IngredientSpec("Olive Oil", "10", "tsp")
+            ),
+            listOf(
+                "Cube the pineapple, peppers, and onion to roughly the size of the shrimp.",
+                "Thread the skewers, alternating shrimp and pieces; brush with olive oil and a pinch of salt.",
+                "Grill or roast at 220°C for 6-8 minutes, turning once.",
+                "Finish with a squeeze of lime if you have one."
+            )
+        ),
+        ExtraRecipe(
+            "Apple Cinnamon Oatmeal",
+            "Warm bowl of oats with apple, almonds, chia, and a splash of milk — autumn breakfast.",
+            3, 5, 1, "easy",
+            "https://images.unsplash.com/photo-1485963631004-f2f00b1d6606?w=800&auto=format&fit=crop&q=80",
+            listOf(
+                IngredientSpec("Oatmeal", "60"),
+                IngredientSpec("Apple", "120"),
+                IngredientSpec("Almonds", "10"),
+                IngredientSpec("Milk (2%)", "200"),
+                IngredientSpec("Chia Seeds", "5")
+            ),
+            listOf(
+                "Bring the milk and a pinch of salt to a gentle simmer.",
+                "Stir in the oats and grated apple; cook for 4-5 minutes until thick.",
+                "Sprinkle ground cinnamon and let it sit for a minute off the heat.",
+                "Top with the almonds and chia seeds."
+            )
+        ),
+        ExtraRecipe(
+            "Chickpea Curry",
+            "Lightly spiced chickpea and sweet potato curry over brown rice — fibre-rich vegetarian dinner.",
+            10, 25, 4, "medium",
+            "https://images.unsplash.com/photo-1631452180519-c014fe946bc7?w=800&auto=format&fit=crop&q=80",
+            listOf(
+                IngredientSpec("Chickpeas", "400"),
+                IngredientSpec("Sweet Potato", "350"),
+                IngredientSpec("Spinach", "150"),
+                IngredientSpec("Brown Rice", "300"),
+                IngredientSpec("Olive Oil", "15", "tsp")
+            ),
+            listOf(
+                "Cube the sweet potato; sauté with olive oil for 5 minutes until it starts to soften.",
+                "Add curry powder, garam masala, and a pinch of chilli; stir for 30 seconds.",
+                "Pour in the drained chickpeas plus 250ml water; simmer 15 minutes.",
+                "Stir spinach through at the end and serve over the brown rice."
+            )
+        ),
+        ExtraRecipe(
+            "Turkey & Hummus Wrap",
+            "Sliced turkey breast and hummus rolled with cucumber and peppers in a wholewheat wrap.",
+            8, 0, 1, "easy",
+            "https://images.unsplash.com/photo-1565958011703-44f9829ba187?w=800&auto=format&fit=crop&q=80",
+            listOf(
+                IngredientSpec("Turkey Breast", "120"),
+                IngredientSpec("Hummus", "60"),
+                IngredientSpec("Cucumber", "80"),
+                IngredientSpec("Mixed Salad Greens", "40"),
+                IngredientSpec("Bell Pepper", "60"),
+                IngredientSpec("Whole Wheat Bread", "80")
+            ),
+            listOf(
+                "Warm the bread briefly so it rolls without cracking.",
+                "Spread hummus across the surface, leaving a 2cm border.",
+                "Layer turkey, sliced cucumber, peppers, and greens.",
+                "Roll up tightly and slice in half on the diagonal."
+            )
+        ),
+        ExtraRecipe(
+            "Cottage Cheese & Berry Bowl",
+            "Cottage cheese topped with fresh berries, almonds, and chia — high-protein quick breakfast.",
+            5, 0, 1, "easy",
+            "https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=800&auto=format&fit=crop&q=80",
+            listOf(
+                IngredientSpec("Cottage Cheese", "200"),
+                IngredientSpec("Blueberries", "60"),
+                IngredientSpec("Strawberries", "60"),
+                IngredientSpec("Almonds", "15"),
+                IngredientSpec("Chia Seeds", "8")
+            ),
+            listOf(
+                "Spoon the cottage cheese into a wide bowl.",
+                "Slice the strawberries and pile both berries on top.",
+                "Scatter almonds and chia across the surface.",
+                "A drizzle of honey is optional but lovely."
+            )
+        ),
+        ExtraRecipe(
+            "Salmon Quinoa Bowl",
+            "Flaked grilled salmon over quinoa with spinach, avocado, and lemon — omega-3 rich dinner.",
+            10, 15, 2, "medium",
+            "https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=800&auto=format&fit=crop&q=80",
+            listOf(
+                IngredientSpec("Salmon (grilled)", "240"),
+                IngredientSpec("Quinoa", "200"),
+                IngredientSpec("Spinach", "100"),
+                IngredientSpec("Avocado", "100"),
+                IngredientSpec("Lemon", "20"),
+                IngredientSpec("Olive Oil", "10", "tsp")
+            ),
+            listOf(
+                "Cook the quinoa in salted water for 12 minutes; fluff with a fork.",
+                "Wilt the spinach in a hot pan with half the olive oil for a minute.",
+                "Build bowls with quinoa, then spinach, sliced avocado.",
+                "Flake the salmon over the top and finish with a generous squeeze of lemon."
+            )
         )
     )
 
