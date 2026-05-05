@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [v0.6.40] - 2026-05-05 — Updated README
+
+Rewrote the README in a more human voice.
+
+---
+
 ## [v0.6.39] - 2026-05-05 — Messages send: harden AJAX, surface failures (closes #125)
 
 ### Fixed
