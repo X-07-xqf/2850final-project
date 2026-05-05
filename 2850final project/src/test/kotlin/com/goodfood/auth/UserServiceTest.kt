@@ -50,4 +50,10 @@ class UserServiceTest {
         assertNotNull(result)
         assertEquals("alice@example.com", result["email"])
     }
+
+    @Test
+    fun weakPasswordWithoutNumberIsRejected() {
+        val error = UserService.validatePassword("Password")
+        assertEquals("Password must include a number (0–9).", error)
+    }
 }
