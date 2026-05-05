@@ -97,14 +97,17 @@
                 <div class="chat-main__head chat-main__head--empty" th:if="${activePartnerId == null}">
                     <p class="empty-hint">Select a client conversation.</p>
                 </div>
-                <div class="chat-scroll js-chat-scroll" role="log" aria-live="polite" th:if="${activePartnerId != null}">
+                <div class="chat-scroll js-chat-scroll" role="log" aria-live="polite"
+                     th:if="${activePartnerId != null}"
+                     th:attr="data-partner-id=${activePartnerId}">
                     <p class="empty-hint" th:if="${conversationGroups == null or conversationGroups.isEmpty()}">
                         No messages yet.
                     </p>
                     <div th:each="day : ${conversationGroups}" class="chat-day">
                         <div class="chat-day__sep"><span th:text="${day.label}">Today</span></div>
                         <div th:each="m : ${day.messages}"
-                             th:class="${m.isMine} ? 'bubble bubble--mine' : 'bubble bubble--theirs'">
+                             th:class="${m.isMine} ? 'bubble bubble--mine' : 'bubble bubble--theirs'"
+                             th:attr="data-message-id=${m.id}">
                             <p class="bubble__text" th:text="${m.message}">Text</p>
                             <time class="bubble__time" th:text="${m.sentTime}">14:32</time>
                         </div>
