@@ -4,6 +4,24 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [v0.6.39] - 2026-05-05 — Messages send: harden AJAX, surface failures (closes #125)
+
+### Fixed
+- **v0.6.37 still left silent failure paths.** The AJAX send used `redirect: "manual"`, which makes the response opaque — fetch resolved the promise even when the server rejected the request. The optimistic bubble dropped its "sending…" class regardless, so the user saw a phantom "sent" while the row was never inserted. After refresh: nothing.
+- Server now branches on the `Accept` header. AJAX clients send `Accept: application/json` and get back `{ok: true|false}` so success/failure is unambiguous. Native `<form method=post>` (no JS fallback) keeps the previous 302 redirect behaviour.
+- Client switched to an explicit urlencoded string body (`"message=" + encodeURIComponent(msgValue)`) — sidesteps any `URLSearchParams(FormData)` quirks. Also drops `redirect: "manual"`, adds explicit `credentials: "same-origin"`, and checks `response.ok`.
+- Three `console.info / warn / error` lines now log every send attempt, server-rejected ack, and network failure — DevTools console makes the path visible instead of silently flipping bubbles to `--failed`.
+
+### What this means for testing
+Open DevTools → Network when sending a message. You should see:
+- `POST /messages/{partnerId}` → `200 OK` with body `{"ok": true}`.
+- Console line `[chat] sent ok`.
+- A poll within 4s picking up the new message.
+
+If you see `[chat] send failed: ...` or a non-200 response, the actual error is now in the console, not buried.
+
+---
+
 ## [v0.6.38] - 2026-05-05 — Landing page: tighten the four subtitle blocks (closes #123)
 
 ### Changed
