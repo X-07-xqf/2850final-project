@@ -2294,6 +2294,9 @@ input::placeholder, textarea::placeholder {
     justify-content: center;
     min-height: 72px;
 }
+/* Default-hide the mobile back arrow; the @media (max-width: 840px) block
+   below flips it to inline-flex when there's no conversation rail beside. */
+.chat-main__back { display: none; }
 .chat-main__head-body {
     display: flex;
     flex-direction: column;
@@ -3817,13 +3820,41 @@ input::placeholder, textarea::placeholder {
     }
     .sidebar-backdrop.is-open { display: block; animation: fade-in var(--dur) var(--ease) both; }
 
-    .chat-layout { grid-template-columns: 1fr; min-height: auto; }
+    /* Mobile chat — single-pane phone UX. With an active conversation we
+       hide the conversation rail and show the chat full-screen. Without
+       one we hide the empty chat panel and the rail takes the screen. */
+    .chat-layout {
+        grid-template-columns: 1fr;
+        min-height: auto;
+    }
     .chat-sidebar {
         border-right: none;
         border-bottom: 1px solid var(--color-border-soft);
-        max-height: 240px;
+        max-height: none;
         overflow-y: auto;
     }
+    .chat-layout--active .chat-sidebar { display: none; }
+    .chat-layout:not(.chat-layout--active) .chat-main { display: none; }
+
+    /* Back arrow — only on mobile, only inside an active conversation
+       (chat-main__head only renders when activePartnerId != null, so
+       the link doesn't appear on the empty-state header). */
+    .chat-main__back {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 36px;
+        height: 36px;
+        flex-shrink: 0;
+        border-radius: 50%;
+        color: var(--text-strong);
+        text-decoration: none;
+        margin-left: -6px;
+        margin-right: 2px;
+        transition: background var(--dur-fast) var(--ease);
+    }
+    .chat-main__back:hover,
+    .chat-main__back:active { background: var(--color-surface-warm); text-decoration: none; }
 
     .auth-title { font-size: 32px; }
 }

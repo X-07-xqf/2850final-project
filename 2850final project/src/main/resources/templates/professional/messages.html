@@ -33,7 +33,7 @@
             <p class="page-meta">Message your clients</p>
         </header>
 
-        <div class="chat-layout card card--flush">
+        <div class="chat-layout card card--flush" th:classappend="${activePartnerId != null} ? ' chat-layout--active' : ''">
             <aside class="chat-sidebar">
                 <div class="chat-sidebar__head">
                     <h2 class="chat-sidebar__title">Conversations</h2>
@@ -81,6 +81,12 @@
             </aside>
             <section class="chat-main">
                 <header class="chat-main__head" th:if="${activePartnerId != null}">
+                    <a href="/messages" class="chat-main__back" aria-label="Back to conversations">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                             stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M15 6 L 9 12 L 15 18"/>
+                        </svg>
+                    </a>
                     <span class="conv-list__avatar conv-list__avatar--lg">
                         <span th:text="${activePartnerInitials}">AB</span>
                         <span class="conv-list__online" aria-hidden="true"></span>
