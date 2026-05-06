@@ -3,6 +3,10 @@
 Format tightened on 2026-05-05 to short Keep-a-Changelog style. Earlier
 verbose entries are in git history (`git log -p CHANGELOG.md`).
 
+## [0.6.45] - 2026-05-06
+### Fixed
+- iOS Safari layout fixes: 100dvh fallback so URL bar doesn't cut content; 16 px input font so the keyboard doesn't auto-zoom; overscroll-behavior contains modal / chat / picker scrolls. (#140)
+
 ## [0.6.44] - 2026-05-06
 ### Fixed
 - Mobile sidebar links wouldn't respond to taps when the drawer was open. (#138)

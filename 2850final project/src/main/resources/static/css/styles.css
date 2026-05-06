@@ -456,6 +456,7 @@ body {
     line-height: var(--leading-body);
     letter-spacing: var(--tracking-body);
     min-height: 100vh;
+    min-height: 100dvh;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     transition: background var(--dur) var(--ease), color var(--dur) var(--ease);
@@ -510,6 +511,7 @@ a:hover { text-decoration: underline; text-decoration-thickness: 1.5px; text-und
     flex-direction: column;
     align-items: center;
     min-height: 100vh;
+    min-height: 100dvh;
     padding: 32px;
     background: var(--color-bg);
     position: relative;
@@ -698,6 +700,7 @@ a:hover { text-decoration: underline; text-decoration-thickness: 1.5px; text-und
    ============================================================ */
 .app-body {
     min-height: 100vh;
+    min-height: 100dvh;
     position: relative;
     /* isolation creates a new stacking context here so the blob can sit at
        z-index: -1 without falling behind the body bg; meanwhile the sidebar
@@ -744,6 +747,7 @@ a:hover { text-decoration: underline; text-decoration-thickness: 1.5px; text-und
 .app-layout {
     display: flex;
     min-height: 100vh;
+    min-height: 100dvh;
 }
 
 .sidebar {
@@ -756,6 +760,7 @@ a:hover { text-decoration: underline; text-decoration-thickness: 1.5px; text-und
     position: sticky;
     top: 0;
     height: 100vh;
+    height: 100dvh;
     overflow-y: auto;
     background: var(--sidebar-bg);
     color: var(--sidebar-text);
@@ -2051,6 +2056,7 @@ input::placeholder, textarea::placeholder {
     display: grid;
     grid-template-columns: minmax(260px, 340px) 1fr;
     min-height: calc(100vh - 220px);
+    min-height: calc(100dvh - 220px);
     background: var(--color-surface);
     border-radius: var(--radius-md);
     overflow: hidden;
@@ -3783,6 +3789,7 @@ input::placeholder, textarea::placeholder {
         top: 0;
         left: 0;
         height: 100vh;
+        height: 100dvh;
         width: 280px;
         z-index: 150;
         transform: translateX(-100%);
@@ -3923,6 +3930,29 @@ input::placeholder, textarea::placeholder {
     /* Modal — full-bleed-ish on the smallest phones */
     .modal { padding: 12px; }
     .modal__panel { padding: 20px 18px; }
+}
+
+/* iOS Safari auto-zooms a focused input whose font-size is < 16px and never
+   zooms back out. Bump every form control to 16px below the desktop
+   breakpoint to prevent that. Visual size on desktop is unaffected. */
+@media (max-width: 840px) {
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    input[type="search"],
+    input[type="number"],
+    select,
+    textarea {
+        font-size: 16px;
+    }
+}
+
+/* Scroll-chain containment — scrolling inside the modal / chat / sidebar
+   doesn't propagate to the body, so the page underneath stays put. */
+.modal__panel,
+.chat-scroll,
+.food-picker__grid {
+    overscroll-behavior: contain;
 }
 
 @media print {
