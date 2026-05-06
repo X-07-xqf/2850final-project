@@ -3,6 +3,10 @@
 Format tightened on 2026-05-05 to short Keep-a-Changelog style. Earlier
 verbose entries are in git history (`git log -p CHANGELOG.md`).
 
+## [0.6.46] - 2026-05-06
+### Changed
+- Mobile messages page: single-pane phone UX. Conversation list takes the full screen until you pick someone; opening a conversation hides the rail and shows the chat full-width with a back arrow in the header. (#142)
+
 ## [0.6.45] - 2026-05-06
 ### Fixed
 - iOS Safari layout fixes: 100dvh fallback so URL bar doesn't cut content; 16 px input font so the keyboard doesn't auto-zoom; overscroll-behavior contains modal / chat / picker scrolls. (#140)
