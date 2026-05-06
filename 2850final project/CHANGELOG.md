@@ -3,6 +3,10 @@
 Format tightened on 2026-05-05 to short Keep-a-Changelog style. Earlier
 verbose entries are in git history (`git log -p CHANGELOG.md`).
 
+## [0.6.43] - 2026-05-06
+### Fixed
+- iOS Safari rendered the mobile sidebar text blurry when the drawer opened. (#136)
+
 ## [0.6.42] - 2026-05-05
 ### Fixed
 - Mobile polish: stack header rows, full-width filter selects, tighter paddings, larger tap targets. (#134)

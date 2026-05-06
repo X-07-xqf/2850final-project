@@ -3778,6 +3778,10 @@ input::placeholder, textarea::placeholder {
         width: 280px;
         z-index: 150;
         transform: translateX(-100%);
+        /* will-change forces the drawer onto its own GPU layer so iOS Safari
+           doesn't co-rasterise it with the page's backdrop-filter cards
+           (which made the sidebar text render blurry). */
+        will-change: transform;
         transition: transform var(--dur) var(--ease);
         padding: 20px 0;
         box-shadow: var(--shadow-lg);
@@ -3786,14 +3790,15 @@ input::placeholder, textarea::placeholder {
     .sidebar__nav { flex-direction: column; }
     .main { padding: 70px 16px 32px; max-width: 100%; }
 
+    /* Solid scrim — no backdrop-filter. iOS Safari + multiple
+       backdrop-filter elements (the page's glass cards plus this scrim)
+       triggered a compositor bug that down-sampled the sidebar above. */
     .sidebar-backdrop {
         display: none;
         position: fixed;
         inset: 0;
         background: var(--overlay-modal);
         z-index: 140;
-        backdrop-filter: blur(2px);
-        -webkit-backdrop-filter: blur(2px);
     }
     .sidebar-backdrop.is-open { display: block; animation: fade-in var(--dur) var(--ease) both; }
 
