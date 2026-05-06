@@ -699,6 +699,10 @@ a:hover { text-decoration: underline; text-decoration-thickness: 1.5px; text-und
 .app-body {
     min-height: 100vh;
     position: relative;
+    /* isolation creates a new stacking context here so the blob can sit at
+       z-index: -1 without falling behind the body bg; meanwhile the sidebar
+       and its backdrop don't get trapped in a child stacking context. */
+    isolation: isolate;
 }
 /* Atmospheric layer behind every authenticated page — three soft radial
    blobs (sage / clay / berry) fixed to the viewport. Provides the colour
@@ -709,7 +713,13 @@ a:hover { text-decoration: underline; text-decoration-thickness: 1.5px; text-und
     position: fixed;
     inset: 0;
     pointer-events: none;
-    z-index: 0;
+    /* z-index -1 (combined with .app-body's `isolation: isolate`) keeps the
+       blob behind every layout child but in front of the body background.
+       Was z-index: 0, which forced .app-layout to z-index: 1 and trapped
+       the mobile sidebar in a child stacking context — its 150 then sat
+       below the backdrop's 140 in the body context, making the open
+       drawer un-clickable on iOS. */
+    z-index: -1;
     background:
         radial-gradient(80vw 80vh at 12% 10%, rgba(184, 209, 168, 0.30), transparent 55%),
         radial-gradient(70vw 70vh at 88% 92%, rgba(217, 119, 87, 0.16), transparent 60%),
@@ -731,8 +741,6 @@ a:hover { text-decoration: underline; text-decoration-thickness: 1.5px; text-und
             radial-gradient(60vw 60vh at 92% 18%, rgba(74, 37, 48, 0.24), transparent 60%);
     }
 }
-.app-layout { position: relative; z-index: 1; }
-
 .app-layout {
     display: flex;
     min-height: 100vh;
