@@ -14,10 +14,8 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 /**
- * Group a flat conversation list by `sentDate`, labelling each group as
+ * Groups a conversation list by `sentDate`, labelling each group as
  * "Today" / "Yesterday" / day-of-week (within the last 6 days) / "MMM d, yyyy".
- * Returns a list of `{label, messages}` maps so the template can render
- * sticky date pills between message clusters (Telegram-style).
  */
 private fun groupByDate(conversation: List<Map<String, Any>>, today: LocalDate): List<Map<String, Any>> {
     if (conversation.isEmpty()) return emptyList()
@@ -80,9 +78,6 @@ fun Route.messageRoutes() {
         val session = call.sessions.get<UserSession>() ?: return@post call.respondRedirect("/login")
         val partnerId = call.parameters["partnerId"]?.toIntOrNull() ?: return@post call.respondRedirect("/messages")
         val message = call.receiveParameters()["message"] ?: ""
-        // v0.6.39 — AJAX clients send `Accept: application/json` so we can
-        // signal success/failure cleanly instead of relying on opaque 302s.
-        // Native form submit (no JS) still falls back to the redirect path.
         val wantsJson = call.request.headers["Accept"]?.contains("application/json", ignoreCase = true) == true
         val ok = message.isNotBlank()
         if (ok) MessageService.sendMessage(session.userId, partnerId, message)
@@ -93,13 +88,11 @@ fun Route.messageRoutes() {
         }
     }
 
-    /**
-     * Polling endpoint backbone for cross-device real-time updates (v0.6.37).
-     * Front-end calls this every few seconds while a chat is open; returns
-     * every message in the thread whose id is greater than [lastId] in
-     * chronological order. Side-effect: marks newly-arrived messages from the
-     * partner as read.
-     */
+    // Chat polling endpoint, called by frontend while a convo is open to catch new messages
+    // Returns all messages between the logged-in user and [partnerId] that arrived
+    // after [lastId], oldest first. 
+    // Returns 401 if not logged in, 400 if the URL parameters aren't valid ints,
+    // otherwise a (possibly empty) list of new messages.
     get("/api/messages/{partnerId}/since/{lastId}") {
         val session = call.sessions.get<UserSession>() ?: return@get call.respond(io.ktor.http.HttpStatusCode.Unauthorized)
         val partnerId = call.parameters["partnerId"]?.toIntOrNull()
