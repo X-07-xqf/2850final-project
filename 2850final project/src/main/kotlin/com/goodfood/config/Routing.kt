@@ -35,10 +35,7 @@ fun Application.configureRouting() {
         messageRoutes()
         profileRoutes()
         professionalRoutes()
-
-        // The landing page is the entry point for everyone — signed-out and signed-in
-        // alike. The template adapts its CTAs based on whether `session` is present
-        // (Sign in / Start free vs Go to dashboard / Sign out).
+        
         get("/") {
             val session = call.sessions.get<UserSession>()
             call.respond(ThymeleafContent("landing", model("session" to session)))

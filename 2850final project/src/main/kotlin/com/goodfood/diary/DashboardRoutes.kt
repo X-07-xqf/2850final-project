@@ -53,8 +53,6 @@ fun Route.dashboardRoutes() {
         val goalFat = goals?.get("fat") ?: BigDecimal("65")
         val isDayEmpty = entries.isEmpty()
 
-        // Below-the-fold dashboard modules (v0.6.25): weekly summary, streak,
-        // featured recipes, and the most recent coaching conversation.
         val monday = today.minusDays(today.dayOfWeek.value.toLong() - 1)
         val weeklyRaw = DiaryService.getWeeklySummary(session.userId, monday)
         val goalCalDouble = goalCal.toDouble()
@@ -76,9 +74,7 @@ fun Route.dashboardRoutes() {
             mapOf(
                 "id" to (r["id"] ?: 0),
                 "title" to (r["title"] ?: ""),
-                // Pass null through when the recipe has no real image, so the
-                // template's `th:if="${f.imageUrl != null}"` falls through to
-                // the emoji fallback instead of rendering an <img src="">.
+                //if recipe has no image, fallback to emoji instead
                 "imageUrl" to r["imageUrl"],
                 "coverEmoji" to (r["coverEmoji"] ?: "🍽️"),
                 "coverTone" to (r["coverTone"] ?: "sage"),

@@ -15,16 +15,7 @@ import java.net.URI
 
 private data class DbSettings(val driver: String, val url: String, val user: String, val password: String)
 
-/**
- * When `DATABASE_URL` is set (Render injects this when a PostgreSQL service is
- * linked) we connect to PostgreSQL so user accounts survive container rebuilds.
- * Otherwise we fall back to the H2 file from `application.conf` — convenient
- * for Codespaces / local dev where data living in `./data/` is good enough.
- *
- * Render hands us the libpq form `postgres://user:pass@host:port/db`, but JDBC
- * needs `jdbc:postgresql://host:port/db` with credentials passed separately,
- * so the URL is parsed before being handed to `Database.connect`.
- */
+
 private fun Application.resolveDbSettings(): DbSettings {
     val raw = System.getenv("DATABASE_URL")?.trim().orEmpty()
     if (raw.startsWith("postgres://") || raw.startsWith("postgresql://")) {
@@ -69,16 +60,8 @@ fun Application.configureDatabase() {
     }
 
     SeedData.insertIfEmpty()
-    // Idempotent — fills in image_url on the seed recipes for any DB that
-    // came up before that column was being populated. Safe on every boot.
     SeedData.backfillImageUrls()
-    // Idempotent — inserts the v0.6.8 recipe pack (titles checked first), so
-    // the live Render PostgreSQL gets six new recipes without a fresh seed.
     SeedData.backfillExtraRecipes()
-    // Idempotent — inserts the v0.6.33 food pack (~37 commonly-eaten foods) so
-    // the diary picker has variety on existing live DBs without a re-seed.
     SeedData.backfillExtraFoods()
-    // Idempotent — keeps the demo account (alice@email.com) populated for
-    // *today* so the dashboard never opens to a hostile zero state.
-    SeedData.ensureAliceHasTodayEntries()
+    SeedData.ensureAliceHasTodayEntries() //fill test account with data for testing and demo
 }

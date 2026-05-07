@@ -42,8 +42,6 @@ fun Route.authRoutes() {
         if (password != confirmPassword) {
             call.respond(ThymeleafContent("auth/login", model("error" to "Passwords do not match.", "tab" to "register"))); return@post
         }
-        // Password complexity gate (v0.6.36). Returns the specific reason so the
-        // user knows which rule to satisfy.
         val passwordError = UserService.validatePassword(password)
         if (passwordError != null) {
             call.respond(ThymeleafContent("auth/login", model("error" to passwordError, "tab" to "register"))); return@post
