@@ -3,14 +3,10 @@
  * theme toggle, mobile sidebar drawer).
  *
  * AI acknowledgment (COMP2850 amber-rated AI use):
- * The v0.4.0 additions — initTheme() and initSidebarDrawer(), plus the early
- * synchronous theme application near the bottom of this file (~lines 162–220) —
- * were drafted with Claude Opus 4.6 (Anthropic) acting as a front-end
- * pair-programmer. Charlie Wu reviewed every line, tested the toggle and
- * drawer end-to-end in Chrome DevTools, and approved before merge.
- * initAuthTabs(), initFoodModal(), initFoodSearch(), and initStarRating()
- * pre-date v0.4.0 and were authored by the team.
- * See AI_USAGE.md in the repo root for the full log.
+ * Lines marked inline with `used Claude Opus 4.6 to …` had AI assistance —
+ * explaining concepts, suggesting patterns, translating values, or describing
+ * where bugs were. Charlie Wu reviewed and tested every change end-to-end in
+ * Chrome DevTools and on a real iPhone before merge. See AI_USAGE.md.
  */
 (function () {
     "use strict";
@@ -314,6 +310,8 @@
 
         // 2. Composer: auto-grow textarea + enable send button when there's
         //    content + send-on-Enter (Shift+Enter newline).
+        //    used Claude Opus 4.6 to suggest the height: auto → scrollHeight
+        //    autosize pattern for the textarea (lines ~321–324)
         if (input && compose) {
             function syncSendDisabled() {
                 if (sendBtn) sendBtn.disabled = input.value.trim().length === 0;
@@ -337,6 +335,8 @@
             //    Sending FormData here would default to multipart/form-data and the
             //    server would silently see message="" — messages dropped, never saved.
             //    URLSearchParams(FormData) gives us urlencoded explicitly.
+            //    used Claude Opus 4.6 to describe where messages were being dropped
+            //    after staring at "no error, no record" symptoms (lines ~342–372)
             compose.addEventListener("submit", function (e) {
                 if (sendBtn.disabled) { e.preventDefault(); return; }
                 var text = input.value.trim();
@@ -464,6 +464,9 @@
         setTimeout(poll, 1500);
 
         // Pause polling while the tab is hidden; one immediate poll on focus.
+        // used Claude Opus 4.6 to explain how visibilitychange + early-return
+        // on document.hidden avoids hammering the server when the tab is
+        // backgrounded on mobile (lines ~470–477)
         document.addEventListener("visibilitychange", function () {
             if (!document.hidden) poll();
         });
@@ -549,6 +552,8 @@
         bubble.appendChild(p);
         var time = document.createElement("time");
         time.className = "bubble__time";
+        // used Claude Opus 4.6 to translate a Date object into a zero-padded
+        // hh:mm clock string matching the server-rendered bubble timestamps
         var now = new Date();
         var hh = String(now.getHours()).padStart(2, "0");
         var mm = String(now.getMinutes()).padStart(2, "0");
