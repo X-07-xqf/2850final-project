@@ -1,13 +1,6 @@
-/*
- * Sage — front-end glue (auth tabs, food modal, food search, star rating,
- * theme toggle, mobile sidebar drawer).
- *
- * AI acknowledgment (COMP2850 amber-rated AI use):
- * Lines marked inline with `used Claude Opus 4.6 to …` had AI assistance —
- * explaining concepts, suggesting patterns, translating values, or describing
- * where bugs were. Charlie Wu reviewed and tested every change end-to-end in
- * Chrome DevTools and on a real iPhone before merge. See AI_USAGE.md.
- */
+/* Some JavaScript in this file was assisted by Claude Opus 4.6,
+   mainly for UI behaviour, debugging, and browser compatibility fixes.
+   AI-assisted sections are marked near the relevant code. */
 (function () {
     "use strict";
 
