@@ -12,13 +12,10 @@
    reinforce that.
 
    ---- AI acknowledgment (COMP2850 amber-rated AI use) ----
-   Token-to-component translation drafted with Claude Opus 4.6
-   (Anthropic) acting as a CSS pair-programmer. The team chose
-   the design direction (warm wellness consumer); AI mapped
-   tokens onto the existing class names so HTML templates stay
-   intact. Charlie Wu reviewed every rule, walked every page in
-   light + dark + the <840 px drawer, and approved before merge.
-   See AI_USAGE.md.
+   Lines marked inline with `used Claude Opus 4.6 to …` had AI
+   assistance — explaining browser quirks, suggesting patterns,
+   translating tokens, or describing where bugs were. Charlie Wu
+   reviewed and tested every rule before merge. See AI_USAGE.md.
    ============================================================ */
 
 :root {
@@ -195,6 +192,7 @@
     --glass-border-soft:      1px solid rgba(255, 255, 255, 0.30);
     /* Multi-layer shadow: top inner highlight (catches light) +
        thin bottom inner shadow (suggests thickness) + soft outer drop. */
+    /* used Claude Opus 4.6 to suggest the inset 1px white highlight + dark hairline pair for liquid-glass edge refraction (lines 198–207) */
     --glass-shadow:
         inset 0 1px 0 rgba(255, 255, 255, 0.75),
         inset 0 -1px 0 rgba(31, 42, 35, 0.05),
@@ -251,6 +249,7 @@
 }
 
 /* ---- Dark mode (auto, user-overridable) ---- */
+/* used Claude Opus 4.6 to translate the warm light palette into dark equivalents that keep the same hue family but invert luminance (lines 254–294) */
 @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) {
         --color-bg:           #14201a;
@@ -698,6 +697,7 @@ a:hover { text-decoration: underline; text-decoration-thickness: 1.5px; text-und
 /* ============================================================
    App shell
    ============================================================ */
+/* used Claude Opus 4.6 to explain why iOS Safari needs a 100dvh fallback after 100vh and how `isolation: isolate` here keeps the mobile sidebar out of a child stacking context (lines 701–709) */
 .app-body {
     min-height: 100vh;
     min-height: 100dvh;
@@ -1969,6 +1969,7 @@ input::placeholder, textarea::placeholder {
    tabular-mono numbers, and four meaningful row states:
    default (sage gradient) / --over (clay/warn) / --empty (dashed track) /
    --today (mint pill bg). */
+/* used Claude Opus 4.6 to suggest 12px pill bars over thin 6px hairlines so empty days and tiny days look distinct on the weekly chart (lines 1972–2021) */
 .weekly-chart {
     margin: 4px -8px 0;  /* row hover/today bg can bleed slightly past card padding */
 }
@@ -2296,6 +2297,7 @@ input::placeholder, textarea::placeholder {
 }
 /* Default-hide the mobile back arrow; the @media (max-width: 840px) block
    below flips it to inline-flex when there's no conversation rail beside. */
+/* used Claude Opus 4.6 to describe where the cascade order was hiding the back arrow on mobile (this rule must precede the @media block, not follow it) (line 2300) */
 .chat-main__back { display: none; }
 .chat-main__head-body {
     display: flex;
@@ -3808,6 +3810,7 @@ input::placeholder, textarea::placeholder {
     .sidebar__nav { flex-direction: column; }
     .main { padding: 70px 16px 32px; max-width: 100%; }
 
+    /* used Claude Opus 4.6 to describe where the iOS Safari sidebar blur was coming from — the scrim's backdrop-filter co-rasterised with the page's glass cards (fix on the next ~6 lines) */
     /* Solid scrim — no backdrop-filter. iOS Safari + multiple
        backdrop-filter elements (the page's glass cards plus this scrim)
        triggered a compositor bug that down-sampled the sidebar above. */
