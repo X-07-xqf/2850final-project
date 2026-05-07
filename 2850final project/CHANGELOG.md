@@ -1,11 +1,8 @@
 # Changelog
 
-Format tightened on 2026-05-05 to short Keep-a-Changelog style. Earlier
-verbose entries are in git history (`git log -p CHANGELOG.md`).
-
 ## [0.6.47] - 2026-05-07
 ### Changed
-- AI usage: refreshed `AI_USAGE.md`, tightened CSS / JS file headers, and added 10 inline `used Claude Opus 4.6 to …` notes on the front-end spots where AI helped, per COMP2850 amber guidance. (#144)
+- AI usage: refreshed `AI_USAGE.md`, tightened CSS / JS file headers, and added 10 inline `used Claude Opus 4.6 to …` notes on the front-end spots where AI helped.(#144)
 
 ## [0.6.46] - 2026-05-06
 ### Changed
