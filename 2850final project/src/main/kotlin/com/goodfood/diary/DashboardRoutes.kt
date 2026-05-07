@@ -16,6 +16,7 @@ import java.math.RoundingMode
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
+@Suppress("CyclomaticComplexMethod", "LongMethod")
 fun Route.dashboardRoutes() {
     get("/dashboard") {
         val session = call.sessions.get<UserSession>() ?: return@get call.respondRedirect("/login")

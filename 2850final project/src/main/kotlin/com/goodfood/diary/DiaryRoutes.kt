@@ -15,6 +15,7 @@ import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
+@Suppress("CyclomaticComplexMethod")
 fun Route.diaryRoutes() {
     get("/diary") {
         val session = call.sessions.get<UserSession>() ?: return@get call.respondRedirect("/login")

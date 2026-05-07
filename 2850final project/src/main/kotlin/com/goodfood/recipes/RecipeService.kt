@@ -1,3 +1,5 @@
+@file:Suppress("MaxLineLength")
+
 package com.goodfood.recipes
 
 import com.goodfood.auth.Users

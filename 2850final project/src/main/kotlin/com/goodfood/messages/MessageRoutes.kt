@@ -34,6 +34,7 @@ private fun groupByDate(conversation: List<Map<String, Any>>, today: LocalDate):
         }
 }
 
+@Suppress("CyclomaticComplexMethod")
 fun Route.messageRoutes() {
     get("/messages") {
         val session = call.sessions.get<UserSession>() ?: return@get call.respondRedirect("/login")

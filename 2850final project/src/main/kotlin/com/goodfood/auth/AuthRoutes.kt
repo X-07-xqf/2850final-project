@@ -9,6 +9,7 @@ import io.ktor.server.routing.*
 import io.ktor.server.sessions.*
 import io.ktor.server.thymeleaf.*
 
+@Suppress("CyclomaticComplexMethod")
 fun Route.authRoutes() {
     get("/login") {
         val session = call.sessions.get<UserSession>()

@@ -1,3 +1,5 @@
+@file:Suppress("MaxLineLength")
+
 package com.goodfood.diary
 
 import org.jetbrains.exposed.sql.*
