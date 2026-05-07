@@ -6,20 +6,12 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import java.math.BigDecimal
 import java.time.LocalDateTime
 
-/**
- * Read/write nutritional goal targets per user.
- *
- * The schema allows multiple historical rows per user (`set_at` timestamp), but
- * the application UX is "one current goal", so [saveGoals] does an upsert on
- * `user_id` rather than appending a new row.
- */
+//read/write goal targets
 object GoalService {
 
-    /**
-     * Most-recent goals for [userId]; `null` when the user has never set goals.
-     * Returned map keys: `calories`, `protein`, `carbs`, `fat`, `fiber`. Any
-     * individual macro can itself be `null` if the user only filled in some.
-     */
+
+    //get most recent goals for a user, null if no goals ever set. returns calories, protein, carbs, fat,fibre
+    //macros can also be null if left blank by user
     fun getGoals(userId: Int): Map<String, BigDecimal?>? = transaction {
         NutritionalGoals.selectAll().where { NutritionalGoals.userId eq userId }
             .orderBy(NutritionalGoals.setAt, SortOrder.DESC).firstOrNull()?.let { row ->
@@ -28,18 +20,8 @@ object GoalService {
             }
     }
 
-    /**
-     * Upsert nutritional goals for [userId]. If the user already has a row, every
-     * macro is overwritten (passing `null` zeros that macro). If not, a new row
-     * is inserted with the supplied values.
-     *
-     * @param cal daily calorie target in kcal
-     * @param prot daily protein target in grams
-     * @param carbs daily carbohydrate target in grams
-     * @param fat daily fat target in grams
-     * @param fiber daily fibre target in grams (`null` is acceptable — fibre is
-     *  not surfaced on every page).
-     */
+    
+    //upsert goals for a user. if a row exists, it is overwritten. if not, a new row is inserted with the given values
     fun saveGoals(userId: Int, cal: BigDecimal?, prot: BigDecimal?, carbs: BigDecimal?, fat: BigDecimal?, fiber: BigDecimal?) = transaction {
         val existing = NutritionalGoals.selectAll().where { NutritionalGoals.userId eq userId }.firstOrNull()
         if (existing != null) {

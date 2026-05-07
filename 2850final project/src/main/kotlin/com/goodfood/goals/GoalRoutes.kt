@@ -24,21 +24,20 @@ fun Route.goalRoutes() {
         val weekStart: LocalDate = weekParam?.let {
             try { LocalDate.parse(it) } catch (_: Exception) { currentMonday }
         } ?: currentMonday
-        // Snap to Monday if the user passed any other day in the URL.
+        // default to Monday if the user passed any other day in the URL.
         val monday = weekStart.minusDays(weekStart.dayOfWeek.value.toLong() - 1)
         val goals = GoalService.getGoals(session.userId)
         val weekly = DiaryService.getWeeklySummary(session.userId, monday)
         val unread = MessageService.getUnreadCount(session.userId)
         val displayGoals = goals?.mapValues { (_, v) -> v?.fmt(1) ?: "" } ?: emptyMap()
-        // Calorie goal drives the bar scale. If the user hasn't set one, every
-        // bar reads as "empty" — pct stays 0 and the dashed empty track shows.
+        // Calorie goal controls the bar scale, if there is not set calorie goal, the bar will show as empty 
         val goalCals: Double = goals?.get("calories")?.toDouble() ?: 0.0
         val displayWeekly = weekly.map { w ->
             val calsRaw = w["calories"] as BigDecimal
             val cals = calsRaw.toDouble()
             val rowDate = w["date"] as LocalDate
             val pct: Int = if (goalCals > 0) ((cals / goalCals) * 100).coerceAtMost(100.0).toInt() else 0
-            // 10% buffer so "right around goal" stays sage-green; only meaningfully-over days flip to clay.
+            // 10% buffer so stays green if close to goal, only change if significantly over
             val isOver = goalCals > 0 && cals > goalCals * 1.10
             val isEmpty = cals == 0.0
             val isToday = rowDate == today
