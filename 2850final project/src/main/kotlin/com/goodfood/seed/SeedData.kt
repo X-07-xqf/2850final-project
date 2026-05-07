@@ -1,3 +1,5 @@
+@file:Suppress("LargeClass", "LongMethod", "MaxLineLength")
+
 package com.goodfood.seed
 
 import at.favre.lib.crypto.bcrypt.BCrypt

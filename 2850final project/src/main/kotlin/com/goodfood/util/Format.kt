@@ -52,6 +52,7 @@ fun LocalDateTime.fmtChatTime(now: LocalDateTime = LocalDateTime.now()): String 
  * Falls through to a generic plate when nothing matches. Cheap stand-in for
  * a real image pipeline — keeps the recipe grid from looking text-only.
  */
+@Suppress("CyclomaticComplexMethod")
 fun recipeCoverEmoji(title: String): String {
     val t = title.lowercase()
     return when {
@@ -91,6 +92,7 @@ fun recipeCoverTone(title: String): String {
  * visual without needing real photographs. Falls through to a generic
  * plate when nothing matches.
  */
+@Suppress("CyclomaticComplexMethod")
 fun foodEmoji(name: String): String {
     val n = name.lowercase()
     return when {

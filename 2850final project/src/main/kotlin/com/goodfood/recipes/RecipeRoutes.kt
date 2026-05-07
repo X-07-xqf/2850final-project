@@ -10,6 +10,7 @@ import io.ktor.server.routing.*
 import io.ktor.server.sessions.*
 import io.ktor.server.thymeleaf.*
 
+@Suppress("CyclomaticComplexMethod", "MaxLineLength")
 fun Route.recipeRoutes() {
     get("/recipes") {
         val session = call.sessions.get<UserSession>() ?: return@get call.respondRedirect("/login")

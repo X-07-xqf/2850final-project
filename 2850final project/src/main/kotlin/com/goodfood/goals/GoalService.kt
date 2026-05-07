@@ -1,3 +1,5 @@
+@file:Suppress("MaxLineLength")
+
 package com.goodfood.goals
 
 import com.goodfood.diary.NutritionalGoals

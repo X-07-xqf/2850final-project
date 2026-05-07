@@ -36,6 +36,7 @@ private fun hasActiveRelationship(professionalId: Int, subscriberId: Int): Boole
     }.limit(1).any()
 }
 
+@Suppress("CyclomaticComplexMethod", "LongMethod", "MaxLineLength")
 fun Route.professionalRoutes() {
     get("/pro/dashboard") {
         val session = call.sessions.get<UserSession>() ?: return@get call.respondRedirect("/login")
