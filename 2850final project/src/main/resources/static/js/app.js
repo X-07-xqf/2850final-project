@@ -323,7 +323,7 @@
             input.focus();
             syncSendDisabled();
 
-            // 3. Optimistic AJAX submit. v0.6.37 fix: Ktor's
+            
             //    call.receiveParameters() only parses application/x-www-form-urlencoded.
             //    Sending FormData here would default to multipart/form-data and the
             //    server would silently see message="" — messages dropped, never saved.
@@ -340,7 +340,7 @@
                 autosize();
                 syncSendDisabled();
 
-                // v0.6.39 — bulletproof AJAX send.
+                
                 //  • body: explicit URLSearchParams string (works around any
                 //    browser quirks with FormData → urlencoded conversion).
                 //  • Accept: application/json so the server returns

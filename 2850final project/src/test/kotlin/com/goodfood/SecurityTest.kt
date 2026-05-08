@@ -9,33 +9,27 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 /**
- * Regression tests for the four critical security fixes shipped in v0.4.4
- * (issues #16 / #17 / #18 / #19).
- *
- * Acceptance criteria exercised:
- *  - AC-SEC-1  Food search treats `%` as a literal character, not a SQL wildcard.    [searchFoodTreatsPercentAsLiteral]
- *  - AC-SEC-2  Food search treats `_` as a literal character.                        [searchFoodTreatsUnderscoreAsLiteral]
- *  - AC-SEC-3  Recipe search treats `%` as a literal character.                      [searchRecipesTreatsPercentAsLiteral]
- *  - AC-SEC-4  A normal search query still finds the matching food.                  [searchFoodHappyPathStillWorks]
- *  - AC-SEC-5  deleteEntry() refuses to delete another user's diary entry.           [deleteEntryDoesNotAllowCrossUserDeletion]
- *
- * IDOR / authorisation tests for the professional routes are at the route layer
- * (requires testApplication) — see [IntegrationTest].
+ * Acceptance criteria:
+ *  - Food search treats `%` as a literal character, not a SQL wildcard.    [searchFoodTreatsPercentAsLiteral]
+ *  - Food search treats `_` as a literal character.                        [searchFoodTreatsUnderscoreAsLiteral]
+ *  - Recipe search treats `%` as a literal character.                      [searchRecipesTreatsPercentAsLiteral]
+ *  - A normal search query still finds the matching food.                  [searchFoodHappyPathStillWorks]
+ *  - deleteEntry() refuses to delete another user's diary entry.           [deleteEntryDoesNotAllowCrossUserDeletion]
  */
 class SecurityTest {
 
     @Test
     fun searchFoodTreatsPercentAsLiteral() {
         TestDatabase.setup()
-        // Seed a few food items, NONE containing a literal '%' character.
+        // Seed a few food items, none containing a literal '%' character.
         TestDatabase.insertFood(name = "Banana")
         TestDatabase.insertFood(name = "Apple")
         TestDatabase.insertFood(name = "Chicken Breast")
         TestDatabase.insertFood(name = "Olive Oil")
         TestDatabase.insertFood(name = "Salmon")
 
-        // Pre-fix behaviour: '%' would dump every row.
-        // Post-fix behaviour: '%' is escaped and matches only foods that contain a literal '%'.
+        // pre fix, '%' would dump every row.
+        // post fix, '%' is escaped and matches only foods that contain a literal '%'.
         val results = DiaryService.searchFood("%")
 
         assertEquals(0, results.size, "raw % wildcard must not dump the entire food_items table")
@@ -73,7 +67,7 @@ class SecurityTest {
         TestDatabase.insertFood(name = "Banana")
         TestDatabase.insertFood(name = "Apple")
 
-        // Sanity check that wildcard escaping does NOT break ordinary substring search.
+        // check that wildcard escaping does not break ordinary substring search.
         val results = DiaryService.searchFood("ban")
 
         assertEquals(1, results.size)
