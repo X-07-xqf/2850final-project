@@ -8,12 +8,14 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import java.math.BigDecimal
 import java.time.LocalDateTime
 
-//read/write goal targets
+/**
+ * Read/write goal targets — daily calorie + macro targets per user.
+ */
 object GoalService {
-
-
-    //get most recent goals for a user, null if no goals ever set. returns calories, protein, carbs, fat,fibre
-    //macros can also be null if left blank by user
+    /**
+     * Latest goals row for [userId], or null if the user has never set goals.
+     * Macro values may be null when the user left a target blank.
+     */
     fun getGoals(userId: Int): Map<String, BigDecimal?>? = transaction {
         NutritionalGoals.selectAll().where { NutritionalGoals.userId eq userId }
             .orderBy(NutritionalGoals.setAt, SortOrder.DESC).firstOrNull()?.let { row ->
@@ -22,8 +24,10 @@ object GoalService {
             }
     }
 
-    
-    //upsert goals for a user. if a row exists, it is overwritten. if not, a new row is inserted with the given values
+    /**
+     * Upsert: overwrite the existing goals row for [userId] when one exists,
+     * otherwise insert a fresh row with the supplied values.
+     */
     fun saveGoals(userId: Int, cal: BigDecimal?, prot: BigDecimal?, carbs: BigDecimal?, fat: BigDecimal?, fiber: BigDecimal?) = transaction {
         val existing = NutritionalGoals.selectAll().where { NutritionalGoals.userId eq userId }.firstOrNull()
         if (existing != null) {
