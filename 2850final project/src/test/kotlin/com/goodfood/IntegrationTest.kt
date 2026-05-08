@@ -24,7 +24,7 @@ import kotlin.test.assertTrue
  *  - AC-INT-2  GET `/login` reaches the route layer without a server crash.           [loginPageRendersWithoutCrashing]
  *  - AC-INT-3  POST `/login` with bogus credentials does NOT issue a session.         [postLoginWithBadCredentialsDoesNotSetSession]
  *  - AC-INT-4  Register → reuse session cookie → /dashboard serves 200 OK.            [registerThenSessionCookieGrantsDashboard]
- *  - AC-INT-5  A subscriber cannot access any /pro/* route — role-based redirect.    [subscriberCannotAccessProRoute]
+ *  - AC-INT-5  A subscriber cannot access pro-only routes — role-based redirect.    [subscriberCannotAccessProRoute]
  *  - AC-INT-6  /api/messages/{id}/since/{lastId} without a session returns 401.       [unauthenticatedMessageApiReturns401]
  */
 class IntegrationTest {
