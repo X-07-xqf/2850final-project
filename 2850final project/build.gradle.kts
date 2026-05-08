@@ -3,6 +3,7 @@ plugins {
     id("application")
     id("com.gradleup.shadow") version "8.3.0"
     id("io.gitlab.arturbosch.detekt") version "1.23.7"
+    jacoco
 }
 
 group = "com.goodfood"
@@ -77,4 +78,20 @@ dependencies {
 
 kotlin {
     jvmToolchain(17)
+}
+
+jacoco {
+    toolVersion = "0.8.11"
+}
+
+tasks.test {
+    finalizedBy(tasks.jacocoTestReport)
+}
+
+tasks.jacocoTestReport {
+    dependsOn(tasks.test)
+    reports {
+        xml.required.set(true)
+        html.required.set(true)
+    }
 }
