@@ -20,9 +20,12 @@ import kotlin.test.assertTrue
  * rendering — not just the service layer.
  *
  * Acceptance criteria exercised:
- *  - AC-INT-1  GET `/dashboard` without a session does NOT serve the dashboard.   [unauthenticatedDashboardDoesNotServeDashboard]
- *  - AC-INT-2  GET `/login` reaches the route layer without a server crash.       [loginPageRendersWithoutCrashing]
- *  - AC-INT-3  POST `/login` with bogus credentials does NOT issue a session.     [postLoginWithBadCredentialsDoesNotSetSession]
+ *  - AC-INT-1  GET `/dashboard` without a session does NOT serve the dashboard.       [unauthenticatedDashboardDoesNotServeDashboard]
+ *  - AC-INT-2  GET `/login` reaches the route layer without a server crash.           [loginPageRendersWithoutCrashing]
+ *  - AC-INT-3  POST `/login` with bogus credentials does NOT issue a session.         [postLoginWithBadCredentialsDoesNotSetSession]
+ *  - AC-INT-4  Register → reuse session cookie → /dashboard serves 200 OK.            [registerThenSessionCookieGrantsDashboard]
+ *  - AC-INT-5  A pro cannot view another pro's /pro/client/{id} detail page.          [professionalCannotViewAnotherProsDetailPage]
+ *  - AC-INT-6  /api/messages/{id}/since/{lastId} without a session returns 401.       [unauthenticatedMessageApiReturns401]
  */
 class IntegrationTest {
 
@@ -93,5 +96,71 @@ class IntegrationTest {
             .firstOrNull { it.startsWith("user_session=") && !it.startsWith("user_session=;") }
         assertEquals(null, session,
             "Bad credentials must not set a populated user_session cookie; got: $session")
+    }
+
+    @Test
+    fun registerThenSessionCookieGrantsDashboard() = testApplication {
+        bootApp()
+        val client = createClient { followRedirects = false }
+
+        // 1. Register a fresh subscriber. The route both creates the user
+        //    and sets the user_session cookie in one round-trip.
+        val registerResp = client.post("/register") {
+            header(HttpHeaders.ContentType, ContentType.Application.FormUrlEncoded.toString())
+            setBody("fullName=Test+User&email=test@example.com&password=Aa1bcd&confirmPassword=Aa1bcd&role=subscriber")
+        }
+        val sessionCookie = registerResp.headers.getAll(HttpHeaders.SetCookie).orEmpty()
+            .firstOrNull { it.startsWith("user_session=") && !it.startsWith("user_session=;") }
+        assertTrue(sessionCookie != null, "Register must set a populated user_session cookie")
+
+        // 2. Reuse the cookie to access /dashboard. The session is enough —
+        //    no separate /login round-trip needed.
+        val dashResp = client.get("/dashboard") {
+            header(HttpHeaders.Cookie, sessionCookie!!.split(";").first())
+        }
+        assertEquals(HttpStatusCode.OK, dashResp.status,
+            "Authenticated user must reach /dashboard with 200 OK")
+    }
+
+    @Test
+    fun professionalCannotViewAnotherProsDetailPage() = testApplication {
+        bootApp()
+        val client = createClient { followRedirects = false }
+
+        // Register two pros. The second registration is what makes id 2 a pro
+        // rather than a subscriber — the detail route checks role server-side.
+        val sarahResp = client.post("/register") {
+            header(HttpHeaders.ContentType, ContentType.Application.FormUrlEncoded.toString())
+            setBody("fullName=Sarah&email=sarah@example.com&password=Aa1bcd&confirmPassword=Aa1bcd&role=professional")
+        }
+        client.post("/register") {
+            header(HttpHeaders.ContentType, ContentType.Application.FormUrlEncoded.toString())
+            setBody("fullName=Mike&email=mike@example.com&password=Aa1bcd&confirmPassword=Aa1bcd&role=professional")
+        }
+
+        val sarahCookie = sarahResp.headers.getAll(HttpHeaders.SetCookie).orEmpty()
+            .firstOrNull { it.startsWith("user_session=") && !it.startsWith("user_session=;") }!!
+            .split(";").first()
+
+        // Sarah opens /pro/client/2 — Mike is also a pro, not a subscriber,
+        // so the route must refuse to serve the detail page.
+        val resp = client.get("/pro/client/2") {
+            header(HttpHeaders.Cookie, sarahCookie)
+        }
+        assertNotEquals(HttpStatusCode.OK, resp.status,
+            "Pro must not get a 200 detail page for another pro")
+        val location = resp.headers[HttpHeaders.Location].orEmpty()
+        assertTrue(!location.contains("/pro/client/"),
+            "Redirect must leave the pro detail surface, got: $location")
+    }
+
+    @Test
+    fun unauthenticatedMessageApiReturns401() = testApplication {
+        bootApp()
+
+        val response = client.get("/api/messages/1/since/0")
+
+        assertEquals(HttpStatusCode.Unauthorized, response.status,
+            "GET /api/messages/.../since/... without a session must return 401")
     }
 }

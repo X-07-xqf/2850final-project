@@ -57,6 +57,14 @@ jobs:
           path: "2850final project/build/reports/tests/test"
           if-no-files-found: ignore
 
+      - name: Publish coverage report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: jacoco-coverage
+          path: "2850final project/build/reports/jacoco/test/html"
+          if-no-files-found: ignore
+
       - name: Publish detekt report
         if: always()
         uses: actions/upload-artifact@v4
