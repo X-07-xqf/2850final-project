@@ -15,10 +15,10 @@ Professionals can see every client's day at a glance, notice when clients are of
 
 ## Tech stack
 
-Backend: Kotlin, Ktor, Exposed ORM, BCrypt, JDK 17
-Frontend: Thymeleaf templates, plain CSS (no framework), vanilla JS
-Database: H2 in-memory in dev, PostgreSQL on Render in production
-CI: GitHub Actions — `build`, `test`, `detekt`, JaCoCo coverage report
+- Backend: Kotlin, Ktor, Exposed ORM, BCrypt, JDK 17
+- Frontend: Thymeleaf templates, plain CSS (no framework), vanilla JS
+- Database: H2 in-memory in dev, PostgreSQL on Render in production
+- CI: GitHub Actions — `build`, `test`, `detekt`, JaCoCo coverage report
 
 ```
 2850final project/
