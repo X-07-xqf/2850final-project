@@ -15,6 +15,12 @@ import java.time.LocalDateTime
  * calorie/protein/carbs/fat scaling logic (per-100g values × grams ÷ 100)
  */
 object DiaryService {
+    /**
+     * All diary rows for [userId] on [date], joined with the food catalogue,
+     * with macro values scaled to the logged quantity (per-100g × grams ÷ 100).
+     * Sorted by meal type so breakfast / lunch / snack / dinner come back in a
+     * stable order.
+     */
     fun getEntriesForDate(userId: Int, date: LocalDate): List<Map<String, Any?>> = transaction {
         (FoodDiaryEntries innerJoin FoodItems).selectAll().where {
             (FoodDiaryEntries.userId eq userId) and (FoodDiaryEntries.entryDate eq date)
@@ -44,20 +50,29 @@ object DiaryService {
             "carbs" to entries.sumOf { it["carbs"] as BigDecimal }, "fat" to entries.sumOf { it["fat"] as BigDecimal })
     }
 
-    
-    fun getWeeklySummary(userId: Int): List<Map<String, Any>> { //calculates current 'monday'
+    /**
+     * Calorie totals for the week containing today. Convenience wrapper that
+     * picks the current ISO Monday and delegates.
+     */
+    fun getWeeklySummary(userId: Int): List<Map<String, Any>> {
         val today = LocalDate.now(); val monday = today.minusDays(today.dayOfWeek.value.toLong() - 1)
         return getWeeklySummary(userId, monday)
     }
 
-    fun getWeeklySummary(userId: Int, monday: LocalDate): List<Map<String, Any>> { //generates actual weekly summary
+    /**
+     * Calorie totals for the seven days starting at [monday]. Each item carries
+     * `date`, `dayName` (Mon/Tue/…), and `calories`.
+     */
+    fun getWeeklySummary(userId: Int, monday: LocalDate): List<Map<String, Any>> {
         return (0..6).map { offset ->
             val d = monday.plusDays(offset.toLong()); val summary = getDailySummary(userId, d)
             mapOf("date" to d, "dayName" to d.dayOfWeek.name.take(3).lowercase().replaceFirstChar { it.uppercase() }, "calories" to summary["calories"]!!)
         }
     }
 
-    
+    /**
+     * Insert one diary row.
+     */
     fun addEntry(userId: Int, foodItemId: Int, mealType: String, grams: BigDecimal, date: LocalDate, notes: String?) = transaction {
         FoodDiaryEntries.insert {
             it[FoodDiaryEntries.userId] = userId; it[FoodDiaryEntries.foodItemId] = foodItemId; it[FoodDiaryEntries.mealType] = mealType
@@ -66,16 +81,24 @@ object DiaryService {
         }
     }
 
+    /**
+     * Delete diary row [entryId] only if it belongs to [userId]. The userId
+     * filter on the WHERE clause is the IDOR defence — closes #16.
+     */
     fun deleteEntry(entryId: Int, userId: Int) = transaction {
         FoodDiaryEntries.deleteWhere { (FoodDiaryEntries.id eq entryId) and (FoodDiaryEntries.userId eq userId) }
     }
 
-
-    private fun escapeLikePattern(input: String): String = //escape wildcard chars
+    /** Escape SQL `LIKE` wildcards so user input is matched as a literal substring. */
+    private fun escapeLikePattern(input: String): String =
         input.replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_")
 
-
-    //search food function - shows up to 60 items if query is blank. 
+    /**
+     * Substring search over food names. Blank query returns up to 60 items
+     * (used by the food-picker grid); otherwise returns up to 20 matches.
+     * `%` and `_` in [query] are escaped via [escapeLikePattern] so a malicious
+     * search string can't dump the whole table — closes #19.
+     */
     fun searchFood(query: String): List<Map<String, Any>> = transaction {
         val rows = if (query.isBlank()) {
             FoodItems.selectAll().orderBy(FoodItems.name).limit(60)
