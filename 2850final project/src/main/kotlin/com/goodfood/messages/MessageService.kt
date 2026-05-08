@@ -7,22 +7,18 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
-/**
- * 1-on-1 messaging between subscribers and their professionals.
- *
- * Persistence is a single `advice_messages` table; conversations are derived
- * by querying every row where the user is sender *or* receiver and grouping
- * by the partner's user id. The "unread badge" feature relies on the
- * `is_read` boolean flipping the moment a conversation is opened.
- */
+
+// direct messaging between users and their assigned professionals.
+// All messages are in a single advice_messages table. A "conversation" is
+// all the rows where the two users appear as sender and receiver in
+// either direction, grouped by the other person's ID. 
+// checks is_read flag, which becomes 'true' as soon as user opens conversation
+
 object MessageService {
 
     /**
      * List of every distinct conversation partner of [userId], ordered by the
-     * most recent message exchanged. Each entry carries:
-     *  - `partnerId` / `partnerName` / `partnerInitials` / `partnerRole`
-     *  - `lastMessage` — the partner's most recent message body, truncated to 50 chars
-     *  - `unreadCount` — number of messages from this partner not yet read
+     * most recent message exchanged. 
      */
     fun getConversationPartners(userId: Int): List<Map<String, Any>> = transaction {
         val partners = mutableMapOf<Int, MutableMap<String, Any>>()
@@ -44,15 +40,9 @@ object MessageService {
         partners.values.toList()
     }
 
-    /**
-     * Full chronological transcript of the conversation between [userId] and
-     * [partnerId]. As a side-effect, marks every message **from** [partnerId]
-     * **to** [userId] as read — the unread badge in the sidebar will tick
-     * down on the next render.
-     *
-     * @return one map per message with `id`, `senderId`, `message`, `sentAt`,
-     *  and `isMine` (true when the row was sent by [userId]).
-     */
+
+    // gets conversation between userID and partnerID
+    // returns 1 map per message, with id, senderId, message, sentAt, isMine (checks if the row was sent by userId)
     fun getConversation(userId: Int, partnerId: Int): List<Map<String, Any>> = transaction {
         AdviceMessages.update({
             (AdviceMessages.senderId eq partnerId) and (AdviceMessages.receiverId eq userId) and (AdviceMessages.isRead eq false)
@@ -71,20 +61,17 @@ object MessageService {
         }
     }
 
-    /**
-     * Insert a new message row. Authorisation (e.g. "may this professional
-     * actually message this subscriber?") is enforced upstream by the route —
-     * see [com.goodfood.professional.professionalRoutes] / `hasActiveRelationship`.
-     */
+    // inserts a new message row
+    // authorisation for whether the sender and reciever have an active relationship
+    // is done in professionalRoutes hasActiveRelationship()
     fun sendMessage(senderId: Int, receiverId: Int, message: String) = transaction {
         AdviceMessages.insert { it[AdviceMessages.senderId] = senderId; it[AdviceMessages.receiverId] = receiverId
             it[AdviceMessages.message] = message; it[isRead] = false; it[sentAt] = LocalDateTime.now() }
     }
 
-    /**
-     * Number of messages addressed to [userId] that are still flagged unread.
-     * Used by every page's sidebar to render the red badge next to "Messages".
-     */
+
+    // gets number of messages to userId that are flagged unread
+    // used to render red badge next to Messages
     fun getUnreadCount(userId: Int): Long = transaction {
         AdviceMessages.selectAll().where { (AdviceMessages.receiverId eq userId) and (AdviceMessages.isRead eq false) }.count()
     }
@@ -98,6 +85,12 @@ object MessageService {
      * Marks any newly-arrived message FROM the partner as read, same as
      * [getConversation] does on full page load.
      */
+    
+    // Returns all messages in a conversation that arrived after lastId, oldest first.
+    // Frontend keeps track of the highest message ID already shown
+    // and passes it in every few seconds to pick up anything new.
+    // Any unread messages from partnerId are marked as read
+    
     fun getConversationSince(userId: Int, partnerId: Int, lastId: Int): List<Map<String, Any>> = transaction {
         AdviceMessages.update({
             (AdviceMessages.senderId eq partnerId) and (AdviceMessages.receiverId eq userId) and (AdviceMessages.isRead eq false)
@@ -120,12 +113,10 @@ object MessageService {
         }
     }
 
-    /**
-     * "Directory" — every user of the opposite role that [userId] has *not*
-     * yet exchanged messages with. Powers the new-conversation list at the
-     * bottom of `/messages`. Subscribers see professionals, professionals see
-     * subscribers; never returns the current user themselves.
-     */
+
+    // directory of every user of the opposite role that userId hasn't messaged yet
+    // 'new conversation' list in Messages
+    // does not return the actual current user
     fun getEligibleNewPartners(userId: Int, currentUserRole: String): List<Map<String, Any>> = transaction {
         val targetRole = if (currentUserRole == "professional") "subscriber" else "professional"
         val existing: Set<Int> = AdviceMessages.selectAll().where {
