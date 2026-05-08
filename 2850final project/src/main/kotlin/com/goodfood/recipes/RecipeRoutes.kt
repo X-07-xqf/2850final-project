@@ -20,9 +20,8 @@ fun Route.recipeRoutes() {
         val protein = call.request.queryParameters["protein"]
         val time = call.request.queryParameters["time"]
         val recipes = RecipeService.searchRecipes(query, difficulty, calories, protein, time)
-        // Featured strip only shows on the truly unfiltered landing — any active
-        // filter (search or any of the four dropdowns) hides it so the page is
-        // just the user's results.
+        // featured strip only shows on unfiltered landing 
+        // hidden during search or filtering
         val anyFilterActive =
             !query.isNullOrBlank() ||
             (!difficulty.isNullOrBlank() && difficulty != "all") ||

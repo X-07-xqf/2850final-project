@@ -20,13 +20,8 @@ import java.math.RoundingMode
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
-/**
- * Was the gate for `/pro/client/{id}` (issues #16/#17 — IDOR protection so a
- * professional could only access their assigned clients). v0.6.31 dropped the
- * gate per product request: every professional now sees every subscriber.
- * Function kept in code so it can be re-wired if a stricter access model is
- * reinstated later.
- */
+
+// originally used so that professionals can only message their own clients - feature removed
 @Suppress("unused")
 private fun hasActiveRelationship(professionalId: Int, subscriberId: Int): Boolean = transaction {
     ClientRelationships.selectAll().where {
@@ -42,8 +37,7 @@ fun Route.professionalRoutes() {
         val session = call.sessions.get<UserSession>() ?: return@get call.respondRedirect("/login")
         if (session.role != "professional") return@get call.respondRedirect("/dashboard")
         val unread = MessageService.getUnreadCount(session.userId)
-        // v0.6.31: query every subscriber, not just supervised ones — pros can
-        // see the full client base by design.
+        // query every subscriber, not just supervised ones as professionals can see the full client base by design.
         val clients = transaction {
             Users.selectAll().where { Users.role eq "subscriber" }
                 .orderBy(Users.fullName)
@@ -51,11 +45,10 @@ fun Route.professionalRoutes() {
                     val clientId = row[Users.id]; val today = LocalDate.now()
                     val summary = DiaryService.getDailySummary(clientId, today); val goals = GoalService.getGoals(clientId)
                     val goalCal = goals?.get("calories") ?: BigDecimal("2000")
-                    // v0.6.34 — NOT capped at 100, so over-eating clients (e.g. 150%)
-                    // surface as such instead of being silently clamped to 100% / On Track.
+                    // not capped at 100% so clients with calories above 100% are shown instead 
+                    // of just saying On Track
                     val pct = if (goalCal > BigDecimal.ZERO) summary["calories"]!!.multiply(BigDecimal(100)).divide(goalCal, 0, RoundingMode.HALF_UP).toInt() else 0
-                    // Status band: under 80% = under-eating, over 100% = over-eating —
-                    // both flag "Needs Attention". 80–100% is the On-Track sweet spot.
+                    // under 80% and over 100% shown as Needs Attention
                     val status = if (pct in 80..100) "On Track" else "Needs Attention"
                     mapOf<String, Any>("id" to clientId, "fullName" to row[Users.fullName],
                         "initials" to row[Users.fullName].split(" ").map { it.first() }.joinToString(""),
@@ -78,8 +71,6 @@ fun Route.professionalRoutes() {
         val date = if (dateStr != null) LocalDate.parse(dateStr) else LocalDate.now()
         val unread = MessageService.getUnreadCount(session.userId)
         val client = transaction { Users.selectAll().where { Users.id eq clientId }.singleOrNull() } ?: return@get call.respondRedirect("/pro/dashboard")
-        // Defence-in-depth: still require the URL parameter to point at a subscriber
-        // (so pros can't scrape pro-on-pro detail pages via this endpoint).
         if (client[Users.role] != "subscriber") return@get call.respondRedirect("/pro/dashboard")
         val entries = DiaryService.getEntriesForDate(clientId, date); val summary = DiaryService.getDailySummary(clientId, date)
         val goals = GoalService.getGoals(clientId)
@@ -110,7 +101,7 @@ fun Route.professionalRoutes() {
         )
         val displayGoals = goals?.mapValues { (_, v) -> v?.fmt(1) ?: "" } ?: emptyMap()
 
-        // 7-day weekly ladder so the detail page can show recent calorie pattern.
+        // 7 day weekly ladder so the detail page can show recent calorie pattern
         val today = LocalDate.now()
         val monday = today.minusDays(today.dayOfWeek.value.toLong() - 1)
         val weeklyRaw = DiaryService.getWeeklySummary(clientId, monday)
