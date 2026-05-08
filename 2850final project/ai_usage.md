@@ -7,5 +7,5 @@ JavaScript UI behaviour
 Browser compatibility issues
 Debugging frontend problems
 
-AI-assisted sections are marked with inline comments in the relevant CSS and JS files.
+AI-assisted sections are marked with inline comments in the relevant CSS, JS, and HTML files.
 The entire Kotlin backend, business logic, database queries, security checks, and tests were written by humans.
